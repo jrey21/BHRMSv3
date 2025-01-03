@@ -532,11 +532,11 @@ h2{
 .edit-button {
     margin-right: 10px;
 }
-
+/* 
 .benificiary-head {
     font-size: 20px;
     margin-top: 15px;
-}
+} */
 
 .modal {
     display: flex;

@@ -126,7 +126,7 @@ const deleteData = async (benificiary) => {
         </div>
     </transition>
     <div class="header">
-        <h1 class="benificiary-head text-slate-500" style="margin-bottom:20px;">Beneficiaries</h1>
+        <h1 class="beneficiary-head text-slate-500" style="margin-bottom:20px;">Beneficiaries</h1>
     </div>
     <div class="data-container">
         <div class="action-bar">
@@ -236,7 +236,7 @@ h2 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 .scrollable-table {
-    height: 250px;
+    height: 450px;
     overflow-y: auto;
     margin-top: 10px;
     scroll-snap-type: y mandatory;
@@ -303,6 +303,7 @@ h2 {
     align-items: center;
     margin-bottom: 20px;
     margin-top: -40px;
+    margin-left:10% ;
 }
 .action-bar {
     display: flex;
@@ -394,10 +395,10 @@ h2 {
 .edit-button {
     margin-right: 10px;
 }
-.benificiary-head {
+/* .benificiary-head {
     font-size: 20px;
     margin-left: 10%;
-}
+} */
 .modal {
     display: flex;
     justify-content: center;

@@ -10,6 +10,7 @@ import GrowthMonitoring from './GrowthMonitoring.vue';
 import DevelopmentalScreening from './DevelopmentalScreening.vue';
 import Deworming from './Deworming.vue';
 import Dental from './Dental.vue';
+import Space from '../../Components/Space.vue';
 
 defineOptions({
     layout: FormLayout,
@@ -45,7 +46,7 @@ const today = computed(() => {
     <div class="name-header">
         <transition name="fade">
             <h3 v-if="child?.first_name" class="child-head text-slate-500">
-                Records of {{ child.first_name }} {{ child.middle_name }} {{ child.last_name }}
+               Records of <strong style="color: #007bff;"> {{ child.first_name }} {{ child.middle_name }} {{ child.last_name }} </strong> 
             </h3>
         </transition>
         <transition name="fade">

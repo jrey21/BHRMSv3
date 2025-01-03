@@ -608,6 +608,7 @@ h2{
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    margin-left: 10%;
 }
 .quantity-1{
     flex:0 0 220px;
@@ -718,11 +719,10 @@ h2{
     margin-right: 10px;
 }
 
-.medicine-head {
+/* .medicine-head {
     font-size: 20px;
     margin-top: 15px;
-    margin-left: 10%;
-}
+} */
 
 .modal {
     display: flex;

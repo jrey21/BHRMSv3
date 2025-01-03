@@ -1,71 +1,62 @@
 <template>
     <div v-if="child">
         <h1>Child's Information</h1>
-        <div>
-            <table class="info-table">
-                <tbody>
-                    <tr>
-                        <td class="info">Full Name:</td><td class="data">{{ child.first_name }} {{ child.middle_name }} {{ child.last_name }} {{ child.suffix }}</td>
-                        <td class="info">Gestational Age At Birth:</td><td class="data">{{ child.gestational_age }}</td>
-                    </tr>
-                    <tr>
-                        <td class="info">Complete Address:</td><td class="data">{{ child.complete_address }}</td>
-                        <td class="info">Type Of Birth:</td><td class="data">{{ child.type_of_birth }}</td>
-                    </tr>
-                    <tr>
-                        <td class="info">Birth Date:</td><td class="data">{{ formattedBirthDate }}</td> 
-                        <td class="info">Birth Order:</td><td class="data">{{ child.birth_order }}</td>
-                    </tr>
-                    <tr>
-                        <td class="info">Birth Place:</td><td class="data">{{ child.birth_place }} {{ child.other_birth_place }}</td>
-                        <td class="info">Family No.:</td><td class="data">{{ child.family_no }}</td>
-                    </tr>
-                    <tr>
-                        <td class="info">Birth Weight:</td><td class="data">{{ child.birth_weight }}</td>
-                        <td class="info">Child No.:</td><td class="data">{{ child.child_no }}</td>
-                    </tr>
-                    <tr>
-                        <td class="info">Birth Length:</td><td class="data">{{ child.birth_length }}</td>
-                        <td class="info">Birth Attendant:</td><td class="data">{{ child.birth_attendant }} {{ child.other_birth_attendant }}</td>
-                    </tr>
-                    <tr>
-                        <td class="info">Birth Registered:</td><td class="data">{{ child.birth_registered }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <h1>Mother's Information</h1>
-            <table class="info-table">
-                <tbody>
-                    <tr>
-                        <td class="info">Full Name:</td><td class="data">{{ child.mother_name }}</td>
-                        <td class="info">Education:</td><td class="data">{{ child.mother_education }}</td>
-                    </tr>
-                    <tr>
-                        <td class="info">No. Of Pregnancies:</td><td class="data">{{ child.no_pregancies }}</td>
-                        <td class="info">Occupation:</td><td class="data">{{ child.mother_occupation }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <h1>Father's Information</h1>
-            <table class="info-table">
-                <tbody>
-                    <tr>
-                        <td class="info">Full Name:</td><td class="data">{{ child.father_name }}</td>
-                    </tr>
-                    <tr>
-                        <td class="info">Education:</td><td class="data">{{ child.father_education }}</td>
-                    </tr>
-                    <tr>
-                        <td class="info">Occupation:</td><td class="data">{{ child.father_occupation }}</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="card">
+            <div class="container-1">
+                <p class="width-50"><strong>Full Name:</strong> <Space/><span>{{ child.first_name }} {{ child.middle_name }} {{ child.last_name }} {{ child.suffix }}</span></p>
+                <p class="width-50"><strong>Gestational Age at Birth:</strong> <Space/><span>{{ child.gestational_age }}</span></p>
+            </div>
+            <div class="container-1">
+                <p class="width-50"><strong>Complete Address:</strong> <Space/><span>{{ child.complete_address }}</span></p>
+                <p class="width-50"><strong>Type of Birth:</strong> <Space/><span>{{ child.type_of_birth }}</span></p>
+            </div>
+            <div class="container-1">
+                <p class="width-50"><strong>Birth Date:</strong> <Space/><span>{{ formattedBirthDate }}</span></p>
+                <p class="width-50"><strong>Birth Order:</strong> <Space/><span>{{ child.birth_order }}</span></p>
+            </div>
+            <div class="container-1">
+                <p class="width-50"><strong>Birth Place:</strong> <Space/><span>{{ child.birth_place }} {{ child.other_birth_place }}</span></p>
+                <p class="width-50"><strong>Family No. :</strong> <Space/><span>{{ child.family_no }}</span></p>
+            </div>
+            <div class="container-1">
+                <p class="width-50"><strong>Birth Weight:</strong> <Space/><span>{{ child.birth_weight }}</span></p>
+                <p class="width-50"><strong>Child No. :</strong> <Space/><span>{{ child.child_no }}</span></p>
+            </div>
+            <div class="container-1">
+                <p class="width-50"><strong>Birth Length:</strong> <Space/><span>{{ child.birth_length }}</span></p>
+                <p class="width-50"><strong>Birth Attendant:</strong> <Space/><span>{{ child.birth_attendant }} {{ child.other_birth_attendant }}</span></p>
+            </div>
+            <div class="container-1">
+                <p class="width-50"><strong>Birth Registered:</strong> <Space/><span>{{ child.birth_registered }}</span></p>
+            </div>
+        </div>
+        <h1>Mother's Information</h1>
+        <div class="card">
+            <div class="container-1">
+                <p class="width-50"><strong>Full Name:</strong> <Space/><span>{{ child.mother_name }}</span></p>
+                <p class="width-50"><strong>Education:</strong> <Space/><span>{{ child.mother_education }}</span></p>
+            </div>
+            <div class="container-1">
+                <p class="width-50"><strong>No. of Pregnancies:</strong> <Space/><span>{{ child.no_pregancies }}</span></p>
+                <p class="width-50"><strong>Occupation:</strong> <Space/><span>{{ child.mother_occupation }}</span></p>
+            </div>
+        </div>
+        <h1>Father's Information</h1>
+        <div class="card">
+            <div class="container-1">
+                <p class="width-50"><strong>Full Name:</strong> <Space/><span>{{ child.father_name }}</span></p>
+                <p class="width-50"><strong>Education:</strong> <Space/><span>{{ child.father_education }}</span></p>
+            </div>
+            <div class="container-1">
+                <p class="width-50"><strong>Occupation:</strong> <Space/><span>{{ child.father_occupation }}</span></p>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
 import { defineProps, computed } from 'vue';
+import Space from '../../Components/Space.vue';
 
 const props = defineProps({
     child: { type: Object, required: true },
@@ -78,58 +69,50 @@ const formattedBirthDate = computed(() => {
 </script>
 
 <style scoped>
-
-.info-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-}
-.info-table thead th{
-    position:sticky;
-    top:-1px;
-}
-.info {
-    font-weight: bold;
-    color: #333;
-    max-width: 10px;
-}
-.data {
-    color: #333;
-    max-width: 30px;
-    background-color: #f4f4f4;
-    padding: 0;
-    margin: 0;
-}   
-.info-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center; 
-}
-.info-table td:first-child {
-    text-align: left; 
-    font-weight: bold;
-    width: 30%;
-    text-transform: capitalize;
-}
-.info-table td.info, .info-table td.data {
-    text-align: left;
-}
-.info-table th {
-    background-color: #f4f4f4;
-    padding: 10px;
-    text-align: center; 
-    font-weight: bold;
-}
-.info-table tr:hover {
-    background-color: #f1f1f1;
-}
 h1 {
     color: #488a99;
-    font-size: 16px;
-    padding-bottom: 10px;
+    font-size: 17px;
+    padding-top: 20px;
+    padding-bottom:10px;
     font-weight: bold;
-    width: 100%; 
+    text-align: left;
+    border-bottom: 2px solid #488a99;
+    margin-bottom: 20px;
+    margin-left: 10px;
+}
+.card {
+    background-color: #fff;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.container-1 {
+    display: flex;
+    margin-bottom: 5px;
+}
+.width-50 {
+    flex: 0 0 50%;
+    margin-bottom: 5px;
+}
+.width-35 {
+    flex: 0 0 35%;
+}
+.width-30 {
+    flex: 0 0 30%;
+}
+.width-20 {
+    flex: 0 0 25%;
+}
+.width-10 {
+    flex: 0 0 10%;
+}
+p {
+    margin: 0;
+    padding: 0;
+    color: #34495e;
+}
+strong {
+    color: #34495e;
 }
 </style>

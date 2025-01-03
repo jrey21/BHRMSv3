@@ -381,11 +381,11 @@ h2{
     max-width: 0;
 }
 .data-table td:nth-child(1) {
-    width: 15%; 
+    width: 18%; 
 }
 
 .data-table td:nth-child(2) {
-    width: 30%; 
+    width: 28%; 
 }
 
 .data-table td:nth-child(3) {
@@ -397,7 +397,7 @@ h2{
 }
 
 .data-table td:nth-child(5) {
-    width: 20%; 
+    width: 19%; 
 }
 
 .data-table td:nth-child(6) {

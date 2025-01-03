@@ -162,7 +162,8 @@ const totalNormal = computed(() => {
                 </select>
             </div>
         </div>
-        <table>
+        <div class="scrollable-table">
+        <table class="data-table">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -201,9 +202,28 @@ const totalNormal = computed(() => {
                 </tbody>
         </table>
     </div>
+        <div class="pagination">
+            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
 </template>
 
 <style>
+.scrollable-table{
+    height:980px;
+    overflow-y: auto;
+    margin-top:10px;
+    scroll-snap-type: y mandatory;
+}
+.scrollable-table > .data-table{
+    width: 100%;
+}
 .header {
     display: flex;
     justify-content: space-between;

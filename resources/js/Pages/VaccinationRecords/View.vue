@@ -170,7 +170,7 @@ const getVaccineName = (record) => {
 
 <style>
 .scrollable-table{
-    height:480px;
+    height:980px;
     overflow-y: auto;
     margin-top:10px;
     scroll-snap-type: y mandatory;

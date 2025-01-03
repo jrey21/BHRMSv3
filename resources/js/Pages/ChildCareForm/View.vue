@@ -465,7 +465,6 @@ h2{
 
 .child-head {
     font-size: 20px;
-    margin-top: 15px;
 }
 
 .modal {

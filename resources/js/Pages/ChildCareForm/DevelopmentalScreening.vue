@@ -207,6 +207,7 @@ const toggleDevelopmentalScreening = () => {
     margin-bottom: 20px;
     border-bottom: 2px solid #ddd;
     position: relative;
+    margin-left: -.5px;
 }
 .container {
     max-width: 100%;
