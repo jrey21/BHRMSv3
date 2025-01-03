@@ -160,7 +160,7 @@ const saveChanges = async () => {
                         <th>Sex</th>
                         <th>Zone</th>
                         <th>Occupation</th>
-                        <th>Actions</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -322,14 +322,17 @@ h2{
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.data-table th:nth-child(2),.data-table th:nth-child(6){
+.data-table th:nth-child(2){
     width: 30%; 
 }
 .data-table th:nth-child(3){
     width: 10%; 
 }
 .data-table th:nth-child(1),.data-table th:nth-child(4),.data-table th:nth-child(5){
-    width: 7%; 
+    width: 9%; 
+}
+.data-table th:nth-child(7){
+    width: 10%; 
 }
 
 .data-table td {

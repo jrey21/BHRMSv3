@@ -129,7 +129,8 @@ const getVaccineName = (record) => {
                 </select>
             </div>
         </div>
-        <table>
+        <div class="scrollable-table">
+        <table class="data-table">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -155,9 +156,60 @@ const getVaccineName = (record) => {
             </tbody>
         </table>
     </div>
+        <div class="pagination">
+            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
 </template>
 
 <style>
+.scrollable-table{
+    height:480px;
+    overflow-y: auto;
+    margin-top:10px;
+    scroll-snap-type: y mandatory;
+}
+.scrollable-table > .data-table{
+    width: 100%;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 2px 8px;
+    margin: 0 10px; 
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    margin: 0 10px;
+    font-size: 12px; 
+}
+
+.pagination button i {
+    font-size: 14px;
+}
 .header {
     margin-bottom: 20px;
     font-size: 20px;
@@ -197,6 +249,8 @@ const getVaccineName = (record) => {
     color: white;
     font-weight: bold;
     cursor: pointer;
+    position: sticky;
+    top: -1px;
 }
 
 /* Styling for the search box */

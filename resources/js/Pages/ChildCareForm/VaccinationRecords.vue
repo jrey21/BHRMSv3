@@ -343,7 +343,7 @@ const formatDate = (dateString) => {
     position: sticky;
     top: -1px;
 }
-.info-table thead th{
+.info-table th{
     position:sticky;
     top:-1px;
 }
