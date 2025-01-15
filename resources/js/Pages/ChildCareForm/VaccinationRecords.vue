@@ -165,7 +165,7 @@ const formatDate = (dateString) => {
 <template>
     <!-- Vaccination Records Information -->
     <div v-if="child" class="container">
-        <div class="header" @click="toggleVaccinationRecords" style="cursor: pointer; display: flex;">
+        <div class="header1" @click="toggleVaccinationRecords" style="cursor: pointer; display: flex;">
             <div style="display: flex;">
                 <h1>Vaccination Information</h1>
                 <span style="margin-left: 10px; margin-bottom:10px; margin-top:-5px; color:#488a99;">
@@ -309,7 +309,7 @@ const formatDate = (dateString) => {
     align-items: center;
     margin-bottom: 20px;
 }
-.header {
+.header1 {
     display: flex;
     justify-content: space-between;
     align-items: center;

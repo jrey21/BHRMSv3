@@ -74,7 +74,7 @@ const toggledeworming = () => {
 <template>
     <!-- deworming Records Information -->
     <div v-if="child" class="container">
-        <div class="header" @click="toggledeworming" style="cursor: pointer;">
+        <div class="header6" @click="toggledeworming" style="cursor: pointer;">
             <div style="display: flex; align-items: center;">
                 <h1>Deworming (every 6 months starting at 1 year old)</h1>
                 <span style="margin-left: 10px; margin-bottom:10px;color:#488a99;">
@@ -210,7 +210,7 @@ const toggledeworming = () => {
 .add-button:hover {
     background-color: #45a049; 
 }
-.header {
+.header6 {
     display: flex;
     justify-content: space-between;
     align-items: center;

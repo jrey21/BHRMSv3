@@ -76,7 +76,7 @@ const toggleCounseling = () => {
 <template>
     <!-- Counseling Records Information -->
     <div v-if="child" class="container">
-        <div class="header" @click="toggleCounseling" style="cursor: pointer;">
+        <div class="header3" @click="toggleCounseling" style="cursor: pointer;">
             <div style="display: flex; align-items: center;">
                 <h1>Counseling (Breastfeeding and Complementary Feeding)</h1>
                 <span style="margin-left: 10px; margin-bottom:10px;color:#488a99;">
@@ -223,7 +223,7 @@ const toggleCounseling = () => {
 .add-button:hover {
     background-color: #45a049; 
 }
-.header {
+.header3 {
     display: flex;
     justify-content: space-between;
     align-items: center;

@@ -381,7 +381,7 @@ const togglegrowth_monitorings = () => {
 <template>
     <!-- Growth Monitoring Records Section -->
     <div v-if="child" class="container">
-        <div class="header" @click="togglegrowth_monitorings" style="cursor: pointer;">
+        <div class="header4" @click="togglegrowth_monitorings" style="cursor: pointer;">
             <div style="display: flex; align-items: center;">
                 <h1>Counseling (Growth Monitoring)</h1>
                 <span style="margin-left: 10px; margin-bottom:10px;color:#488a99;">
@@ -518,7 +518,7 @@ const togglegrowth_monitorings = () => {
 .add-button:hover {
     background-color: #45a049; 
 }
-.header {
+.header4 {
     display: flex;
     justify-content: space-between;
     align-items: center;

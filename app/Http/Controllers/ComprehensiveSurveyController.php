@@ -65,7 +65,7 @@ class ComprehensiveSurveyController extends Controller
             ]);
         }
 
-        return redirect()->route('comprehensive-survey-view')->with('success', 'Survey submitted successfully!');
+        // return redirect()->route('comprehensive-survey-view')->with('success', 'Survey submitted successfully!');
     }
 
     // Retrieve all the data from the database

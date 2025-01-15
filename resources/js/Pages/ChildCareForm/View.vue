@@ -194,7 +194,7 @@ const formatDate = (dateString) => {
             <span class="close" @click="closeModal">&times;</span>
             <h2>Update Personal Details</h2>
             <div style="padding-bottom: 8px;"></div>
-            <hr> <!-- Added line to create distance -->
+            <hr> 
             <form @submit.prevent="saveChanges">
                 
                 <label for="last_name" style="color: #888;">Last Name:</label>
@@ -286,6 +286,23 @@ h2{
     overflow-y: auto;
     margin-top:10px;
     scroll-snap-type: y mandatory;
+    scrollbar-width: thin; 
+    scrollbar-color: #ccc #f9f9f9; 
+}
+
+/* Webkit browsers */
+.scrollable-table::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-table::-webkit-scrollbar-track {
+    background: #f9f9f9;
+}
+
+.scrollable-table::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 10px;
+    border: 1px solid #f9f9f9;
 }
 .scrollable-table > .data-table{
     width: 100%;
@@ -491,6 +508,7 @@ h2{
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     animation: fadeIn 0.3s ease-in-out;
+    z-index: 1001;
 }
 
 @keyframes fadeIn {
@@ -617,6 +635,7 @@ h2{
     display: inline-block;
     font-size: 14px;
     margin-top: 0;
+    margin-right: 10px;
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.3s ease;

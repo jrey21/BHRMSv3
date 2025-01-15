@@ -24,14 +24,14 @@ const filteredData = computed(() => {
 const currentPage = ref(1);
 const itemsPerPage = 20;
 
-const sortOption = ref(''); // New state for sorting option
+const sortOption = ref(''); 
 
 const sortedData = computed(() => {
     let data = [...filteredData.value];
     if (sortOption.value === 'asc') {
-        data.sort((a, b) => a.first_name.localeCompare(b.first_name));
+        data.sort((a, b) => a.last_name.localeCompare(b.last_name));
     } else if (sortOption.value === 'desc') {
-        data.sort((a, b) => b.first_name.localeCompare(a.first_name));
+        data.sort((a, b) => b.last_name.localeCompare(a.last_name));
     } else if (sortOption.value === 'age') {
         data.sort((a, b) => {
             if (a.age_unit === 'months' && b.age_unit !== 'months') return -1;
@@ -117,6 +117,60 @@ const saveChanges = async () => {
     }
 };
 
+const downloadPDF = () => {
+    let data = [...sortedData.value]; // Use sortedData to ensure the data is sorted according to the selected option
+
+    const doc = new jsPDF();
+
+    // Set font size and alignment
+    doc.setFontSize(12);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header section (Regular font for other titles)
+    doc.setFont('helvetica', 'normal');
+    doc.text('Republic of the Philippines', pageWidth / 2, 10, { align: 'center' });
+    doc.text('Province of Leyte', pageWidth / 2, 16, { align: 'center' });
+    doc.text('City of Baybay', pageWidth / 2, 22, { align: 'center' });
+
+    // Add more space before the "Comprehensive Survey" title
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Comprehensive Survey', pageWidth / 2, 40, { align: 'center' }); // Added more space here
+    
+    // Bold the "List of Residents" and "BHS PATAG" titles
+    doc.setFont('helvetica', 'normal');
+    doc.text('LIST OF RESIDENTS', pageWidth / 2, 50, { align: 'center' });
+
+    // Bold font for the "BHS PATAG" title
+    doc.setFont('helvetica', 'bold');
+    doc.text('BHS PATAG', pageWidth / 2, 60, { align: 'center' });
+
+    // Adjusted top margin for the table
+    const tableStartY = 70;
+    
+    doc.autoTable({
+        head: [['', 'HH No.', 'Name', 'Age', 'Sex', 'Zone', 'Occupation']],
+        body: data.map((data, index) => [
+            `${index + 1}.`, 
+            data.household_number,
+            `${data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1)}, ${data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1)}`,
+            `${data.age} ${data.age_unit === 'months' ? (data.age === 1 ? 'month' : 'months') : ''}`,
+            data.sex.charAt(0).toUpperCase(),
+            data.zone,
+            data.occupation.charAt(0).toUpperCase() + data.occupation.slice(1)
+        ]),
+        startY: tableStartY, // Adjusted top margin
+        didDrawPage: function (data) {
+            // Add page number
+            let pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(10);
+            doc.setTextColor(150); // Make the font color lighter
+            doc.text(`Page ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+        }
+    });
+    doc.save('List of Residents.pdf');
+};
+
 </script>
 
 <template>
@@ -145,9 +199,13 @@ const saveChanges = async () => {
                     <option value="age">Age</option>
                     <option value="zone">Zone</option>
                 </select>
+                <button @click="downloadPDF" class="download-button">
+                    <i class="fas fa-download"></i>
+                </button>
                 <button @click="router.get(route('comprehensive-survey'))" class="add-button">
                     <i class="fas fa-plus"></i>
                 </button>
+                
             </div>
         </div>
         <div class="scrollable-table">
@@ -169,7 +227,7 @@ const saveChanges = async () => {
                     </tr>
                     <tr v-for="data in paginatedData" :key="data.id">
                         <td>{{ data.household_number }}</td>
-                        <td class="td-name">{{data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1) +" " + data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1)}}</td>
+                        <td class="td-name">{{data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1) + ", " + data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1)}}</td>
                         <td>{{ data.age + " "}}<span v-if="data.age_unit === 'months'">{{ data.age === 1 ? 'month' : 'months' }}</span></td>
                         <td>{{ data.sex.charAt(0).toUpperCase() }}</td>
                         <td>{{ data.zone }}</td>
@@ -583,6 +641,7 @@ h2{
     display: inline-block;
     font-size: 14px;
     margin-top: 0;
+    margin-right: 10px;
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.3s ease;

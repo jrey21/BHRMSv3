@@ -127,7 +127,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     // Route::get('/maternal-care/{id}', [PNEAEnrollmentController::class, 'show'])->name('maternal-care.show');
     Route::get('/pnea-enrollment-edit/{id}', [PNEAEnrollmentController::class, 'edit'])->name('pnea-enrollment-edit');
     Route::put('/pnea-enrollment-update/{id}', [PNEAEnrollmentController::class, 'update'])->name('pnea-enrollment-update');
-
+    Route::delete('/pnea-enrollment-delete/{id}', [PNEAEnrollmentController::class, 'destroy'])->name('pnea-enrollment-delete');
 
     //Retrieve details of specific data from pnea
     Route::get('/pnea/{id}', [PNEAEnrollmentController::class, 'show'])->name('pnea.show');

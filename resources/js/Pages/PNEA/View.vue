@@ -79,7 +79,7 @@ const pneaCopy = ref({});
 
 const editData = (child) => {
     selectedPnea.value = child;
-    pneaCopy.value = { ...child }; // Create a copy of the selected child data
+    pneaCopy.value = { ...child }; // Create a copy of the selected child
     showModal.value = true;
 };
 
@@ -142,6 +142,39 @@ const saveChanges = async () => {
     }
 };
 
+const showDeleteModal = ref(false);
+const pneaToDelete = ref(null);
+
+const confirmDelete = (pnea) => {
+    pneaToDelete.value = pnea;
+    showDeleteModal.value = true;
+};
+
+const deleteData = async () => {
+    try {
+        await axios.delete(route('pnea-enrollment-delete', { id: pneaToDelete.value.id }));
+        pneaData.value = pneaData.value.filter(item => item.id !== pneaToDelete.value.id);
+        flashMessage.value = 'Data deleted successfully!';
+        showFlashMessage.value = true;
+        setTimeout(() => {
+            showFlashMessage.value = false;
+        }, 900);
+        closeDeleteModal();
+    } catch (error) {
+        console.error('Error deleting data:', error);
+        flashMessage.value = `Error deleting data: ${JSON.stringify(error.response.data)}`;
+        showFlashMessage.value = true;
+        setTimeout(() => {
+            showFlashMessage.value = false;
+        }, 5000);
+    }
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    pneaToDelete.value = null;
+};
+
 const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
@@ -202,11 +235,12 @@ const capitalizeFirstLetter = (string) => {
                         <td>{{ data.zone}}</td>
                         <td>{{ capitalizeFirstLetter(data.term_of_pregnancy) }}</td>
                         <td>
-                            <button @click="editData(data)" class="edit-button">
-                                <i class="fas fa-edit"></i>
-                            </button>
+                            
                             <button @click="router.get(route('pnea.show', { id: data.id }))" class="address-button">
                                 <i class="fas fa-address-card"></i>
+                            </button>
+                            <button @click="confirmDelete(data)" class="delete-button">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -273,6 +307,18 @@ const capitalizeFirstLetter = (string) => {
             </form>
         </div>
     </div>
+    <div v-if="showDeleteModal" class="modal">
+        <div class="modal-content">
+            <!-- <span class="close" @click="closeDeleteModal">&times;</span> -->
+            <h2>Confirm Delete</h2>
+            <hr style="margin-top: 10px; margin-bottom:10px; padding: 0;">
+            <p>Are you sure you want to delete <strong style="color: #007bff;">{{ pneaToDelete.fullName }}</strong> ?</p>
+            <div class="modal-buttons">
+                <button @click="deleteData">Delete</button>
+                <button @click="closeDeleteModal">Cancel</button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <style scoped>
@@ -333,6 +379,23 @@ h2{
     overflow-y: auto;
     margin-top:10px;
     scroll-snap-type: y mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc #f9f9f9; 
+}
+
+/* Webkit browsers */
+.scrollable-table::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-table::-webkit-scrollbar-track {
+    background: #f9f9f9;
+}
+
+.scrollable-table::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 10px;
+    border: 1px solid #f9f9f9;
 }
 .scrollable-table > .data-table{
     width: 100%;
@@ -410,6 +473,7 @@ h2{
     align-items: center;
     margin-bottom: 20px;
     margin-left: 5%;
+    margin-top: 5%;
 }
 
 .action-bar {
@@ -483,22 +547,23 @@ h2{
     font-size: 14px;
 }
 
-.edit-button {
-    background-color: #ffc107; 
+.delete-button {
+    background-color: #dc3545; 
     border: none;
     color: white;
     padding: 3px 5px;
+    margin-left:7px;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s ease, transform 0.3s ease;
     margin-top: 3px;
-    display: inline-block; /* Ensure the button is displayed as an inline-block element */
-    text-align: center; /* Center the text inside the button */
-    z-index: 1; /* Ensure the button is above other elements */
+    display: inline-block;
+    text-align: center;
+    z-index: 1;
 }
 
-.edit-button:hover {
-    background-color: #e0a800; 
+.delete-button:hover {
+    background-color: #c82333; 
     transform: scale(1.1);
 }
 
@@ -545,7 +610,7 @@ h2{
     padding: 20px;
     border: 1px solid #ddd;
     width: 80%;
-    max-width: 600px;
+    max-width: 400px; 
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     animation: fadeIn 0.3s ease-in-out;
@@ -678,6 +743,7 @@ h2{
     display: inline-block;
     font-size: 14px;
     margin-top: 0;
+    margin-right: 10px;
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.3s ease;
@@ -689,5 +755,36 @@ h2{
 
 .sort-button:hover {
     background-color: #0056b3;
+}
+
+.modal-content button {
+    margin-top: 20px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; 
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: #0056b3;
+}
+
+.modal-content button:last-child {
+    background-color: #dc3545;
+    margin-left: 10px;
+}
+
+.modal-content button:last-child:hover {
+    background-color: #c82333;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
 }
 </style>

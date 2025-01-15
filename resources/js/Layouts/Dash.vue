@@ -89,10 +89,10 @@ const toggleRightSidebar = () => {
     <Sidebar :class="{ open: isSidebarOpen }" />
     <main class="main-content">
         <slot />
-        <footer>
+        <!-- <footer>
             <div class="flex items-center" style="margin-top: 20%">
             </div>
-        </footer>
+        </footer> -->
     </main>
     <RightSidebar :class="{ open: isRightSidebarOpen }" />
     <div></div>
@@ -105,10 +105,10 @@ const toggleRightSidebar = () => {
     left: 0;
     width: 100%;
     z-index: 1000;
-    background-color: #1d4ed8; /* Same as the background color of the logout button */
+    background-color: #1d4ed8;
     color: white;
     padding: 0.5rem 1rem;
-    font-size: 0.875rem; /* Adjust font size */
+    font-size: 0.875rem; 
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -136,9 +136,9 @@ const toggleRightSidebar = () => {
 }
 
 .main-content {
-    margin-top: 20px; 
+    margin-top: 3%; 
     margin-left: 270px;
-    margin-right: 270px; /* Add margin-right to accommodate right sidebar */
+    margin-right: 270px;
     padding: 1rem;
 }
 

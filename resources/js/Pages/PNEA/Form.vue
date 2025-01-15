@@ -1,9 +1,10 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
-import Forms from '../../Layouts/FormLayout.vue';
+import FormLayout from '../../Layouts/FormLayout.vue';
+// import OptimumPractice from './OptimumPractice.vue';
 import { ref, watch } from 'vue';
 
-defineOptions({ layout: Forms });
+defineOptions({ layout: FormLayout });
 
 const form = useForm({
     pinkCardNumber: null,
@@ -35,6 +36,9 @@ const form = useForm({
 const showModal = ref(false);
 const modalMessage = ref('');
 const modalTitle = ref('');
+const showCancelModal = ref(false);
+const cancelMessage = ref('Do you really want to cancel?');
+const formSubmittedSuccessfully = ref(false);
 
 const flashMessage = (message, type) => {
     const flash = document.createElement('div');
@@ -47,13 +51,15 @@ const flashMessage = (message, type) => {
 const submit = () => {
     form.post(route('pnea-enrollment'), {
         onSuccess: () => {
+            formSubmittedSuccessfully.value = true;
             modalTitle.value = 'Success';
             modalMessage.value = 'The form has been successfully saved.';
             showModal.value = true;
             flashMessage('The form has been successfully saved.', 'success');
-            windows.location.href = route('pnea-enrollment-view');
+            window.location.href = route('pnea-enrollment-view');
         },
         onError: (errors) => {
+            formSubmittedSuccessfully.value = false;
             modalTitle.value = 'Error';
             modalMessage.value = 'An error occurred while saving the form. Please review the following errors: ' + JSON.stringify(errors, null, 2);
             showModal.value = true;
@@ -65,9 +71,11 @@ const submit = () => {
 const closeModal = () => showModal.value = false;
 
 const redirectToDashboard = () => {
-    if (confirm('Do you really want to cancel?')) {
-        window.location.href = route('pnea-enrollment-view');
-    }
+    showCancelModal.value = true;
+};
+
+const confirmCancel = () => {
+    window.location.href = route('pnea-enrollment-view');
 };
 
 const today = new Date().toISOString().split('T')[0];
@@ -79,9 +87,25 @@ const calculateBMI = () => {
     }
 };
 
+const calculateAge = (birthDate) => {
+    const today = new Date();
+    const birthDateObj = new Date(birthDate);
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    const monthDifference = today.getMonth() - birthDateObj.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDateObj.getDate())) {
+        age--;
+    }
+    return age;
+};
+
 // Watchers to automatically calculate BMI when weight or height changes
 watch(() => form.weight, calculateBMI);
 watch(() => form.height, calculateBMI);
+
+// Watcher to automatically calculate age when birth_date changes
+watch(() => form.birth_date, (newBirthDate) => {
+    form.age = calculateAge(newBirthDate);
+});
 
 </script>
 
@@ -126,7 +150,7 @@ watch(() => form.height, calculateBMI);
                 </div>
                 <div class="form-group small-input-age right-align">
                     <label for="age">Age</label>
-                    <input type="number" name="age" v-model="form.age" required/>
+                    <input type="number" name="age" v-model="form.age" readonly/>
                 </div>
             </div>
             <div class="form-section">
@@ -229,24 +253,40 @@ watch(() => form.height, calculateBMI);
                 <button type="button" @click="redirectToDashboard" class="cancel-button">Cancel</button>
                 <button type="submit" class="save-button">Save</button>
             </div>
-        </form>
+        </form>   
 
         <!-- Modal -->
-        <div v-if="showModal" class="modal">
-            <div class="modal-content">
-                <span class="close" @click="closeModal">&times;</span>
-                <h2>{{ modalTitle }}</h2>
+        <div v-if="showModal" :class="['modal', formSubmittedSuccessfully ? 'modal-success' : 'modal-error']">
+            <div class="modal-content-success" v-if="formSubmittedSuccessfully">
+                <h2 style="color: white;">{{ modalTitle }}</h2>
+                <p>{{ modalMessage }}</p>
+            </div>
+            <div class="modal-content-error" v-else>
+                <h2 style="color: white;">{{ modalTitle }}</h2>
                 <p>{{ modalMessage }}</p>
             </div>
         </div>
+        <!-- Cancel Confirmation Modal -->
+        <div v-if="showCancelModal" class="modal">
+            <div class="modal-content">
+                <h2 style="margin-bottom: 7px;">Cancel Confirmation</h2>
+                <hr style="margin-bottom: 10px;">
+                <p>{{ cancelMessage }}</p>
+                <div class="modal-btn">
+                    <button @click="confirmCancel" class="save-button">Yes</button>
+                    <button @click="showCancelModal = false" class="cancel-button">No</button>
+                </div>
+            </div>
+        </div>
     </div>
+    <!-- <OptimumPractice/> -->
 </template>
 
 <style scoped>
 .survey-container {
     width: 100%;
     padding: 20px;
-    margin: 1% 0 15% 20px;
+    margin: 5% 0 15% 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
@@ -391,13 +431,61 @@ textarea {
     background-color: rgba(0, 0, 0, 0.4);
 }
 
+.modal-success {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-error {
+    background-color: rgba(0, 0, 0, 0.4); /* Change to semi-transparent black */
+    color: white;
+}
+.modal-btn{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modal-content-success {
+    background-color: #28a745;
+    color: white;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #28a745;
+    width: 70%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(74, 220, 79, 0.1);
+    text-align: center;
+}
+.modal-content-error {
+    background-color: #dc3545;
+    color: white;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #dc3545;
+    width: 70%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.1);
+    text-align: center;
+    top: 0;
+}
 .modal-content {
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
+    width: 70%;
+    max-width: 400px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

@@ -1,9 +1,9 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
-import Forms from '../../Layouts/FormLayout.vue';
+import FormLayout from '../../Layouts/FormLayout.vue';
 import { ref } from 'vue';
 
-defineOptions({ layout: Forms });
+defineOptions({ layout: FormLayout });
 
 const form = useForm({
     family_no: null,
@@ -37,6 +37,9 @@ const form = useForm({
 const showModal = ref(false);
 const modalMessage = ref('');
 const modalTitle = ref('');
+const showCancelModal = ref(false);
+const cancelMessage = ref('Do you really want to cancel?');
+const formSubmittedSuccessfully = ref(false);
 
 // Define a simple flash message function
 window.flash = (message, type) => {
@@ -65,18 +68,19 @@ const submit = () => {
     capitalizeFormFields();
     form.post(route('childcare-form'), {
         onSuccess: () => {
-            modalTitle.value = 'Success';
-            modalMessage.value = 'The form has been successfully saved.';
+            formSubmittedSuccessfully.value = true;
+            modalTitle.value = 'SUCCESS!';
+            modalMessage.value = 'The form has been successfully saved!';
             showModal.value = true;
-            window.flash('The form has been successfully saved.', 'success');
+            window.flash('The form has been successfully saved!', 'success');
 
-            alert('Data has been added successfully!');
             window.location.href = route('childcare-form-view'); 
         },
         onError: (errors) => {
-            const errorMessage = JSON.stringify(errors, null, 2).replace(/localhost|127\.0\.0\.1:8000/g, '');
-            modalTitle.value = 'Error';
-            modalMessage.value = 'An error occurred while saving the form. Please review the following errors: ' + errorMessage;
+            formSubmittedSuccessfully.value = false;
+            const errorMessages = Object.values(errors).map(error => `${error}`).join(' ');
+            modalTitle.value = 'Failed to submit data!';
+            modalMessage.value = errorMessages;
             showModal.value = true;
             window.flash('An error occurred while saving the form. Please review the errors.', 'error');
         }
@@ -88,9 +92,11 @@ const closeModal = () => {
 };
 
 const redirectToDashboard = () => {
-    if (confirm('Do you really want to cancel?')) {
-        window.location.href = route('childcare-form-view');
-    }
+    showCancelModal.value = true;
+};
+
+const confirmCancel = () => {
+    window.location.href = route('childcare-form-view');
 };
 
 const today = new Date().toISOString().split('T')[0];
@@ -99,36 +105,59 @@ const today = new Date().toISOString().split('T')[0];
 
 <template>
     <Head title=" | Child Care Form"/>
-    <div class="survey-container">
+    <div :class="['survey-container', { 'form-success': formSubmittedSuccessfully }]">
+        <!-- Modal -->
+        <div v-if="showModal" :class="['modal', formSubmittedSuccessfully ? 'modal-success' : 'modal-error']">
+            <div class="modal-content-success" v-if="formSubmittedSuccessfully">
+                <h2 style="color: white;">{{ modalTitle }}</h2>
+                <p>{{ modalMessage }}</p>
+            </div>
+            <div class="modal-content-error" v-else>
+                <h2 style="color: white;">{{ modalTitle }}</h2>
+                <p>{{ modalMessage }}</p>
+            </div>
+        </div>
+        <!-- Cancel Confirmation Modal -->
+        <div v-if="showCancelModal" class="modal">
+            <div class="modal-content">
+                <h2 style="margin-bottom: 7px;">Cancel Confirmation</h2>
+                <hr style="margin-bottom: 10px;">
+                <p>{{ cancelMessage }}</p>
+                <div class="modal-btn">
+                    <button @click="confirmCancel" class="save-button">Yes</button>
+                    <button @click="showCancelModal = false" class="cancel-button">No</button>
+                </div>
+            </div>
+        </div>
         <div style="display: flex; align-items: center; justify-content: center;">
                 <img src="C:\xampp\htdocs\BHRMSv3\resources\js\Pages\Components\image\doh_logo.png" alt="" class="logo" />
                 <h2 style="text-align: center; color: #1c4e80">Early Childhood Care and Development</h2>
             </div>
-        <div class="left-section">
-                <div class="form-row">
-                    <div class="form-group medium-input">
-                        <label for="family_no">Family No.</label>
-                        <input type="text" name="family_no" v-model="form.family_no" required/>
-                    </div>
-                    <div class="form-group medium-input">
-                        <label for="child_no">Child's No.</label>
-                        <input type="text" name="child_no" v-model="form.child_no" required/>
-                    </div>
-                    <div class="form-group medium-input">
-                        <label for="zone">Zone</label>
-                        <select name="zone" id="zone" v-model="form.zone">
-                            <option value=""></option>
-                            <option value="Zone 1">Zone 1</option>
-                            <option value="Zone 2">Zone 2</option>
-                            <option value="Zone 3">Zone 3</option>
-                            <option value="Zone 4">Zone 4</option>
-                            <option value="Zone 5">Zone 5</option>
-                            <option value="Zone 6">Zone 6</option>
-                            <option value="Zone 7">Zone 7</option>
-                        </select>
-                    </div>
+
+            
+        <div class="form-row-head">
+                <div class="form-group medium-input">
+                    <label for="family_no">Family No.</label>
+                    <input type="text" name="family_no" v-model="form.family_no" required/>
                 </div>
-            </div>
+            <div class="form-group medium-input-child-no">
+                    <label for="child_no">Child's No.</label>
+                    <input type="text" name="child_no" v-model="form.child_no" required/>
+                </div>
+            <div class="form-group medium-input zone-input">
+                    <label for="zone">Zone</label>
+                    <select name="zone" id="zone" v-model="form.zone">
+                        <option value=""></option>
+                        <option value="Zone 1">Zone 1</option>
+                        <option value="Zone 2">Zone 2</option>
+                        <option value="Zone 3">Zone 3</option>
+                        <option value="Zone 4">Zone 4</option>
+                        <option value="Zone 5">Zone 5</option>
+                        <option value="Zone 6">Zone 6</option>
+                        <option value="Zone 7">Zone 7</option>
+                    </select>
+                </div>
+        </div>
         <form @submit.prevent="submit">
             <div class="form-group">
                 <label for="complete_address">Complete Address (House No., Street, City/Province)</label>
@@ -287,14 +316,6 @@ const today = new Date().toISOString().split('T')[0];
                 <button type="submit" class="save-button">Save</button>
             </div>
         </form>
-        <!-- Modal -->
-        <div v-if="showModal" class="modal">
-            <div class="modal-content">
-                <span class="close" @click="closeModal">&times;</span>
-                <h2>{{ modalTitle }}</h2>
-                <p>{{ modalMessage }}</p>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -302,7 +323,7 @@ const today = new Date().toISOString().split('T')[0];
 .survey-container {
     width: 100%;
     padding: 20px;
-    margin-top: 1%;
+    margin-top: 5%;
     margin-bottom: 15%;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -319,7 +340,7 @@ h2 {
     text-align: center;
     font-size: 18px;
     font-weight: bold;
-    color: #333;
+    color: #1c4e80;
     margin-bottom: 20px;
 }
 
@@ -426,12 +447,10 @@ textarea {
 }
 
 .medium-input-child-no {
-    flex: 0 0 91px;
+    flex: 0 0 130px;
+    margin-left: 20px;
+}
 
-}
-.birth-type{
-    flex: 0 0 120px;
-}
 .medium-input-family-no {
     flex: 0 0 100px;
     margin-left: 78%;
@@ -456,6 +475,9 @@ textarea {
     flex: 0 0 150px;
     margin-left: 3%;
     margin-right: 3%;
+}
+.birth-type{
+    flex: 0 0 120px;
 }
 .line{
     border-top: 1px solid #ccc;
@@ -573,13 +595,17 @@ textarea {
 .left-section {
     display: flex;
     align-items: flex-start;
-    margin-right: 80%;
+    justify-content: space-between;
     margin-bottom:-1%;
 }
 
 .form-row {
     display: flex;
     gap: 10px;
+}
+
+.zone-input {
+    margin-left: auto;
 }
 
 .modal {
@@ -595,14 +621,61 @@ textarea {
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
 }
+.modal-success {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-error {
+    background-color: rgba(0, 0, 0, 0.4); /* Change to semi-transparent black */
+    color: white;
+}
+.modal-btn{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
 
+.modal-content-success {
+    background-color: #28a745;
+    color: white;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #28a745;
+    width: 70%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(74, 220, 79, 0.1);
+    text-align: center;
+}
+.modal-content-error {
+    background-color: #dc3545;
+    color: white;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #dc3545;
+    width: 70%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.1);
+    text-align: center;
+    top: 0;
+}
 .modal-content {
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
+    width: 70%;
+    max-width: 400px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -631,13 +704,5 @@ textarea {
     z-index: 1000;
     opacity: 0.9;
     transition: opacity 0.3s ease;
-}
-
-.flash-message.success {
-    background-color: #28a745;
-}
-
-.flash-message.error {
-    background-color: #dc3545;
 }
 </style>

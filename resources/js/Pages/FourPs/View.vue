@@ -3,6 +3,8 @@ import FormLayout from '../../Layouts/FormLayout.vue';
 import { ref, onMounted, computed, watchEffect } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 defineOptions({
     layout: FormLayout
@@ -47,9 +49,9 @@ const sortOption = ref(''); // New state for sorting option
 const sortedData = computed(() => {
     let data = [...filteredData.value];
     if (sortOption.value === 'asc') {
-        data.sort((a, b) => a.first_name.localeCompare(b.first_name));
+        data.sort((a, b) => a.last_name.localeCompare(b.last_name));
     } else if (sortOption.value === 'desc') {
-        data.sort((a, b) => b.first_name.localeCompare(a.first_name));
+        data.sort((a, b) => b.last_name.localeCompare(a.last_name));
     } else if (sortOption.value === 'age') {
         data.sort((a, b) => a.age - b.age);
     } else if (sortOption.value === 'zone') {
@@ -80,12 +82,56 @@ const goBack = () => {
     router.back();
     router.go();
 };
+
+const downloadPDF = () => {
+    let data = [...sortedData.value];
+
+    const doc = new jsPDF();
+    doc.setFontSize(12);
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.setFont('helvetica', 'normal');
+    doc.text('Republic of the Philippines', pageWidth / 2, 10, { align: 'center' });
+    doc.text('Province of Leyte', pageWidth / 2, 16, { align: 'center' });
+    doc.text('City of Baybay', pageWidth / 2, 22, { align: 'center' });
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Comprehensive Survey', pageWidth / 2, 40, { align: 'center' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.text('Pantawid Pamilyang Pilipino Program (4Ps) Members', pageWidth / 2, 50, { align: 'center' });
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('BHS PATAG', pageWidth / 2, 60, { align: 'center' });
+
+    const tableStartY = 70;
+
+    doc.autoTable({
+        head: [['', 'Name', 'Age', 'Sex', 'Zone']],
+        body: data.map((data, index) => [
+            `${index + 1}.`,
+            `${data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1)}, ${data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1)} `,
+            `${data.age}`,
+            data.sex.charAt(0).toUpperCase(),
+            data.zone
+        ]),
+        startY: tableStartY,
+        didDrawPage: function (data) {
+            let pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(10);
+            doc.setTextColor(150);
+            doc.text(`Page ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+        }
+    });
+    doc.save('FourPs-List.pdf');
+};
 </script>
 
 <template>
      <Head title=" | Four Ps"/>
      <div class="header">
-        <h1 class="text-slate-500">List of 4'PS Members</h1>
+        <h1 class="text-slate-500">List of 4 P's Members</h1>
     </div>
     <div class="data-container">
         <div class="action-bar">
@@ -95,7 +141,7 @@ const goBack = () => {
                     <input type="text" v-model="searchQuery" placeholder="Search by name ..." />
                 </div>
             </div>
-            <div>
+            <div class="button-group">
                 <select v-model="sortOption" class="sort-select">
                     <option value="">Sort By</option>
                     <option value="asc">Name (A-Z)</option>
@@ -103,6 +149,9 @@ const goBack = () => {
                     <option value="age">Age</option>
                     <option value="zone">Zone</option>
                 </select>
+                <button @click="downloadPDF" class="download-button">
+                    <i class="fas fa-download"></i>
+                </button>
             </div>
         </div>
         <div class="scrollable-table">
@@ -120,7 +169,7 @@ const goBack = () => {
                         <td colspan="4">No data found</td>
                     </tr>
                     <tr v-for="data in paginatedData" :key="data.id">
-                        <td>{{ data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1) + " " + data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1) }}</td>
+                        <td>{{ data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1) + ", " + data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1)}}</td>
                         <td>{{ data.age }}</td>
                         <td>{{ data.sex.charAt(0).toUpperCase() }}</td>
                         <td>{{ data.zone }}</td>
@@ -163,6 +212,23 @@ const goBack = () => {
     overflow-y: auto;
     margin-top:10px;
     scroll-snap-type: y mandatory;
+    scrollbar-width: thin; 
+    scrollbar-color: #ccc #f9f9f9; 
+}
+
+/* Webkit browsers */
+.scrollable-table::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-table::-webkit-scrollbar-track {
+    background: #f9f9f9;
+}
+
+.scrollable-table::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 10px;
+    border: 1px solid #f9f9f9;
 }
 .scrollable-table > .data-table{
     width: 100%;
@@ -355,5 +421,25 @@ const goBack = () => {
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
+}
+
+.download-button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 5px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-top: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.download-button:hover {
+    background-color: #0056b3;
 }
 </style>

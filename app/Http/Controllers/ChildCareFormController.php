@@ -43,7 +43,7 @@ class ChildCareFormController extends Controller
         
         session()->flash('message', 'Data has been added successfully!');
 
-        return redirect()->route('childcare-form-view');  
+        // return redirect()->route('childcare-form-view');  
     }
 
     // Retrieve all the data from the database
@@ -69,6 +69,7 @@ class ChildCareFormController extends Controller
         $child = ChildCareForm::findOrFail($id);
         $child->family_no = $request->input('family_no');
         $child->child_no = $request->input('child_no');
+        $child->zone = $request->input('zone');
         $child->complete_address = $request->input('complete_address');
         $child->last_name = $request->input('last_name');
         $child->first_name = $request->input('first_name');

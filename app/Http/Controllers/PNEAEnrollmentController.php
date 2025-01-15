@@ -249,6 +249,15 @@ class PNEAEnrollmentController extends Controller
     //     $PNEAEnrollment = PNEAEnrollment::with('optimumPractice')->find($id);
     //     return response()->json($PNEAEnrollment);
     // }
+
+    //delete specific data
+    public function destroy($id)
+    {
+        $pnea = PNEAEnrollment::findOrFail($id);
+        $pnea->delete();
+
+        return response()->json($pnea);
+    }
     
 
 }

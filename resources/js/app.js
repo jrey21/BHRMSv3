@@ -7,6 +7,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import Layout from './Layouts/Layout.vue';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+// import { Link } from '@inertiajs/inertia-vue3';
 // import axios from 'axios';
 
 // Set Axios base URL

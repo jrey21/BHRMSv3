@@ -220,7 +220,25 @@ const totalNormal = computed(() => {
     overflow-y: auto;
     margin-top:10px;
     scroll-snap-type: y mandatory;
+    scrollbar-width: thin; 
+    scrollbar-color: #ccc #f9f9f9; 
 }
+
+/* Webkit browsers */
+.scrollable-table::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-table::-webkit-scrollbar-track {
+    background: #f9f9f9;
+}
+
+.scrollable-table::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 10px;
+    border: 1px solid #f9f9f9;
+}
+
 .scrollable-table > .data-table{
     width: 100%;
 }

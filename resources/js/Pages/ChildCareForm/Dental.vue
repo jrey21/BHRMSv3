@@ -70,7 +70,7 @@ const toggleDental = () => {
 <template>
     <!-- dental Records Information -->
     <div v-if="child" class="container">
-        <div class="header" @click="toggleDental" style="cursor: pointer;">
+        <div class="header7" @click="toggleDental" style="cursor: pointer;">
             <div style="display: flex; align-items: center;">
                 <h1>Dental Check-up (starting at 2-3 years old)</h1>
                 <span style="margin-left: 10px; margin-bottom:10px;color:#488a99;">
@@ -194,7 +194,7 @@ const toggleDental = () => {
 .add-button:hover {
     background-color: #45a049; 
 }
-.header {
+.header7 {
     display: flex;
     justify-content: space-between;
     align-items: center;

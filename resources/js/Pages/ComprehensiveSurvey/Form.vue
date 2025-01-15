@@ -1,8 +1,9 @@
 <script setup> 
+import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import Forms from '../../Layouts/FormLayout.vue';
+import FormLayout from '../../Layouts/FormLayout.vue';
 
-defineOptions({ layout: Forms });
+defineOptions({ layout: FormLayout });
 
 const form = useForm({
     householdNumber: null,
@@ -64,6 +65,25 @@ const removePersonalInfoRow = (index) => {
         form.personalInfo.splice(index, 1);
     }
 };
+
+const showModal = ref(false);
+const modalMessage = ref('');
+const modalTitle = ref('');
+const showCancelModal = ref(false);
+const cancelMessage = ref('Do you really want to cancel?');
+const formSubmittedSuccessfully = ref(false);
+
+// Define a simple flash message function
+window.flash = (message, type) => {
+    const flashMessage = document.createElement('div');
+    flashMessage.className = `flash-message ${type}`;
+    flashMessage.innerText = message;
+    document.body.appendChild(flashMessage);
+    setTimeout(() => {
+        flashMessage.remove();
+    }, 3000);
+};
+
 const submit = () => {
     // Normalize boolean fields
     form.personalInfo.forEach(row => {
@@ -86,19 +106,33 @@ const submit = () => {
     // Submit the form
     form.post(route('comprehensive-survey'), {
         onSuccess: () => {
-            alert('Survey submitted successfully!');
+            formSubmittedSuccessfully.value = true;
+            modalTitle.value = 'SUCCESS!';
+            modalMessage.value = 'Survey submitted successfully!';
+            showModal.value = true;
+            window.flash('Survey submitted successfully!', 'success');
             window.location.href = route('comprehensive-survey-view');
         },
         onError: (errors) => {
-            alert('There was an error submitting the form: ' + JSON.stringify(errors));
+            formSubmittedSuccessfully.value = false;
+            modalTitle.value = 'Failed to submit data!';
+            modalMessage.value = 'There was an error submitting the form: ' + JSON.stringify(errors);
+            showModal.value = true;
+            window.flash('There was an error submitting the form. Please review the errors.', 'error');
         }
     });
 };
 
+const closeModal = () => {
+    showModal.value = false;
+};
+
 const redirectToDashboard = () => {
-    if (confirm('Do you really want to cancel?')) {
-        window.location.href = route('comprehensive-survey-view');
-    }
+    showCancelModal.value = true;
+};
+
+const confirmCancel = () => {
+    window.location.href = route('comprehensive-survey-view');
 };
 
 const today = new Date().toISOString().split('T')[0];
@@ -108,6 +142,8 @@ const today = new Date().toISOString().split('T')[0];
     <Head title=" | Comprehensive Survey"/>
     <div class="survey-container">
         <h2>Barangay Comprehensive Survey</h2>
+        <!-- Flash Message Container -->
+        <div id="flash-message-container"></div>
         <form @submit.prevent="submit">
             <div class="form-row-head">
                 <div class="form-group small-input">
@@ -394,7 +430,31 @@ const today = new Date().toISOString().split('T')[0];
         </div>
     </form>
     </div>
-    <div class="bottom-space">I need space</div>
+    <!-- <div class="bottom-space">I need space</div> -->
+
+    <!-- Modal -->
+    <div v-if="showModal" :class="['modal', formSubmittedSuccessfully ? 'modal-success' : 'modal-error']">
+        <div class="modal-content-success" v-if="formSubmittedSuccessfully">
+            <h2 style="color: white;">{{ modalTitle }}</h2>
+            <p>{{ modalMessage }}</p>
+        </div>
+        <div class="modal-content-error" v-else>
+            <h2 style="color: white;">{{ modalTitle }}</h2>
+            <p>{{ modalMessage }}</p>
+        </div>
+    </div>
+    <!-- Cancel Confirmation Modal -->
+    <div v-if="showCancelModal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 7px;">Cancel Confirmation</h2>
+            <hr style="margin-bottom: 10px;">
+            <p>{{ cancelMessage }}</p>
+            <div class="modal-btn">
+                <button @click="confirmCancel" class="save-button">Yes</button>
+                <button @click="showCancelModal = false" class="cancel-button">No</button>
+            </div>
+        </div>
+    </div>
 </template>
 
 
@@ -403,7 +463,7 @@ const today = new Date().toISOString().split('T')[0];
     width: 100%;
     margin-left: 10%;
     padding: 20px;
-    margin-top: 1%;
+    margin-top: 5%;
     margin-bottom: 15%;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -662,4 +722,87 @@ textarea {
     gap: 0;
 }
 
+.modal-success {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-error {
+    background-color: rgba(0, 0, 0, 0.4); /* Change to semi-transparent black */
+    color: white;
+}
+.modal-btn{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modal-content-success {
+    background-color: #28a745;
+    color: white;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #28a745;
+    width: 70%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(74, 220, 79, 0.1);
+    text-align: center;
+}
+.modal-content-error {
+    background-color: #dc3545;
+    color: white;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #dc3545;
+    width: 70%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.1);
+    text-align: center;
+    top: 0;
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 70%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.flash-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: #fff;
+    z-index: 1000;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
 </style>

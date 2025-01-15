@@ -70,7 +70,7 @@ const toggleVitaminARecords = () => {
 <template>
     <!-- Vitamin A Supplementation Records Information -->
     <div v-if="child" class="container">
-        <div class="header" @click="toggleVitaminARecords" style="cursor: pointer;">
+        <div class="header2" @click="toggleVitaminARecords" style="cursor: pointer;">
             <div style="display: flex; align-items: center;">
                 <h1>Vitamin A Supplementation Information</h1>
                 <span style="margin-left: 10px; margin-bottom:10px;color:#488a99;">
@@ -190,7 +190,7 @@ const toggleVitaminARecords = () => {
 .add-button:hover {
     background-color: #45a049; 
 }
-.header {
+.header2 {
     display: flex;
     justify-content: space-between;
     align-items: center;

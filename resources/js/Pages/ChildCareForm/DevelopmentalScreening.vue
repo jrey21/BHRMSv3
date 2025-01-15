@@ -71,7 +71,7 @@ const toggleDevelopmentalScreening = () => {
 <template>
     <!-- Counseling Records Information -->
     <div v-if="child" class="container">
-        <div class="header" @click="toggleDevelopmentalScreening" style="cursor: pointer;">
+        <div class="header5" @click="toggleDevelopmentalScreening" style="cursor: pointer;">
             <div style="display: flex; align-items: center;">
                 <h1>Counseling (Developmental Screening)</h1>
                 <span style="margin-left: 10px; margin-bottom:10px;color:#488a99;">
@@ -200,7 +200,7 @@ const toggleDevelopmentalScreening = () => {
 .add-button:hover {
     background-color: #45a049; 
 }
-.header {
+.header5 {
     display: flex;
     justify-content: space-between;
     align-items: center;
