@@ -249,5 +249,14 @@ class ChildCareFormController extends Controller
     {
         $childcareForms = ChildCareForm::whereHas('vaccinationRecords')->with('vaccinationRecords')->get();
         return response()->json($childcareForms);
-    }     
+    }
+    
+    //delete a specific child
+    public function destroy($id)
+    {
+        $child = ChildCareForm::findOrFail($id);
+        $child->delete();
+
+        return response()->json($child);
+    }
 }

@@ -120,6 +120,39 @@ const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
 };
+
+const showDeleteModal = ref(false);
+const childToDelete = ref(null);
+
+const confirmDelete = (child) => {
+    childToDelete.value = child;
+    showDeleteModal.value = true;
+};
+
+const deleteData = async () => {
+    try {
+        await axios.delete(route('childcare-form-delete', { id: childToDelete.value.id }));
+        childcareData.value = childcareData.value.filter(item => item.id !== childToDelete.value.id);
+        flashMessage.value = 'Data deleted successfully!';
+        showFlashMessage.value = true;
+        setTimeout(() => {
+            showFlashMessage.value = false;
+        }, 900);
+        closeDeleteModal();
+    } catch (error) {
+        console.error('Error deleting data:', error);
+        flashMessage.value = `Error deleting data: ${JSON.stringify(error.response.data)}`;
+        showFlashMessage.value = true;
+        setTimeout(() => {
+            showFlashMessage.value = false;
+        }, 5000);
+    }
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    childToDelete.value = null;
+};
 </script>
 
 <template>
@@ -164,15 +197,15 @@ const formatDate = (dateString) => {
                         <td colspan="6">No data found</td>
                     </tr>
                     <tr v-for="data in paginatedData" :key="data.id">
-                        <td class="td-name">{{ data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1) + " " + data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1) + (data.suffix ? " " + data.suffix : "") }}</td>
+                        <td class="td-name">{{ data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1) +", " + data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1) + " " + (data.suffix ? " " + data.suffix : "") }}</td>
                         <td>{{ formatDate(data.birth_date) }}</td>
                         <td>{{ data.complete_address}}</td>
                         <td>
-                            <button @click="editData(data)" class="edit-button">
-                                <i class="fas fa-edit"></i>
-                            </button>
                             <button @click="router.get(route('child.show', { id: data.id }))" class="address-button">
                                 <i class="fas fa-address-card"></i>
+                            </button>
+                            <button @click="confirmDelete(data)" class="delete-button">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -224,6 +257,17 @@ const formatDate = (dateString) => {
                 </div>
                 <button type="submit">Save Changes</button>
             </form>
+        </div>
+    </div>
+    <div v-if="showDeleteModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Delete</h2>
+            <hr style="margin-top: 10px; margin-bottom:10px; padding: 0;">
+            <p>Are you sure you want to delete <strong style="color: #007bff;">{{ childToDelete.first_name }} {{ childToDelete.last_name }} </strong> ?</p>
+            <div class="modal-buttons">
+                <button @click="deleteData">Delete</button>
+                <button @click="closeDeleteModal">Cancel</button>
+            </div>
         </div>
     </div>
 </template>
@@ -466,6 +510,7 @@ h2{
     border: none;
     color: white;
     padding: 3px 5px;
+    margin-right: 7px;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s ease, transform 0.3s ease;
@@ -504,7 +549,7 @@ h2{
     padding: 20px;
     border: 1px solid #ddd;
     width: 80%;
-    max-width: 600px;
+    max-width: 400px; 
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     animation: fadeIn 0.3s ease-in-out;
@@ -647,5 +692,51 @@ h2{
 
 .sort-button:hover {
     background-color: #0056b3;
+}
+
+.delete-button {
+    background-color: #dc3545; 
+    border: none;
+    color: white;
+    padding: 3px 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 3px;
+}
+
+.delete-button:hover {
+    background-color: #c82333; 
+    transform: scale(1.1);
+}
+.modal-content button {
+    margin-top: 20px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; 
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: #0056b3;
+}
+
+.modal-content button:last-child {
+    background-color: #dc3545;
+    margin-left: 10px;
+}
+
+.modal-content button:last-child:hover {
+    background-color: #c82333;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
 }
 </style>

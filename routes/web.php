@@ -94,6 +94,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     //Edit specific data
     Route::get('/childcare-form-edit/{id}', [ChildCareFormController::class, 'edit'])->name('childcare-form-edit');
     Route::put('/childcare-form-update/{id}', [ChildCareFormController::class, 'update'])->name('childcare-form-update');
+    Route::delete('/childcare-form-delete/{id}', [ChildCareFormController::class, 'destroy'])->name('childcare-form-delete');
     
     //Retrieve details of specific data from a child
     Route::get('/child/{id}', [ChildCareFormController::class, 'show'])->name('child.show');
