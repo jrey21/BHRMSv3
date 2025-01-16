@@ -21,18 +21,20 @@ class ProfileController extends Controller
     public function updateInfo (Request $request) {
         
         $fields = $request->validate([
-            'avatar' => ['image', 'nullable', 'max:3072'],
             'name' => ['required', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'lowercase', 'unique:users,email,'.$request->user()->id],
+            'avatar' => ['file', 'nullable', 'max:5074'],
         ]);
 
-         if ($request->hasFile('avatar')) {
-            $fields['avatar'] = Storage::disk('public')->put('avatars', $request->avatar);
+        $user = $request->user();
+        $user->name = $fields['name'];
+        $user->email = $fields['email'];
+
+        if ($request->hasFile('avatar')) {
+            $user->avatar = Storage::disk('public')->put('avatars', $request->avatar);
         }
 
-        $request->user()->fill($fields);
-
-        $request->user()->save();
+        $user->save();
 
         return redirect()->route('profile.edit');
     }

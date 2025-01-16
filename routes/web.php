@@ -25,7 +25,7 @@ Route::inertia('/', 'Auth/Login' )->name('Login');
 Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::inertia('/dashboard', 'Dashboard' )->name('dashboard');
     Route::get('/profile',[ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile',[ProfileController::class, 'updateInfo'])->name('profile.info');
+    Route::post('/profile',[ProfileController::class, 'updateInfo'])->name('profile.info');
     Route::put('/profile',[ProfileController::class, 'updatePassword'])->name('profile.password');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

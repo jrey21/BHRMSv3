@@ -86,21 +86,6 @@ const capitalizeWords = (str) => {
                         </Link>
                     </div>
                 </div>
-
-                <!-- Authenticated User Links -->
-                <!-- <div v-else class="flex items-center space-x-10">
-                    <span class="user mr-40">{{ $page.props.auth.user.name }}</span>
-                    <Link :href="route('logout')" 
-                        method="post"
-                        as="button"
-                        type="button"
-                        :class="{' text-white': $page.component === 'Logout'}" 
-                        class="nav-link logout-button"
-                        @click.prevent="handleLogout">
-                        <i class="fas fa-sign-out-alt text-xl"></i>
-                    </Link>
-                </div> -->
-
                 <nav class="flex items-center space-x-6">
                     <!-- Authenticated User Links -->
                     <div v-if="$page.props.auth.user" class="relative dropdown-container">
@@ -110,9 +95,9 @@ const capitalizeWords = (str) => {
                             @click="isDropdownOpen = !isDropdownOpen"
                             >
                             <img 
-                                :src="$page.props.auth.user.avatar ? ('storage/' + $page.props.auth.user.avatar) : ('storage/avatars/default.png')"
+                                :src="$page.props.auth.user.avatar ? ('storage/' + $page.props.auth.user.avatar) : ('storage/avatars/default.jpg')"
                                 alt="User Profile"
-                                class="w-7 h-7 rounded-full object-cover"
+                                class="w-8 h-8 rounded-full object-cover"
                             />
                             <div class="text-left" style="margin-right: 15px; margin-left: 12px;">
                                 <span class="font-semibold text-sm">{{ capitalizeWords($page.props.auth.user.name) }}</span>

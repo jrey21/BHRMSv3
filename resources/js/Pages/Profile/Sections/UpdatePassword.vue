@@ -58,7 +58,7 @@ const submit = () => {
                 v-model="form.password_confirmation"
             />
 
-            <PrimaryBtn :disabled="form.processing">Save</PrimaryBtn>
+            <PrimaryBtn :disabled="form.processing" class="save-btn">Save</PrimaryBtn>
         </form>
     </Container>
     </div>
@@ -67,6 +67,6 @@ const submit = () => {
 
 <style>
 .box-size {
-    width: 400px;
+    width: 440px;
 }
 </style>

@@ -21,15 +21,24 @@ const showErrorModal = ref(false);
 const form = useForm({
     name: props.user.name,
     email: props.user.email,
+    avatar: null,
+    preview: props.user.avatar ? `/storage/${props.user.avatar}` : 'storage/avatars/default.jpg',
 });
 
+const changeAvatar = (e) => {
+    form.avatar = e.target.files[0];
+    form.preview = URL.createObjectURL(e.target.files[0]);
+};
 
 const handleSubmit = () => {
     const formData = new FormData();
     formData.append('name', form.name);
     formData.append('email', form.email);
+    if (form.avatar) {
+        formData.append('avatar', form.avatar);
+    }
 
-    form.patch(route('profile.info'), {
+    form.post(route('profile.info'), {
         data: formData,
         onSuccess: () => {
             showModal.value = true;
@@ -71,12 +80,23 @@ onMounted(() => {
 
         <ErrorMessages :errors="form.errors" />
        
+        <!-- Upload Avatar -->
+        <div class="grid place-items-center mb-6">
+            <div class="relative w-24 h-24 rounded-full overflow-hidden border border-slate-300">
+                <label for="avatar" class="absolute inset-0 grid content-end cursor-pointer avatar">
+                    <span class="bg-white/70 pb-2 text-center">Update</span>
+                </label>
+                <input type="file" @change="changeAvatar" id="avatar" hidden />
+                <img class="object-cover w-24 h-24" :src="form.preview" />
+            </div>
+            <p class="text-xs text-red-500 mb-2">{{ form.errors.avatar }}</p>
+        </div>
+        <!-- End Upload Avatar -->
 
         <form
             @submit.prevent="handleSubmit" 
                 class="space-y-6"
-        >
-        
+        >      
             <InputField
                 label="Name"
                 icon="user"
@@ -90,7 +110,7 @@ onMounted(() => {
                 class="w-1/2"
                 v-model="form.email"
             />
-            <PrimaryBtn :disabled="form.processing">Save</PrimaryBtn>
+            <PrimaryBtn :disabled="form.processing" class="save-btn">Save</PrimaryBtn>
         </form>
     </Container>
     </div>
@@ -98,12 +118,11 @@ onMounted(() => {
 
 <style>
 .box-size {
-    width: 400px;
+    width: 440px;
 }
-button:hover {
+.save-btn:hover {
     background-color: #2553b7; 
     transform: scale(1.02); 
     color: white;
 }
-
 </style>

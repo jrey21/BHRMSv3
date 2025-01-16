@@ -75,7 +75,7 @@ const setActiveLink = (link) => {
     <nav id="sidebar" :class="{ open: sidebarOpen }">
         <div class="sidebar-content">
             <ul>
-                <div style="margin-bottom: 20%;"></div>
+                <!-- <div style="margin-bottom: 20%;"></div> -->
                 <li>
                     <Link :href="route('dashboard')" class="menu" :class="{ active: route().current('dashboard') }" @click="setActiveLink($event.target.closest('.menu'))">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368">
@@ -190,16 +190,19 @@ const setActiveLink = (link) => {
 
 
 <style scoped>
-#sidebar {
-    position: fixed; 
-    top: 0;
-    left: 0;
-    height: 100%;
+#sidebar{
+    position:fixed;
+    padding:1% 0;
     width: 250px;
-    transition: transform 0.3s ease-in-out;
     font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
     color: #333;
     overflow: hidden; 
+    background-color: hwb(206 89% 5%);
+    transition: transform 0.3s ease-in-out;
     /* z-index:999; */
 }
 
@@ -247,11 +250,11 @@ li.active {
     padding: 0;
 }
 
-/* .sub-menu li.active {
+.sub-menu li.active {
     background-color: white;
     border-left: 4px solid #007bff;
     color: #0056b3;
-} */
+}
 
 .categories {
     font-size: 15px;
@@ -267,18 +270,6 @@ hr {
     opacity: 10%;
 }
 
-#sidebar{
-    position:fixed;
-    padding:1% 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    height: 100vh;
-    /* background-color: #f8f9fa; */
-    /* background-color: #2c86e0; */
-    background-color: hwb(206 89% 5%);
-    transition: transform 0.3s ease-in-out;
-}
 #sidebar ul {
     list-style-type: none;
     padding: 0;
@@ -356,7 +347,6 @@ hr {
 .dropdown-btn svg:last-child {
     order: 3;
     transform: rotate(0);
-    /* Remove transition */
 }
 
 .dropdown-btn.active svg:last-child {
@@ -364,12 +354,12 @@ hr {
     background-color: none;
 }
 
-.sub-menu {
+/* .sub-menu {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
     opacity: 0;
-}
+} */
 
 .sub-menu.show {
     max-height: 500px; 
