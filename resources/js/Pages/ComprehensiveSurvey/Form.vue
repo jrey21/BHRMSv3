@@ -463,7 +463,7 @@ const today = new Date().toISOString().split('T')[0];
     width: 100%;
     margin-left: 10%;
     padding: 20px;
-    margin-top: 5%;
+    margin-top: 1%;
     margin-bottom: 15%;
     border: 1px solid #ccc;
     border-radius: 8px;

@@ -25,6 +25,6 @@ defineProps ({
             :type="type" 
             v-model="model" 
             :class="{'!ring-red-500' : message}"/>
-        <small class="error" v-if="message">{{ message }}</small>
+        <small class="error"  v-if="message">{{ message }}</small>
     </div>
 </template>

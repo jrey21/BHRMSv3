@@ -286,7 +286,7 @@ watch(() => form.birth_date, (newBirthDate) => {
 .survey-container {
     width: 100%;
     padding: 20px;
-    margin: 5% 0 15% 20px;
+    margin: 1% 0 15% 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;

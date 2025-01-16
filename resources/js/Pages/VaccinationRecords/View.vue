@@ -233,7 +233,7 @@ const getVaccineName = (record) => {
     font-size: 20px;
     margin-top: 15px;
     margin-left: 5%;
-    margin-top: 5%;
+    margin-top: 1%;
 }
 .data-pwd-list {
     border: 1px solid #ccc;

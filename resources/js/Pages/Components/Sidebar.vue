@@ -356,7 +356,7 @@ hr {
 .dropdown-btn svg:last-child {
     order: 3;
     transform: rotate(0);
-    transition: transform 0.3s ease-in-out;
+    /* Remove transition */
 }
 
 .dropdown-btn.active svg:last-child {
@@ -367,11 +367,13 @@ hr {
 .sub-menu {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
 }
 
 .sub-menu.show {
     max-height: 500px; 
+    opacity: 1;
 }
 
 .arrow-down {

@@ -323,7 +323,7 @@ const today = new Date().toISOString().split('T')[0];
 .survey-container {
     width: 100%;
     padding: 20px;
-    margin-top: 5%;
+    margin-top: 1%;
     margin-bottom: 15%;
     border: 1px solid #ccc;
     border-radius: 8px;

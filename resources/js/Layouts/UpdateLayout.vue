@@ -1,17 +1,17 @@
 <script setup>
 import Sidebar from '../Pages/Components/Sidebar.vue';
-import RightSidebar from '../Pages/Components/RightSidebar.vue';
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+// import RightSidebar from '../Pages/Components/RightSidebar.vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
 // Props for dynamic background class
 const props = defineProps({
     backgroundClass: {
         type: String,
-        default: 'bg-default',
+        default: 'bg-slate-100',
     }
 });
 const isDropdownOpen = ref(false);
-
+ 
 // Function to handle logout without confirmation
 const handleLogout = (event) => {
     window.location.href = route('login');
@@ -26,6 +26,10 @@ const toggleRightSidebar = () => {
     isRightSidebarOpen.value = !isRightSidebarOpen.value;
 };
 
+const closeDropdown = () => {
+    isDropdownOpen.value = false;
+};
+
 // Function to handle click outside of dropdown
 const handleClickOutside = (event) => {
     if (!event.target.closest('.dropdown-container')) {
@@ -33,22 +37,23 @@ const handleClickOutside = (event) => {
     }
 };
 
-const capitalizeWords = (str) => {
-    return str.replace(/\b\w/g, char => char.toUpperCase());
-};
-
+// Add event listener on mounted and remove on unmounted
 onMounted(() => {
     document.addEventListener('click', handleClickOutside);
 });
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside);
 });
+
+const capitalizeWords = (str) => {
+    return str.replace(/\b\w/g, char => char.toUpperCase());
+};
 </script>
 
 <template>
     <!-- Dynamic background -->
-    <div :class="[$page.component === 'Auth/Register' ? 'bg-register' : 'layout']"></div>
+    <div :class="[$page.component === 'Auth/Register' ? 'bg-register' : 'layout']" class="bg-slate-100"></div>
 
     <!-- Page Head -->
     <Head>
@@ -125,9 +130,9 @@ onBeforeUnmount(() => {
                         <!-- Dropdown Menu -->
                         <div
                             v-if="isDropdownOpen"
-                            class="absolute right-4 mt-0 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-20"
+                            class="absolute right-4 mt-0 w-48 bg-white rounded-lg shadow-lg border border-gray-200"
                             >
-                            <Link :href="route('profile.edit')" class="dropdown-item"> Profile Settings</Link>
+                            <Link :href="route('profile-edit')" class="dropdown-item" @click="closeDropdown"> Profile Settings</Link>
                             <hr>
                             <Link :href="route('logout')" 
                                 method="post"
@@ -142,19 +147,20 @@ onBeforeUnmount(() => {
                 </nav>
             </nav>
         </header>
+    
+        <!-- Sidebar and Main Content -->
+        <Sidebar :class="{ open: isSidebarOpen }" />
+        <main class="main-content">
+            <slot />
+            <!-- <footer>
+                <div class="flex items-center" style="margin-top: 20%">
+                </div>
+            </footer> -->
+        </main>
     </div>
-
-    <!-- Sidebar and Main Content -->
-    <Sidebar :class="{ open: isSidebarOpen }" />
-    <main class="main-content">
-        <slot />
-        <!-- <footer>
-            <div class="flex items-center" style="margin-top: 20%">
-            </div>
-        </footer> -->
-    </main>
-    <RightSidebar :class="{ open: isRightSidebarOpen }" />
+    <!-- <RightSidebar :class="{ open: isRightSidebarOpen }" /> -->
     <div></div>
+
 </template>
 
 <style scoped>
@@ -175,10 +181,6 @@ onBeforeUnmount(() => {
     align-items: center;
     /* z-index: 1000; */
 }
-.dropdown-container {
-    position: relative;
-}
-
 .dropdown-item {
   display: block;
   padding: 0.75rem 1rem;
@@ -188,7 +190,6 @@ onBeforeUnmount(() => {
   width: 100%;
   text-align: left;
   transition: background-color 0.2s ease;
-  z-index: 20;
 }
 
 .dropdown-item:hover {

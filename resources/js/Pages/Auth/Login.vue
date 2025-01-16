@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useForm, Head } from '@inertiajs/vue3';
-import TextInput from "../components/TextInput.vue";
+import TextInput from "../Components/TextInput.vue";
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'vue-router';
@@ -25,9 +25,9 @@ const submit = () => {
     form.post(route('login'), {
         onSuccess: () => {
             flashMessage.value = 'Successfully logged in!';
-            setTimeout(() => {
-                window.location.reload();
-            }, 500); 
+            // setTimeout(() => {
+            //     window.location.reload();
+            // }, 500); 
         },
         onError: () => {
             form.reset("password");

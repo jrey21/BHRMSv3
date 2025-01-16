@@ -50,6 +50,7 @@ const handleLogout = (event) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </Head>
     <div class="bg-gradient-to-r from-blue-100 via-white to-blue-400 h-screen">
+    <!-- <div class="bg-slate-100 h-screen"> -->
         
         <!-- Navigation bar -->
         

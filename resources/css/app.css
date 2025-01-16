@@ -18,18 +18,18 @@
     input[type="tel"],
     input[type="url"],
     textarea {
-        @apply block w-full rounded-lg border border-slate-300 p-2 text-slate-900 shadow-sm placeholder:text-slate-500 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out;
+        @apply block w-full rounded-lg border border-slate-300 p-2 text-slate-900 shadow-sm placeholder:text-slate-500 bg-white focus:outline-none mt-0 focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out;
     }
 
     input[type="text"]:focus,
     input[type="email"]:focus,
     input[type="password"]:focus,
     textarea:focus {
-        @apply border-blue-500 ring-0;
+        @apply border-blue-500 ring-0 ;
     }
 
     label {
-        @apply block text-sm font-medium leading-6 text-slate-900 first-letter:capitalize;
+        @apply block text-sm font-medium leading-6 mt-0 text-slate-900 first-letter:capitalize;
     }
 
     main {
@@ -52,9 +52,9 @@
         font-size: 2rem;
     }
 
-    /* .error {
+    .error {
         @apply text-xs text-red-500 mt-1;
-    } */
+    }
 
     /* .success {
         @apply text-xs text-green-500 mt-1;

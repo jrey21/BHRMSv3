@@ -416,6 +416,7 @@ h2{
     align-items: center;
     margin-bottom: 20px;
     margin-left: 5%;
+    margin-top: 1%;
 }
 
 .action-bar {
