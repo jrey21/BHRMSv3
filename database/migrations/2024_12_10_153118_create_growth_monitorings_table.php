@@ -17,13 +17,11 @@ return new class extends Migration
             $table->foreign('child_id')->references('id')->on('child_care_forms')->onDelete('cascade');
             $table->float('weight');
             $table->float('height');
-            $table->float('bmi');
             $table->integer('age');
             $table->enum('sex', ['male','female'])->nullable();
-            $table->string('weight_status');
-            $table->string('weight_for_age_status');
-            $table->string('height_for_age_status')->nullable();
-            $table->string('weight_for_height_status')->nullable();
+            $table->string('weight_age_status');
+            $table->string('height_age_status')->nullable();
+            $table->string('weight_height_status')->nullable();
             $table->date('date');
             $table->timestamps();
         });

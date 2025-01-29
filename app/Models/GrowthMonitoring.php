@@ -17,11 +17,9 @@ class GrowthMonitoring extends Model
         'height',
         'age',
         'sex',
-        'bmi',
-        'weight_status',
-        'weight_for_age_status',
-        'height_for_age_status',
-        'weight_for_height_status',
+        'weight_age_status',
+        'height_age_status',
+        'weight_height_status',
         'date',
     ];
 }

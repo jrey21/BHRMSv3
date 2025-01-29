@@ -23,13 +23,6 @@ class GrowthMonitoringController extends Controller
     }
 
 
-
-
-
-
-
-
-
     public function child()
     {
         return $this->belongsTo(ChildCareForm::class, 'child_id');

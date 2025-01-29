@@ -17,8 +17,6 @@ const confirmCancel = () => {
   background-color: rgb(66, 66, 66);
   border: none;
   cursor: pointer;
-  margin-left: 34%;
-  margin-bottom: 10%;
 }
 .done-btn:hover {
   background-color: rgb(1, 0, 0, 0.6);

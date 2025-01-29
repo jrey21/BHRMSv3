@@ -10,6 +10,7 @@ const form = useForm({
     child_no: null,
     zone: null,
     complete_address: null,
+    sex: null,
     last_name: null,
     first_name: null,
     middle_name: null,
@@ -49,7 +50,7 @@ window.flash = (message, type) => {
     document.body.appendChild(flashMessage);
     setTimeout(() => {
         flashMessage.remove();
-    }, 3000);
+    }, 3000); 
 };
 
 const capitalizeFirstLetter = (string) => {
@@ -83,6 +84,7 @@ const submit = () => {
             modalMessage.value = errorMessages;
             showModal.value = true;
             window.flash('An error occurred while saving the form. Please review the errors.', 'error');
+            
         }
     });
 };
@@ -96,7 +98,8 @@ const redirectToDashboard = () => {
 };
 
 const confirmCancel = () => {
-    window.location.href = route('childcare-form-view');
+    // window.location.href = route('childcare-form-view');
+    form.get(route('childcare-form-view'));
 };
 
 const today = new Date().toISOString().split('T')[0];
@@ -159,10 +162,22 @@ const today = new Date().toISOString().split('T')[0];
                 </div>
         </div>
         <form @submit.prevent="submit">
+            <div class="form-row">
             <div class="form-group">
                 <label for="complete_address">Complete Address (House No., Street, City/Province)</label>
                 <input type="text" name="complete_address" v-model="form.complete_address" required/>
             </div>
+
+            <div class="form-group medium-input sex-input">
+                    <label for="sex">Sex</label>
+                    <select name="sex" id="sex" v-model="form.sex" required>
+                        <option value=""></option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+            </div>
+
             <h1>Child's Name</h1>
             <div class="form-row">
                 <div class="form-group medium-input-hhn">
@@ -704,5 +719,14 @@ textarea {
     z-index: 1000;
     opacity: 0.9;
     transition: opacity 0.3s ease;
+}
+
+select {
+    height: 42px; 
+    border-radius: 5px;
+}
+
+input[type="number"], input[type="date"] {
+    height: 42px; 
 }
 </style>

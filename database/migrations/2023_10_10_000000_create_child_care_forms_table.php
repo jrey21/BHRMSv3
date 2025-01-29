@@ -19,6 +19,7 @@ class CreateChildCareFormsTable extends Migration
             $table->string('child_no');
             $table->enum('zone',['','Zone 1','Zone 2','Zone 3', 'Zone 4', 'Zone 5', 'Zone 6','Zone 7'])->nullable();
             $table->string('complete_address');
+            $table->enum('sex',['Male','Female']);
             $table->string('last_name');
             $table->string('first_name');
             $table->string('middle_name')->nullable();

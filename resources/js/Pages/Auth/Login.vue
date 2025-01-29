@@ -86,7 +86,7 @@ const submit = () => {
                     <p class="text-gray-600">Need an account? <a :href="route('register')" class="text-link">Register</a></p>
                 </div>
             </form>
-            <div v-if="refreshed" class="text-green-500 mt-2">Page has been refreshed</div>
+            <!-- <div v-if="refreshed" class="text-green-500 mt-2">Page has been refreshed</div> -->
             <div v-if="flashMessage" class="text-green-500 mt-2">{{ flashMessage }}</div>
         </div>
     </div>

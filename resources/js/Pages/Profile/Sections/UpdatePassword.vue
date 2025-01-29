@@ -4,6 +4,7 @@ import Title from "../../../Components/Title.vue";
 import InputField from "../../../Components/InputField.vue";
 import PrimaryBtn from "../../../Components/PrimaryBtn.vue";
 import ErrorMessages from "../../../Components/ErrorMessages.vue";
+import Cancel from "../../../Components/Cancel.vue";
 import { useForm } from "@inertiajs/vue3";
 
 const form = useForm({
@@ -61,12 +62,21 @@ const submit = () => {
             <PrimaryBtn :disabled="form.processing" class="save-btn">Save</PrimaryBtn>
         </form>
     </Container>
+
+    <Container>
+        <div>
+            <Title>You're All Set!</Title>
+            <p class="text-[14px] mb-4">The update has been applied successfully.</p>
+            <hr>
+            <Cancel class="mt-4"/>
+        </div>
+    </Container>
     </div>
 </template>
 
 
-<style>
+<style scoped>
 .box-size {
-    width: 440px;
+    width: 450px;
 }
 </style>

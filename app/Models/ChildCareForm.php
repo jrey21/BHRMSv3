@@ -14,6 +14,7 @@ class ChildCareForm extends Model
         'child_no',
         'zone',
         'complete_address',
+        'sex',
         'last_name',
         'first_name',
         'middle_name',

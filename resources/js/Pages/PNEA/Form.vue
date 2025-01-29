@@ -75,7 +75,8 @@ const redirectToDashboard = () => {
 };
 
 const confirmCancel = () => {
-    window.location.href = route('pnea-enrollment-view');
+    // window.location.href = route('pnea-enrollment-view');
+    form.get(route('pnea-enrollment-view'));
 };
 
 const today = new Date().toISOString().split('T')[0];
@@ -118,7 +119,7 @@ watch(() => form.birth_date, (newBirthDate) => {
         <form @submit.prevent="submit">
             <div class="form-section">
                 <div class="form-group small-input">
-                    <label for="date">Date</label>
+                    <label for="date">Registration Date</label>
                     <input type="date" name="date" v-model="form.date" required/>
                 </div>
                 <div class="form-group small-input right-align">

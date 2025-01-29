@@ -137,8 +137,8 @@ const downloadPDF = () => {
 </script>
 
 <template>
-     <Head title=" | PWD"/>
-     <div class="header">
+    <Head title=" | PWD"/>
+    <div class="header">
         <h1 class="text-slate-500">PWD List</h1>
     </div>
     <div class="data-container">

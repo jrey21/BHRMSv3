@@ -3,6 +3,8 @@ import FormLayout from '../../Layouts/FormLayout.vue';
 import { ref, onMounted, computed, watchEffect } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 defineOptions({
     layout: FormLayout
@@ -104,6 +106,57 @@ const formatDate = (dateString) => {
 const getVaccineName = (record) => {
     return record.vaccine_name === 'Other' ? record.other_vaccine_name : record.vaccine_name;
 };
+
+const downloadPDF = () => {
+    let data = [...sortedData.value]; // Use sortedData to ensure the data is sorted according to the selected option
+
+    const doc = new jsPDF();
+
+    // Set font size and alignment
+    doc.setFontSize(12);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header section (Regular font for other titles)
+    doc.setFont('helvetica', 'normal');
+    doc.text('Republic of the Philippines', pageWidth / 2, 10, { align: 'center' });
+    doc.text('Province of Leyte', pageWidth / 2, 16, { align: 'center' });
+    doc.text('City of Baybay', pageWidth / 2, 22, { align: 'center' });
+
+    
+    // Bold font for the "Vaccination Records" title
+    doc.setFont('helvetica', 'normal');
+    doc.text('VACCINATION RECORDS', pageWidth / 2, 40, { align: 'center' });
+
+    // Bold font for the "BHS PATAG" title
+    doc.setFont('helvetica', 'bold');
+    doc.text('BHS PATAG', pageWidth / 2, 50, { align: 'center' });
+
+    // Adjusted top margin for the table
+    const tableStartY = 60;
+    
+    doc.autoTable({
+        head: [['', 'Name', 'Zone', 'Vaccine Name', 'Dose Number', 'Date']],
+        body: data.flatMap((data, index) => 
+            data.vaccination_records.map((record, recordIndex) => [
+                recordIndex === 0 ? `${index + 1}.` : '',
+                recordIndex === 0 ? `${data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1)}, ${data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1)}` : '',
+                recordIndex === 0 ? data.zone : '',
+                getVaccineName(record),
+                formatDoseNumber(record.dose_number),
+                formatDate(record.date)
+            ])
+        ),
+        startY: tableStartY, // Adjusted top margin
+        didDrawPage: function (data) {
+            // Add page number
+            let pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(10);
+            doc.setTextColor(150); 
+            doc.text(`Page ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+        }
+    });
+    doc.save('Vaccination-Records.pdf');
+};
 </script>
 
 <template>
@@ -127,6 +180,7 @@ const getVaccineName = (record) => {
                     <option value="age">Age</option>
                     <option value="zone">Zone</option>
                 </select>
+                <button @click="downloadPDF" class="download-button"> <i class="fas fa-download"></i></button>
             </div>
         </div>
         <div class="scrollable-table">
@@ -169,6 +223,25 @@ const getVaccineName = (record) => {
 </template>
 
 <style>
+.download-button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 5px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-top: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.download-button:hover {
+    background-color: #0056b3;
+}
 .scrollable-table{
     height:480px;
     overflow-y: auto;
@@ -306,6 +379,16 @@ const getVaccineName = (record) => {
     margin-top: 0;
     margin-bottom: 10px;
 }
+
+.action-bar > div {
+    display: flex;
+    align-items: center;
+}
+
+.action-bar > div > .sort-select {
+    margin-right: 10px;
+}
+
 .search-bar {
     width: 200px; 
     padding: 5px;
@@ -327,6 +410,7 @@ const getVaccineName = (record) => {
     color: white;
     cursor: pointer;
     font-size: 14px;
+    margin-left: 10px; /* Add margin to separate buttons */
 }
 
 .action-bar button:hover {

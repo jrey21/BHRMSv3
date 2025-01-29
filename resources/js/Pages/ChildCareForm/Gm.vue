@@ -1,12 +1,20 @@
 <script setup>
-import { defineProps, ref, computed } from 'vue';
 import axios from 'axios';
+import { ref, computed } from 'vue';
+import { usePage } from '@inertiajs/inertia-vue3';
 
-const props = defineProps({
-    child: { type: Object, required: true },
+const { props } = usePage();
+
+const form = ref({
+  sex: 'male',
+  age: '',
+  weight: '',
+  height: '',
+  zScore: null,
+  zScoreHeight: null,
+  WFHzScore: null,
 });
 
-//Table data based on the WHO growth standards
 const maleReferenceData = [
   { age: 0, SD1neg: 2.9, SD0: 3.3, SD1: 3.9 },
   { age: 1, SD1neg: 3.9, SD0: 4.5, SD1: 5.1 },
@@ -129,8 +137,8 @@ const femaleReferenceData = [
   { age: 54, SD1neg: 14.9, SD0: 17.2, SD1: 19.9 },
   { age: 55, SD1neg: 15.1, SD0: 17.3, SD1: 20.1 },
   { age: 56, SD1neg: 15.2, SD0: 17.5, SD1: 20.3 },
-  { age: 57, SD1neg: 15.3, SD0: 17.6, SD1: 20.6 },
-  { age: 58, SD1neg: 15.5, SD0: 17.8, SD1: 20.8 },
+  { age: 57, SD1neg: 15.3, SD0: 17.7, SD1: 20.6 },
+  { age: 58, SD1neg: 15.5, SD0: 17.9, SD1: 20.8 },
   { age: 59, SD1neg: 15.6, SD0: 18, SD1: 21 },
   { age: 60, SD1neg: 15.8, SD0: 18.2, SD1: 21.2 }
 ];
@@ -735,9 +743,8 @@ const maleWeightForHeightReferenceData24To60 = [
   { observedHeight: 120, SD1neg: 20.4, SD0: 22.4, SD1: 24.6 }
 ];
 
-//Computations
 const calculateZScore = (age, observedWeight, sex) => {
-  const referenceData = sex === "Male" ? maleReferenceData : femaleReferenceData;
+  const referenceData = sex === "male" ? maleReferenceData : femaleReferenceData;
   const reference = referenceData.find((data) => data.age === age);
   if (!reference) return 'Data not available'; 
 
@@ -750,13 +757,11 @@ const calculateZScore = (age, observedWeight, sex) => {
     sdInterval = reference.SD1 - median;
   }
 
-  const zScore = (observedWeight - median) / sdInterval;
-
-  return zScore;
+  return (observedWeight - median) / sdInterval;
 };
 
 const calculateHeightForAgeZScore = (age, observedHeight, sex) => {
-  const hReferenceData = sex === "Male" ? maleHeightReferenceData : femaleHeightReferenceData;
+  const hReferenceData = sex === "male" ? maleHeightReferenceData : femaleHeightReferenceData;
   const hReference = hReferenceData.find((data) => data.age === age);
   if (!hReference) return 'Data not available'; 
 
@@ -769,18 +774,16 @@ const calculateHeightForAgeZScore = (age, observedHeight, sex) => {
     heightSdInterval = hReference.SD1 - medianHeight;
   }
 
-  const zScoreHeight = (observedHeight - medianHeight) / heightSdInterval;
-
-  return zScoreHeight;
+  return (observedHeight - medianHeight) / heightSdInterval;
 };
 
 const calculateWHZ = (age, observedHeight, observedWeight, sex) => {
   const referenceDataWHZ =
     age < 23
-      ? sex === "Male"
+      ? sex === "male"
         ? maleWeightForHeightReferenceData
         : femaleWeightForHeightReferenceData
-      : sex === "Male"
+      : sex === "male"
       ? maleWeightForHeightReferenceData24To60
       : femaleWeightForHeightReferenceData24To60;
 
@@ -792,497 +795,101 @@ const calculateWHZ = (age, observedHeight, observedWeight, sex) => {
   const medianWHZ = referenceWHZ.SD0;
   const sdIntervalWHZ = referenceWHZ.SD1 - medianWHZ;
 
-  const WFHzScore = (observedWeight - medianWHZ) / sdIntervalWHZ;
-
-  return WFHzScore;
+  return (observedWeight - medianWHZ) / sdIntervalWHZ;
 };
 
-//Classifications 
-const classifyHeightForAgeZScore  = (zScoreHeight) => {
-  if (zScoreHeight < -3) return 'Severely Stunted';
-  if (zScoreHeight >= -3 && zScoreHeight < -2) return 'Stunted';
-  if (zScoreHeight >= -2 && zScoreHeight <= 2) return 'Normal';
+const classifyHeightForAgeZScore = computed(() => {
+  if (form.value.zScoreHeight < -3) return 'Severely Stunted';
+  if (form.value.zScoreHeight >= -3 && form.value.zScoreHeight < -2) return 'Stunted';
+  if (form.value.zScoreHeight >= -2 && form.value.zScoreHeight <= 2) return 'Normal';
   return 'Tall';
-};
+});
 
-const classifyWeightForAgeZScore  = (zScore) => {
-  if (zScore < -3) return 'Severely Underweight';
-  if (zScore >= -3 && zScore < -2) return 'Underweight';
-  if (zScore >= -2 && zScore <= 2) return 'Normal Weight';
+const classification = computed(() => {
+  if (form.value.zScore < -3) return 'Severely Underweight';
+  if (form.value.zScore >= -3 && form.value.zScore < -2) return 'Underweight';
+  if (form.value.zScore >= -2 && form.value.zScore <= 2) return 'Normal Weight';
   return 'Overweight';
-};
+});
 
-const classifyWeightForHeightZScore  = (WFHzScore) => {
-  if (WFHzScore < -3) return 'Severely Wasted';
-  if (WFHzScore >= -3 && WFHzScore < -2) return 'Moderately Wasted';
-  if (WFHzScore >= -2 && WFHzScore <= 2) return 'Normal Weight';
-  if (WFHzScore > 2 && WFHzScore <= 3) return 'Overweight';
+const WFHclassification = computed(() => {
+  if (form.value.WFHzScore < -3) return 'Severely Wasted';
+  if (form.value.WFHzScore >= -3 && form.value.WFHzScore < -2) return 'Moderately Wasted';
+  if (form.value.WFHzScore >= -2 && form.value.WFHzScore <= 2) return 'Normal Weight';
+  if (form.value.WFHzScore > 2 && form.value.WFHzScore <= 3) return 'Overweight';
   return 'Obese';
-};
-
-// Utility function to format the date
-const formatDate = (dateString) => {
-    if (!dateString) return ' ';
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-};
-
-const calculateAgeInMonths = (birthDate, monitoringDate) => {
-    const birth = new Date(birthDate);
-    const monitoring = new Date(monitoringDate);
-    let ageInMonths = (monitoring.getFullYear() - birth.getFullYear()) * 12;
-    ageInMonths -= birth.getMonth();
-    ageInMonths += monitoring.getMonth();
-    return ageInMonths <= 0 ? 0 : ageInMonths;
-};
-
-// Computed property to sort and map growth monitoring records
-const sortedGrowthMonitoringRecords = computed(() => {
-    console.log('props.child.growth_monitorings:', props.child.growth_monitorings);
-    const records = props.child.growth_monitorings.map(record => {
-        const ageInMonths = calculateAgeInMonths(props.child.birth_date, record.date);
-        const weight_zscore = calculateZScore(ageInMonths, record.weight, props.child.sex);
-        const height_zscore = calculateHeightForAgeZScore(ageInMonths, record.height, props.child.sex);
-        const weight_height_zscore = calculateWHZ(ageInMonths, record.height, record.weight, props.child.sex);
-
-        let weightForAgeClassification = classifyWeightForAgeZScore(weight_zscore);
-        let heightForAgeClassification = classifyHeightForAgeZScore(height_zscore);
-        let weightForHeightClassification = classifyWeightForHeightZScore(weight_height_zscore);
-
-        return {
-            date: record.date,
-            weight: record.weight,
-            height: record.height,
-            age: ageInMonths,
-            sex: props.child.sex,
-            weight_age_status: weightForAgeClassification,
-            height_age_status: heightForAgeClassification,
-            weight_height_status: weightForHeightClassification,
-        };
-    });
-    console.log('sortedGrowthMonitoringRecords:', records);
-    return records;
 });
+const onSubmit = async () => {
+  form.value.zScore = calculateZScore(form.value.age, form.value.weight, form.value.sex);
+  form.value.zScoreHeight = calculateHeightForAgeZScore(form.value.age, form.value.height, form.value.sex);
+  form.value.WFHzScore = calculateWHZ(form.value.age, form.value.height, form.value.weight, form.value.sex);
 
-// Show or hide modals and flash messages
-const showAddModal = ref(false);
-const showFlashMessage = ref(false);
-const flashMessage = ref('');
-const showGrowthMonitoring = ref(true);
-
-// New record object for adding growth monitoring data
-const newRecord = ref({
-    date: "",
-    weight: "",
-    height: "",
-    age: "",
-    sex: props.child.sex, // Get the data based on child's sex
-    height_age_status: " ",
-    weight_age_status: " ",
-    weight_height_status: " ",
-});
-
-// Get today's date
-const today = new Date().toISOString().split('T')[0];
-
-// Handle add record button click
-const handleAddClick = () => {
-    showAddModal.value = true;
-};
-
-// Add record function
-const addRecord = () => {
-    const ageInMonths = calculateAgeInMonths(props.child.birth_date, newRecord.value.date);
-    newRecord.value.age = ageInMonths;
-
-    newRecord.value.weight_zscore = calculateZScore(ageInMonths, newRecord.value.weight, newRecord.value.sex);
-    newRecord.value.height_zscore = calculateHeightForAgeZScore(ageInMonths, newRecord.value.height, newRecord.value.sex);
-    newRecord.value.weight_height_zscore = calculateWHZ(ageInMonths, newRecord.value.height, newRecord.value.weight, newRecord.value.sex);
-
-    newRecord.value.weight_age_status = classifyWeightForAgeZScore(newRecord.value.weight_zscore);
-    newRecord.value.height_age_status = classifyHeightForAgeZScore(newRecord.value.height_zscore);
-    newRecord.value.weight_height_status = classifyWeightForHeightZScore(newRecord.value.weight_height_zscore);
-    
-    axios.post(`/child/${props.child.id}/addGrowthMonitoring`, { 
-        date: newRecord.value.date,
-        weight: newRecord.value.weight,
-        height: newRecord.value.height,
-        sex: newRecord.value.sex, 
-        age: newRecord.value.age,
-        weight_age_status: newRecord.value.weight_age_status,
-        height_age_status: newRecord.value.height_age_status,
-        weight_height_status: newRecord.value.weight_height_status
-    })
-    .then(response => {
-        showAddModal.value = false;
-        flashMessage.value = 'Record added successfully!';
-        showFlashMessage.value = true;
-        setTimeout(() => (showFlashMessage.value = false), 5000);
-        props.child.growth_monitorings.push(response.data.record);
-    })
-    .catch(error => {
-        flashMessage.value = 'Failed to add record! ' + (error.response?.data?.message || error.message);
-        showFlashMessage.value = true;
-        setTimeout(() => (showFlashMessage.value = false), 5000);
+  try {
+    await axios.post(`/child/${props.child.id}/addGrowthMonitoring`, {
+      sex: form.value.sex,
+      age: form.value.age,
+      weight: form.value.weight,
+      height: form.value.height,
+      zScore: form.value.zScore,
+      zScoreHeight: form.value.zScoreHeight,
+      WFHzScore: form.value.WFHzScore,
+      classification: classification.value,
+      classifyHeightForAgeZScore: classifyHeightForAgeZScore.value,
+      WFHclassification: WFHclassification.value
     });
-};
-
-// Toggle the visibility of growth monitoring records
-const togglegrowth_monitorings = () => {
-    showGrowthMonitoring.value = !showGrowthMonitoring.value;
+    alert('Data saved successfully');
+  } catch (error) {
+    console.error('Error saving data:', error);
+    alert(`Failed to save data: ${error.response?.data?.message || error.message}`);
+  }
 };
 </script>
 
 <template>
-    <!-- Growth Monitoring Records Section -->
-    <div v-if="child" class="container">
-        <div class="header4" @click="togglegrowth_monitorings" style="cursor: pointer;">
-            <div style="display: flex; align-items: center;">
-                <h1>Counseling (Growth Monitoring)</h1>
-                <span style="margin-left: 10px; margin-bottom:10px;color:#488a99;">
-                    {{ showGrowthMonitoring ? '▼' : '▲' }}
-                </span>
-            </div>
-            <button @click.stop="handleAddClick" class="add-button">
-                <i class="fas fa-plus"></i>
-            </button>
-        </div>
-        <transition name="fade">
-            <div v-if="showGrowthMonitoring" class="scrollable-table">
-                <table class="info-table">
-                    <thead>
-                        <tr>
-                            <th>Age in months</th>
-                            <th>Weight (kgs)</th>
-                            <th>Height (cm)</th>
-                            <th>Sex</th>
-                            <th>Weight for Age</th>
-                            <th>Height for Age</th>
-                            <th>Weight for Height</th>
-                            <th>Date of Monitoring</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="!child.growth_monitorings || child.growth_monitorings.length === 0">
-                            <td colspan="10" class="no-data" style="text-align: center; font-weight: normal; text-transform: none;">No records available</td>
-                        </tr>
-                        <tr v-for="record in sortedGrowthMonitoringRecords" :key="record.date">
-                            <td>{{ record.age }}</td>
-                            <td>{{ record.weight }}</td>
-                            <td>{{ record.height }}</td>
-                            <td>{{ record.sex }}</td>
-                            <td>{{ record.weight_age_status }}</td>
-                            <td>{{ record.height_age_status }}</td>
-                            <td>{{ record.weight_height_status }}</td>
-                            <td>{{ formatDate(record.date) }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </transition>
-    </div>
+  <div>
+    <h1>Weight-for-Age Z-Score Calculator</h1>
 
-    <!-- Add Growth Monitoring Record Modal -->
-    <transition name="fade">
-        <div v-if="showAddModal" class="modal-overlay">
-            <div class="modal-content">
-                <h2 class="add-vac" style="color: #488a99;">Add Growth Monitoring Record</h2>
-                <form @submit.prevent="addRecord">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="date">Monitoring Date:</label>
-                            <input type="date" v-model="newRecord.date" :max="today" required />
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="weight">Weight (kgs):</label>
-                            <input type="number" v-model="newRecord.weight" step="0.01" required />
-                        </div>
-                        <div class="form-group">
-                            <label for="height">Height (cm):</label>
-                            <input type="number" v-model="newRecord.height" step="0.01" required />
-                        </div>
-                    </div>
-                    <!-- <div class="form-row">
-                        <div class="form-group">
-                            <label for="age">Age in months:</label>
-                            <input type="text" v-model="newRecord.age" required />
-                        </div>
-                        <div class="form-group">
-                            <label for="sex">Sex:</label>
-                            <select name="sex" id="sex" v-model="newRecord.sex" required>
-                                <option value="">Select</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                        </div>
-                    </div> -->
-                    <div class="button-container">
-                        <button type="submit">Add</button>
-                        <button type="button" @click="showAddModal = false">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </transition>
+    <form @submit.prevent="onSubmit">
+      <label for="sex">Sex:</label>
+      <select id="sex" v-model="form.sex">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
 
-    <!-- Flash Message -->
-    <transition name="fade">
-        <div v-if="showFlashMessage" class="flash-modal">
-            <div class="flash-content">{{ flashMessage }}</div>
-        </div>
-    </transition>
+      <label for="age">Age (months):</label>
+      <input type="number" id="age" v-model.number="form.age" min="0" max="60" required />
+
+      <label for="weight">Weight (kg):</label>
+      <input type="number" id="weight" v-model.number="form.weight" step="0.01" required />
+
+      <label for="height">Height (cm):</label>
+      <input type="number" id="height" v-model.number="form.height" step="0.01" required />
+
+      <button type="submit">Save</button>
+    </form>
+  </div>
 </template>
 
-<style scoped>
-.no-data {
-    text-transform: none;
-}
-.scrollable-table {
-    max-height: 350px;
-    overflow-y: auto;
-    margin-top: 10px;
-    scroll-snap-type: y mandatory;
-    position: relative;
-}
-.scrollable-table > .data-table {
-    width: 100%;
-}
-.add-vac {
-    font-size: 18px;
-    font-weight: bold;
-}
-.add-button {
-    position: absolute;
-    right: 0;
-    top: 90%;
-    transform: translateY(-50%);
-    background-color: #4CAF50; 
-    border: none; 
-    color: white;
-    padding: 5px 15px; 
-    text-align: center; 
-    text-decoration: none; 
-    display: inline-block; 
-    font-size: 14px; 
-    cursor: pointer;
-    border-radius: 8px; 
-    transition: background-color 0.3s ease; 
-}
-.add-button:hover {
-    background-color: #45a049; 
-}
-.header4 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ddd;
-    position: relative;
-    margin-left: -.5px;
-}
-.container {
-    max-width: 100%;
-    padding: 20px;
-    margin-top: 0;
-    margin-bottom: 5%;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-}
-.info-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-}
-.info-table thead th {
-    position: sticky;
-    top: 0;
-    background-color: #007bff;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
-    z-index: 1;
-}
-.info-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-    color: #333;
-}
-.info-table td:first-child {
-    text-align: center;
-    width:1%;
-}
-.info-table td:nth-child(2){
-    width: 10%; 
-}
-.info-table td:nth-child(3),.info-table td:nth-child(4){
-    width: 10%; 
-}
-.info-table td:nth-child(5),.info-table td:nth-child(6),.info-table td:nth-child(7){
-    width: 17%; 
-}
-.info-table tr:hover {
-    background-color: #f1f1f1;
-}
-h1 {
-    color: #488a99;
-    font-size: 16px;
-    padding-bottom: 10px;
-    font-weight: bold;
-    width: 100%;
-}
-button {
-    padding: 5px 10px;
-    font-size: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #488a99;
-    color: white;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-button:hover {
-    background-color: #3a6f7a;
-}
-.fade-enter-active, .fade-leave-active {
-    transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to {
-    opacity: 0;
-}
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1001;
-}
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 500px; 
-    width: 35%; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    animation: slide-down 0.3s ease-out;
-}
-.modal-content h2 {
-    margin-top: 0;
-    font-size: 18px;
-    color: #333;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-}
-.modal-content label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-    color: #555;
-}
-.modal-content input,
-.modal-content select {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-.modal-content input[type="text"][placeholder="5 mins"] {
-    width: 50%;
-}
-.modal-content select[name="breastfeeding_status"] {
-    width: 100%;
-}
-.modal-content .button-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-}
-.modal-content .button-container button {
-    margin-left: 10px;
-    padding: 8px 12px;
-    font-size: 14px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-.modal-content .button-container button[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-}
-.modal-content .button-container button[type="submit"]:hover {
-    background-color: #45a049;
-}
-.modal-content .button-container button[type="button"] {
-    background-color: #f44336;
-    color: white;
-}
-.modal-content .button-container button[type="button"]:hover {
-    background-color: #e53935;
-}
-@keyframes slide-down {
-    from {
-        transform: translateY(-20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-.flash-message {
-    background-color: #f44336;
-    color: white;
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    text-align: center;
-}
-.flash-modal {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #4CAF50;
-    color: white;
-    padding: 15px 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-}
-.flash-content {
-    font-size: 16px;
-    font-weight: bold;
-}
-.form-row {
 
-    display: flex;
-    justify-content: space-between;
+<style scoped>
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 300px;
+  margin: auto;
 }
-.form-group {
-    flex: 1;
-    margin-right: 10px;
+
+button {
+  padding: 0.5rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
-.form-group-duration {
-    flex: 1;
-    right: 0;
-}
-.form-group:last-child {
-    margin-right: 0;
+
+button:hover {
+  background-color: #0056b3;
 }
 </style>

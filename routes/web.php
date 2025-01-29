@@ -19,8 +19,16 @@ use App\Http\Controllers\GrowthMonitoringController;
 use App\Http\Controllers\OptimumPracticeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserConfirmationController;
 
 Route::inertia('/', 'Auth/Login' )->name('Login');
+// Route::middleware(['auth', 'approved', 'admin'])->group(function () {
+//     Route::get('/admin/pending-users', [AdminController::class, 'showPendingUsers'])->name('admin.pending-users');
+//     Route::post('/admin/approve-user/{id}', [AdminController::class, 'approveUser'])->name('admin.approve-user');
+//     Route::post('/admin/reject-user/{id}', [AdminController::class, 'rejectUser'])->name('admin.reject-user');
+// });
+
+
 
 Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::inertia('/dashboard', 'Dashboard' )->name('dashboard');
@@ -29,6 +37,12 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::put('/profile',[ProfileController::class, 'updatePassword'])->name('profile.password');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/users', [UserConfirmationController::class, 'index'])->name('users.index');
+
+    Route::inertia('/gm', 'ChildCareForm/Gm')->name('gm');
+    // -- ----- -- - - - --  - - - - - -  -- -  -- - - - --  - - - - - - - -//
+    //User Confirmation
+    Route::inertia('/user-confirmation', 'UserConfirmation/View')->name('user-confirmation');
     
     //Medicine
     Route::inertia('/medicine', 'Medicine')->name('medicine');
@@ -178,4 +192,6 @@ Route::middleware(['guest', RefreshPageMiddleware::class])->group(function() {
     Route::inertia('/login', 'Auth/Login' )->name('login');
     Route::post('/login', [AuthController::class, 'login']);
 });
+
+
 

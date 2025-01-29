@@ -45,7 +45,23 @@ const handleAddClick = () => {
     showAddModal.value = true;
 };
 
+const isDuplicateRecord = (newRecord) => {
+    return props.child.vitamin_a_supplementation.some(record => 
+        record.age === newRecord.age &&
+        record.age_unit === newRecord.age_unit &&
+        record.dose === newRecord.dose &&
+        record.date === newRecord.date
+    );
+};
+
 const addRecord = () => {
+    if (isDuplicateRecord(newRecord.value)) {
+        flashMessage.value = 'Duplicate record! This record already exists.';
+        showFlashMessage.value = true;
+        setTimeout(() => (showFlashMessage.value = false), 5000);
+        return;
+    }
+
     axios.post(`/child/${props.child.id}/addVitA`, { ...newRecord.value })
         .then(response => {
             console.log('Record Added:', response.data);

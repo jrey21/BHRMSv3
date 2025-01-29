@@ -7,6 +7,7 @@ const form = useForm({
     email: null,
     password: null,
     password_confirmation: null,
+    position: null,
     avatar: null,
     preview: null,
 });
@@ -57,10 +58,23 @@ const submit = () => {
                 <!-- End Upload Avatar -->
 
 
-                <TextInput name="name" v-model="form.name" :message="form.errors.name" class="mb-1" />
-                <TextInput name="email" type="email" v-model="form.email" :message="form.errors.email" class="mb-1" />
-                <TextInput name="password" type="password" v-model="form.password" :message="form.errors.password" class="mb-1" />
+                <TextInput name="name" v-model="form.name" :message="form.errors.name" class="mb-[9px]" />
+                
+                <!-- Position Dropdown -->
+                <div class="mb-[9px]">
+                    <label for="position" class="block text-sm font-medium text-gray-700">Position</label>
+                    <select id="position" v-model="form.position" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="Health Worker">Health Worker</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                    <p class="text-xs text-red-500">{{ form.errors.position }}</p>
+                </div>
+                <!-- End Position Dropdown -->
+
+                <TextInput name="email" type="email" v-model="form.email" :message="form.errors.email" class="mb-[9px]" />
+                <TextInput name="password" type="password" v-model="form.password" :message="form.errors.password" class="mb-[9px]" />
                 <TextInput name="confirm password" type="password" v-model="form.password_confirmation" class="mb-6" />
+                
                 <div class="flex items-center justify-between mb-6">
                     <p class="text-slate-600">Already a user?
                         <Link :href="route('login')" class="text-blue-500 hover:underline">Login</Link>

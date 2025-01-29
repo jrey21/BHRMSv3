@@ -116,9 +116,9 @@ onMounted(() => {
     </div>
 </template>
 
-<style>
+<style scoped>
 .box-size {
-    width: 440px;
+    width: 450px;
 }
 .save-btn:hover {
     background-color: #2553b7; 

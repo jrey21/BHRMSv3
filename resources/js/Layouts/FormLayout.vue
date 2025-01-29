@@ -101,7 +101,7 @@ const capitalizeWords = (str) => {
                             />
                             <div class="text-left" style="margin-right: 15px; margin-left: 12px;">
                                 <span class="font-semibold text-sm">{{ capitalizeWords($page.props.auth.user.name) }}</span>
-                                <div class="text-xs text-white">Software Developer</div>
+                                <div class="text-xs text-white">{{ capitalizeWords($page.props.auth.user.position) }}</div>
                             </div>
                             <i :class="{'fa-chevron-down': true, 'fa-chevron-up': isDropdownOpen}" class="fas" style="margin-right: 10px;"></i>
                         </button>

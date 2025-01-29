@@ -15,6 +15,7 @@ class ChildCareFormController extends Controller
             'child_no' => 'required|string|max:255',
             'zone' => 'required|string|max:255',
             'complete_address' => 'required|string|max:255',
+            'sex' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
@@ -170,11 +171,9 @@ class ChildCareFormController extends Controller
             'age'=> 'required|integer',
             'date' => 'date',
             'sex' => 'string|max:255',
-            'weight_status' => 'string|max:255',
-            'weight_for_age_status' => 'string|max:255',
-            'height_for_age_status' => 'string|max:255',
-            'weight_for_height_status' => 'string|max:255',
-            'bmi' => 'numeric',
+            'weight_age_status' => 'string|max:255',
+            'height_age_status' => 'string|max:255',
+            'weight_height_status' => 'string|max:255',
         ]);
 
         $child = ChildCareForm::findOrFail($child_id);

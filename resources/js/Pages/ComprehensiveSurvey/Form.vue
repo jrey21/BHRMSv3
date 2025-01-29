@@ -132,7 +132,8 @@ const redirectToDashboard = () => {
 };
 
 const confirmCancel = () => {
-    window.location.href = route('comprehensive-survey-view');
+    // window.location.href = route('comprehensive-survey-view');
+    form.get(route('comprehensive-survey-view'));
 };
 
 const today = new Date().toISOString().split('T')[0];

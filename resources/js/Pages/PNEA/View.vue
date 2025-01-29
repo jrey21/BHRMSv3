@@ -55,10 +55,31 @@ const toggleSortOrder = () => {
     sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
 };
 
+const incrementAge = async () => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+
+    for (let pnea of pneaData.value) {
+        const birthDate = new Date(pnea.birth_date);
+        const birthYear = birthDate.getFullYear();
+        const newAge = currentYear - birthYear;
+
+        if (pnea.age !== newAge) {
+            pnea.age = newAge;
+            try {
+                await axios.put(route('pnea-enrollment-update', { id: pnea.id }), { age: newAge });
+            } catch (error) {
+                console.error(`Error updating age for ${pnea.fullName}:`, error);
+            }
+        }
+    }
+};
+
 onMounted(async () => {
     try {
         const response = await axios.get(route('pnea-enrollment-data'));
         pneaData.value = response.data;
+        incrementAge(); // Call the function to increment age on mount
     } catch (error) {
         console.error('Error fetching pnea enrollment data:', error);
     }
