@@ -3,6 +3,8 @@ import { ref, onMounted, computed, watchEffect } from 'vue';
 import { router } from '@inertiajs/vue3'; 
 import axios from 'axios';
 import FormLayout from '../../Layouts/FormLayout.vue';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 defineOptions({ layout: FormLayout });
 
@@ -27,11 +29,17 @@ const sortedData = computed(() => {
     return [...filteredData.value].sort((a, b) => {
         const nameA = a.fullName.toLowerCase();
         const nameB = b.fullName.toLowerCase();
-        if (sortOrder.value === 'asc') {
-            return nameA.localeCompare(nameB);
-        } else {
-            return nameB.localeCompare(nameA);
+        const zoneA = a.zone.toLowerCase();
+        const zoneB = b.zone.toLowerCase();
+        
+        if (zoneA === zoneB) {
+            if (sortOrder.value === 'asc') {
+                return nameA.localeCompare(nameB);
+            } else {
+                return nameB.localeCompare(nameA);
+            }
         }
+        return zoneA.localeCompare(zoneB);
     });
 });
 
@@ -204,6 +212,51 @@ const formatDate = (dateString) => {
 const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+const downloadPDF = () => {
+    const doc = new jsPDF();
+    // Set font size and alignment
+    doc.setFontSize(12);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header section (Regular font for other titles)
+    doc.setFont('helvetica', 'normal');
+    doc.text('Republic of the Philippines', pageWidth / 2, 10, { align: 'center' });
+    doc.text('Province of Leyte', pageWidth / 2, 16, { align: 'center' });
+    doc.text('City of Baybay', pageWidth / 2, 22, { align: 'center' });
+
+    // Bold font for the "Vaccination Records" title
+    doc.setFont('helvetica', 'normal');
+    doc.text('List of Pregnant Women', pageWidth / 2, 40, { align: 'center' });
+
+    // Bold font for the "BHS PATAG" title
+    doc.setFont('helvetica', 'bold');
+    doc.text('BHS PATAG', pageWidth / 2, 50, { align: 'center' });
+
+    // Adjusted top margin for the table
+    const tableStartY = 60;
+
+    doc.autoTable({
+        head: [['Pink Card Number', 'Name', 'Birth Date', 'Zone', 'Term of Pregnancy']],
+        body: paginatedData.value.map(data => [
+            data.pinkCardNumber,
+            data.fullName,
+            formatDate(data.birth_date),
+            data.zone,
+            capitalizeFirstLetter(data.term_of_pregnancy)
+        ]),
+        startY: tableStartY,
+        didDrawPage: (data) => {
+            // Add page number at the bottom right corner
+            const pageCount = doc.internal.getNumberOfPages();
+            const pageSize = doc.internal.pageSize;
+            const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+            doc.setFontSize(10);
+            doc.text(`Page ${data.pageNumber} of ${pageCount}`, pageWidth - 10, pageHeight - 10, { align: 'right' });
+        }
+    });
+    doc.save('Pregnant_Women_List.pdf');
+};
 </script>
 
 <template>
@@ -225,9 +278,11 @@ const capitalizeFirstLetter = (string) => {
                 </div>
             </div>
             <div>
-                <button @click="toggleSortOrder" class="sort-button">
-                    <i :class="sortOrder === 'asc' ? 'fas fa-sort-alpha-down' : 'fas fa-sort-alpha-up'"></i>
-                </button>
+                <select v-model="sortOrder" class="sort-select">
+                    <option value="asc">Name (A-Z)</option>
+                    <option value="desc">Name (Z-A)</option>
+                </select>
+                <button @click="downloadPDF" class="download-button"> <i class="fas fa-download"></i></button>
                 <button @click="router.get(route('pnea-enrollment'))" class="add-button">
                     <i class="fas fa-plus"></i>
                 </button>
@@ -766,7 +821,6 @@ h2{
     display: inline-block;
     font-size: 14px;
     margin-top: 0;
-    margin-right: 10px;
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.3s ease;
@@ -809,5 +863,32 @@ h2{
     display: flex;
     justify-content: flex-end;
     gap: 5px;
+}
+
+.download-button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 5px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-top: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+    background-color: #0056b3;
+}
+
+.sort-select {
+    padding: 5px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
 }
 </style>

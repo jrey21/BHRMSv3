@@ -265,7 +265,7 @@ onMounted(() => {
     </div>
     <div class="modal" v-if="isDeleteModalOpen">
         <div class="modal-content delete-modal">
-            <span class="close" @click="isDeleteModalOpen = false">&times;</span>
+            <!-- <span class="close" @click="isDeleteModalOpen = false">&times;</span> -->
             <h2>Confirm Delete</h2>
             <p>Are you sure you want to delete this event?</p>
             <div class="modal-actions">
