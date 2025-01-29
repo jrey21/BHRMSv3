@@ -596,6 +596,8 @@ h2{
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .address-button:hover {

@@ -57,7 +57,6 @@ class ChildCareFormController extends Controller
     // Edit data from the database
     public function edit($id)
     {
-
         $childcareForm = ChildCareForm::findOrFail($id);
         return Inertia::render('ChildCareForm/Edit', [
             'form' => $childcareForm,

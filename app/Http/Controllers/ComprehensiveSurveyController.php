@@ -115,4 +115,34 @@ class ComprehensiveSurveyController extends Controller
         $pwd = ComprehensiveSurvey::where('pwd', 1)->get();
         return response()->json($pwd);   
     }
+
+    //Update a specific data from the database
+    public function update(Request $request, $id)
+    {
+        $survey = ComprehensiveSurvey::findOrFail($id);
+        $survey->zone = $request->input('zone');
+        $survey->last_name = $request->input('last_name');
+        $survey->first_name = $request->input('first_name');
+        $survey->middle_name = $request->input('middle_name');
+        $survey->suffix = $request->input('suffix');
+        $survey->birth_date = $request->input('birth_date');
+        $survey->sex = $request->input('sex');
+        $survey->civil_status = $request->input('civil_status');
+        $survey->education = $request->input('education');
+        $survey->religion = $request->input('religion');
+        $survey->occupation = $request->input('occupation');
+
+        $survey->save();
+
+        return response()->json($survey);
+    }   
+
+    //Delete a specific data from the database
+    public function destroy($id)
+    {
+        $survey = ComprehensiveSurvey::findOrFail($id);
+        $survey->delete();
+
+        return response()->json($survey);
+    }
 }

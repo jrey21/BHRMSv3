@@ -273,6 +273,10 @@ const closeDeleteModal = () => {
 </template>
 
 <style scoped>
+.delete-button:hover {
+    background-color: #c82333; 
+    transform: scale(1.1);
+}
 h2{
     color: #488a99;
     font-size: 18px;
@@ -515,6 +519,8 @@ h2{
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .address-button:hover {

@@ -208,10 +208,11 @@ const downloadPDF = () => {
     doc.setFont('helvetica', 'normal');
     doc.text('as of', pageWidth / 2, 48, { align: 'center' });
 
-    
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
     doc.text(`${currentDate}`, pageWidth / 2, 55, { align: 'center' });
 
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text('BHS PATAG', pageWidth / 2, 65, { align: 'center' });
 

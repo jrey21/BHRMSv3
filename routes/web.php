@@ -110,6 +110,9 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     //Retrieve all data
     Route::get('/childcare-data', [ChildCareFormController::class, 'retrieve'])->name('childcare-data');
 
+    Route::put('/survey-update/{id}', [ComprehensiveSurveyController::class, 'update'])->name('survey-update');
+    Route::delete('/survey-delete/{id}', [ComprehensiveSurveyController::class, 'destroy'])->name('survey-delete');
+
     //Edit specific data
     Route::get('/childcare-form-edit/{id}', [ChildCareFormController::class, 'edit'])->name('childcare-form-edit');
     Route::put('/childcare-form-update/{id}', [ChildCareFormController::class, 'update'])->name('childcare-form-update');

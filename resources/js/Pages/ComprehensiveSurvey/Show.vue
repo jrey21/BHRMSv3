@@ -37,39 +37,156 @@ const computeAge = (birthDate) => {
 
 const age = computed(() => computeAge(props.survey.birth_date));
 
+const isEditing = ref(false);
+const editableSurvey = ref({ ...props.survey });
+const flashMessage = ref('');
+const showFlashMessage = ref(false);
+const isError = ref(false);
+
+const editData = () => {
+    isEditing.value = true;
+};
+
+const saveData = async () => {
+    try {
+        const response = await axios.put(
+            route('survey-update', { id: props.survey.id }),
+            { ...editableSurvey.value }
+        );
+        Object.assign(props.survey, response.data);
+        flashMessage.value = 'Changes saved successfully!';
+        isError.value = false;
+        showFlashMessage.value = true;
+        isEditing.value = false;
+        setTimeout(() => (showFlashMessage.value = false), 900);
+    } catch (error) {
+        console.error('Error updating data:', error);
+        flashMessage.value = `Failed to update! Please check your input and try again.`; 
+        isError.value = true;
+        showFlashMessage.value = true;
+        setTimeout(() => (showFlashMessage.value = false), 5000);
+    }
+};
+
+const cancelEdit = () => {
+    Object.assign(editableSurvey.value, props.survey);
+    isEditing.value = false;
+};
+
 </script>
 
 <template>
     <Head title=" | Comprehensive Survey Data" />
-
+    <div v-if="showFlashMessage" :class="['flash-message', { error: isError }]">
+        {{ flashMessage }}
+    </div>
     <div class="tables-container">
         <div class="table-wrapper">
             <div class="header-with-button">
                 <h1 class="personal-head text-slate-500">I. Personal Information</h1>
                 <div>
-                    <!-- <button class="edit-button"><i class="fa fa-edit"></i></button> -->
-                    <!-- <button class="delete-button" @click="handleDelete"><i class="fa fa-trash"></i></button> -->
+                    <button @click="isEditing ? saveData() : editData()" :class="['icon-buttons', { 'save-button': isEditing }]">
+                        <i :class="isEditing ? 'fas fa-save' : 'fas fa-edit'"></i>
+                    </button>
+                    <!-- <button v-if="isEditing" @click="cancelEdit" class="icon-buttons">
+                        <i class="fas fa-times"></i>
+                    </button> -->
                 </div>
             </div>
             <table class="info-table">
-                <tr><td class="label">Last Name: </td><td>{{ survey.last_name }}</td></tr>
-                <tr><td class="label">First Name: </td><td>{{ survey.first_name }}</td></tr>
-                <tr><td class="label">Middle Name: </td><td>{{ survey.middle_name }}</td></tr>
-                <tr><td class="label">Suffix: </td><td>{{ suffix }}</td></tr>
-                <tr><td class="label">Birthdate: </td><td>{{ formattedBirthDate }}</td></tr>
-                <tr><td class="label">Age: </td><td>{{ age.value }} {{ age.unit }}</td></tr>
-                <tr><td class="label">Sex: </td><td>{{ survey.sex }}</td></tr>
-                <tr><td class="label">Civil Status: </td><td>{{ survey.civil_status }}</td></tr>
-                <tr><td class="label">Religion: </td><td>{{ survey.religion }}</td></tr>
-                <tr><td class="label">Occupation: </td><td>{{ survey.occupation }}</td></tr>
-                <tr><td class="label">Educational Attainment: </td><td>{{ survey.education }}</td></tr>
+                <tr><td class="label">Last Name: </td>
+                    <td v-if="!isEditing">{{ survey.last_name }}</td>
+                    <td v-else><input v-model="editableSurvey.last_name" class="data input-field" /></td>
+                </tr>
+                <tr><td class="label">First Name: </td>
+                    <td v-if="!isEditing">{{ survey.first_name }}</td>
+                    <td v-else><input v-model="editableSurvey.first_name" class="data input-field" /></td>
+                </tr>
+                <tr><td class="label">Middle Name: </td>
+                    <td v-if="!isEditing">{{ survey.middle_name }}</td>
+                    <td v-else><input v-model="editableSurvey.middle_name" class="data input-field" /></td>
+                </tr>
+                <tr><td class="label">Suffix: </td>
+                    <td v-if="!isEditing">{{ suffix }}</td>
+                    <td v-else>
+                        <select v-model="editableSurvey.suffix" class="data input-field">
+                            <option value="-">-</option>
+                            <option value="Jr.">Jr.</option>
+                            <option value="Sr.">Sr.</option>
+                            <option value="II">II</option>
+                            <option value="III">III</option>
+                            <option value="IV">IV</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr><td class="label">Birthdate: </td>
+                    <td v-if="!isEditing">{{ formattedBirthDate }}</td>
+                    <td v-else><input type="date" v-model="editableSurvey.birth_date" class="data input-field" /></td>
+                </tr>
+                <tr><td class="label">Age: </td>
+                    <td>{{ age.value }} {{ age.unit }}</td>
+                </tr>
+                <tr><td class="label">Sex: </td>
+                    <td v-if="!isEditing">{{ survey.sex }}</td>
+                    <td v-else>
+                        <select v-model="editableSurvey.sex" class="data input-field">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr><td class="label">Civil Status: </td>
+                    <td v-if="!isEditing">{{ survey.civil_status }}</td>
+                    <td v-else>
+                        <select v-model="editableSurvey.civil_status" class="data input-field">
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Widowed">Widowed</option>
+                            <option value="Separated">Separated</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr><td class="label">Religion: </td>
+                    <td v-if="!isEditing">{{ survey.religion }}</td>
+                    <td v-else><input v-model="editableSurvey.religion" class="data input-field" /></td>
+                </tr>
+                <tr><td class="label">Occupation: </td>
+                    <td v-if="!isEditing">{{ survey.occupation }}</td>
+                    <td v-else><input v-model="editableSurvey.occupation" class="data input-field" /></td>
+                </tr>
+                <tr><td class="label">Educational Attainment: </td>
+                    <td v-if="!isEditing">{{ survey.education }}</td>
+                    <td v-else>
+                        <select v-model="editableSurvey.education" class="data input-field">
+                            <option value="None">N/A</option>
+                            <option value="Elementary">Elementary</option>
+                            <option value="Highschool">High School</option>
+                            <option value="College">College</option>
+                            <option value="Postgraduate">Postgraduate</option>
+                        </select>
+                    </td>
+                </tr>
             </table>
         </div>
 
         <div class="table-wrapper">
             <h1 class="personal-head text-slate-500">II. Other Information</h1>
             <table class="info-table">
-                <tr><td class="label">Zone: </td><td>{{ survey.zone }}</td></tr>
+                <tr><td class="label">Zone: </td>
+                    <td v-if="!isEditing">{{ survey.zone }}</td>
+                    <td v-else>
+                        <select v-model="editableSurvey.zone" class="data input-field">
+                            <option value="Zone 1">Zone 1</option>
+                            <option value="Zone 2">Zone 2</option>
+                            <option value="Zone 3">Zone 3</option>
+                            <option value="Zone 4">Zone 4</option>
+                            <option value="Zone 5">Zone 5</option>
+                            <option value="Zone 6">Zone 6</option>
+                            <option value="Zone 7">Zone 7</option>
+                        </select>
+                    </td>
+                </tr>
+
                 <tr><td class="label">H/H Access to Sanitary: </td><td>{{ survey.sanitary_access }}</td></tr>
                 <tr><td class="label">Water Sources: </td><td>{{ survey.water_source }}</td></tr>
                 <tr><td class="label">Family Planning Used: </td><td>{{ survey.family_planning }}</td></tr>
@@ -82,7 +199,7 @@ const age = computed(() => computeAge(props.survey.birth_date));
     </div>
 </template>
 
-<style>
+<style scoped>
 .personal-head{
     font-size: 20px;
     margin-bottom: 15px;
@@ -203,5 +320,50 @@ const age = computed(() => computeAge(props.survey.birth_date));
 }
 .table-wrapper:hover {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.icon-buttons {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ffc107; 
+}
+.icon-buttons:hover {
+    color: #ec971f; 
+}
+.icon-buttons.save-button {
+    color: #007bff;
+}
+.flash-message {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    color: #fff;
+    background-color: #4caf50; 
+    border-radius: 5px;
+    text-align: center;
+    z-index: 1000;
+}
+.flash-message.error {
+    background-color: #ff5722;
+    color:white;
+}
+
+.input-field {
+    width: 100%;
+    /* padding: 8px; */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+.input-field:focus {
+    border-color: #4CAF50;
+    outline: none;
 }
 </style>
