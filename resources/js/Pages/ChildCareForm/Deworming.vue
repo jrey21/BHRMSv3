@@ -11,19 +11,50 @@ const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
+const calculateAge = (birthDate, recordDate) => {
+    const birth = new Date(birthDate);
+    const record = new Date(recordDate);
+    let age = record.getFullYear() - birth.getFullYear();
+    let age_unit = 'years';
+
+    const monthDiff = record.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && record.getDate() < birth.getDate())) {
+        age--;
+    }
+
+    if (age === 0) {
+        age = monthDiff + (record.getDate() < birth.getDate() ? -1 : 0);
+        age_unit = 'months';
+    }
+
+    if (age < 1 && age_unit === 'years') {
+        age = monthDiff + (record.getDate() < birth.getDate() ? -1 : 0);
+        age_unit = 'months';
+    }
+
+    if (age_unit === 'months' && age < 0) {
+        age = 0;
+    }
+
+    if (age === 1 && age_unit === 'years') {
+        age_unit = 'year';
+    }
+
+    return { age, age_unit };
+};
+
 const sortedDewormingRecords = computed(() => {
     const records = props.child.deworming.map(record => {
-        console.log('Record:', record); 
+        const { age, age_unit } = calculateAge(props.child.birth_date, record.date);
         return {
             date: record.date,
-            age: record.age,
-            age_unit: record.age_unit,
+            age,
+            age_unit,
             deworming_medicine: record.deworming_medicine,
             other_deworming_medicine: record.other_deworming_medicine,
             administered_by: record.administered_by,
         };
     });
-    console.log(records);
     return records;
 });
 
@@ -50,6 +81,10 @@ const handleAddClick = () => {
 };
 
 const addRecord = () => {
+    const { age, age_unit } = calculateAge(props.child.birth_date, newRecord.value.date);
+    newRecord.value.age = age;
+    newRecord.value.age_unit = age_unit;
+
     axios.post(`/child/${props.child.id}/addDeworming`, { ...newRecord.value })
         .then(response => {
             console.log('Record Added:', response.data);
@@ -125,7 +160,7 @@ const toggledeworming = () => {
                             <input type="date" v-model="newRecord.date" :max="today" required />
                         </div>
                     </div>
-                    <div class="form-row">
+                    <!-- <div class="form-row">
                         <div class="form-group">
                             <label for="age">Age:</label>
                             <input type="number" v-model="newRecord.age" required style="width: 60%;" />
@@ -135,7 +170,7 @@ const toggledeworming = () => {
                                 <option value="years">years</option>
                             </select>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="deworming_medicine">Deworming Medicine</label>

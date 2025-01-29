@@ -11,17 +11,45 @@ const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
+const calculateAge = (birthDate, recordDate) => {
+    const birth = new Date(birthDate);
+    const record = new Date(recordDate);
+    let age = record.getFullYear() - birth.getFullYear();
+    let age_unit = 'years';
+
+    const monthDiff = record.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && record.getDate() < birth.getDate())) {
+        age--;
+    }
+
+    if (age === 0) {
+        age = monthDiff + (record.getDate() < birth.getDate() ? -1 : 0);
+        age_unit = 'months';
+    }
+
+    if (age < 1 && age_unit === 'years') {
+        const totalMonths = (record.getFullYear() - birth.getFullYear()) * 12 + monthDiff;
+        age = Math.abs(totalMonths);
+        age_unit = 'months';
+    }
+
+    if (age === 1) {
+        age_unit = 'year';
+    }
+
+    return { age, age_unit };
+};
+
 const sortedVitaminARecords = computed(() => {
     const records = props.child.vitamin_a_supplementation.map(record => {
-        console.log('Record:', record); 
+        const { age, age_unit } = calculateAge(props.child.birth_date, record.date);
         return {
-            age: record.age,
-            age_unit: record.age_unit, 
+            age,
+            age_unit,
             dose: record.dose,
             date: record.date
         };
     });
-    console.log(records);
     return records;
 });
 
@@ -55,6 +83,10 @@ const isDuplicateRecord = (newRecord) => {
 };
 
 const addRecord = () => {
+    const { age, age_unit } = calculateAge(props.child.birth_date, newRecord.value.date);
+    newRecord.value.age = age;
+    newRecord.value.age_unit = age_unit;
+
     if (isDuplicateRecord(newRecord.value)) {
         flashMessage.value = 'Duplicate record! This record already exists.';
         showFlashMessage.value = true;
@@ -129,7 +161,7 @@ const toggleVitaminARecords = () => {
                 <h2 class="add-vac" style="color: #488a99;">Add Vitamin A Supplementation</h2>
                 <form @submit.prevent="addRecord">
                     <!-- Form fields for adding a new record -->
-                    <div class="form-row">
+                    <!-- <div class="form-row">
                         <div class="form-group">
                             <label for="age">Age:</label>
                             <input type="number" v-model="newRecord.age" required />
@@ -142,19 +174,20 @@ const toggleVitaminARecords = () => {
                                 <option value="years">years</option>
                             </select>
                         </div>
-                    </div>
+                    </div> -->
+                    <label for="date">Record Date:</label>
+                    <input type="date" v-model="newRecord.date" :max="today" required />
                     <label for="dose">Dosage:</label>
                     <select v-model="newRecord.dose" required>
                         <option value=""></option>
                         <option value="100,000 IU">100,000 LU</option>
                         <option value="200,000 IU">200,000 LU</option>
                     </select>
-                    <label for="date">Date:</label>
-                    <input type="date" v-model="newRecord.date" :max="today" required />
                     <div class="button-container">
                         <button type="submit">Add</button>
                         <button type="button" @click="showAddModal = false">Cancel</button>
                     </div>
+                    
                 </form>
             </div>
         </div>

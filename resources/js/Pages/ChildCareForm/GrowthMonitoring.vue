@@ -808,14 +808,14 @@ const classifyHeightForAgeZScore  = (zScoreHeight) => {
 const classifyWeightForAgeZScore  = (zScore) => {
   if (zScore < -3) return 'Severely Underweight';
   if (zScore >= -3 && zScore < -2) return 'Underweight';
-  if (zScore >= -2 && zScore <= 2) return 'Normal Weight';
+  if (zScore >= -2 && zScore <= 2) return 'Normal';
   return 'Overweight';
 };
 
 const classifyWeightForHeightZScore  = (WFHzScore) => {
   if (WFHzScore < -3) return 'Severely Wasted';
   if (WFHzScore >= -3 && WFHzScore < -2) return 'Moderately Wasted';
-  if (WFHzScore >= -2 && WFHzScore <= 2) return 'Normal Weight';
+  if (WFHzScore >= -2 && WFHzScore <= 2) return 'Normal';
   if (WFHzScore > 2 && WFHzScore <= 3) return 'Overweight';
   return 'Obese';
 };

@@ -215,6 +215,8 @@ const formatDate = (dateString) => {
             <div class="modal-content">
                 <h2 class="add-vac" style="color: #488a99;">Add Vaccination Record</h2>
                 <form @submit.prevent="addRecord">
+                    <label for="date"> Record Date:</label>
+                    <input type="date" v-model="newRecord.date" :max="today"  required />
                     <label for="vaccine_name">Vaccine Name:</label>
                     <select name="vaccine_name" v-model="newRecord.vaccine_name" required>
                         <option value=""></option>
@@ -244,9 +246,6 @@ const formatDate = (dateString) => {
                             {{ dose.replace('_date', '').replace('_', ' ').toUpperCase() }}
                         </option>
                     </select>
-
-                    <label for="date">Date:</label>
-                    <input type="date" v-model="newRecord.date" :max="today"  required />
 
                     <div class="button-container">
                         <button type="submit">Add</button>

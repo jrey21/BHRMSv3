@@ -15,8 +15,8 @@ const form = useForm({
             firstName: null,
             middleName: null,
             suffix: null,
-            age: null,
-            age_unit: 'years', 
+            // age: null,
+            // age_unit: 'years', 
             sex: null,
             civilStatus: null,
             birth_date: null,
@@ -41,8 +41,8 @@ const addPersonalInfoRow = () => {
         firstName: null,
         middleName: null,
         suffix: null,
-        age: null,
-        age_unit: 'years', 
+        // age: null,
+        // age_unit: 'years', 
         sex: null,
         civilStatus: null,
         birth_date: null,
@@ -222,7 +222,7 @@ const today = new Date().toISOString().split('T')[0];
             </div>
           
             <div v-for="(row, index) in form.personalInfo" :key="index" class="form-row">
-                <div class="form-group small-input">
+                <!-- <div class="form-group small-input">
                     <label for="age">Age</label>
                     <div class="age-unit-container">
                         <input 
@@ -237,7 +237,7 @@ const today = new Date().toISOString().split('T')[0];
                             <option value="months">Months</option>
                         </select>
                     </div>
-                </div>
+                </div> -->
                 <div class="form-group medium-input">
                     <label for="sex">Sex</label>
                     <select :name="`sex_${index}`" v-model="row.sex" required>
@@ -805,5 +805,14 @@ textarea {
     z-index: 1000;
     opacity: 0.9;
     transition: opacity 0.3s ease;
+}
+
+select {
+    height: 42px; 
+    border-radius: 5px;
+}
+
+input[type="number"], input[type="date"] {
+    height: 42px; 
 }
 </style>

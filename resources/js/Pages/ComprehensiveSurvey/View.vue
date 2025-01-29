@@ -26,6 +26,24 @@ const itemsPerPage = 20;
 
 const sortOption = ref(''); 
 
+const calculateAge = (birthDate) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+
+    if (age === 0) {
+        const months = monthDifference + 12 * (today.getFullYear() - birth.getFullYear());
+        return `${months} ${months === 1 ? 'month' : 'months'}`;
+    }
+
+    return `${age} ${age === 1 ? 'year' : 'years'}`;
+};
+
 const sortedData = computed(() => {
     let data = [...filteredData.value];
     if (sortOption.value === 'asc') {
@@ -41,7 +59,10 @@ const sortedData = computed(() => {
     } else if (sortOption.value === 'zone') {
         data.sort((a, b) => a.zone.localeCompare(b.zone));
     }
-    return data;
+    return data.map(item => ({
+        ...item,
+        age_display: calculateAge(item.birth_date)
+    }));
 });
 
 const paginatedData = computed(() => {
@@ -228,7 +249,7 @@ const downloadPDF = () => {
                     <tr v-for="data in paginatedData" :key="data.id">
                         <td>{{ data.household_number }}</td>
                         <td class="td-name">{{data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1) + ", " + data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1)}}</td>
-                        <td>{{ data.age + " "}}<span v-if="data.age_unit === 'months'">{{ data.age === 1 ? 'month' : 'months' }}</span></td>
+                        <td>{{ data.age_display }}</td>
                         <td>{{ data.sex.charAt(0).toUpperCase() }}</td>
                         <td>{{ data.zone }}</td>
                         <td>{{ data.occupation.charAt(0).toUpperCase() + data.occupation.slice(1) }}</td>

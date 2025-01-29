@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('child_id');
             $table->foreign('child_id')->references('id')->on('child_care_forms')->onDelete('cascade');
             $table->tinyInteger('age');
-            $table->enum('age_unit', ['years', 'months'])->default('years');
+            $table->string('age_unit');
             $table->string('dose');
             $table->date('date');
             $table->timestamp('created_at');

@@ -15,6 +15,28 @@ const props = defineProps({
 const suffix = computed(() => props.survey.suffix || '-');
 const router = useRouter();
 
+const formattedBirthDate = computed(() => {
+    const date = new Date(props.survey.birth_date);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+});
+
+const computeAge = (birthDate) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+    if (age < 1) {
+        const months = (today.getFullYear() - birth.getFullYear()) * 12 + today.getMonth() - birth.getMonth();
+        return { value: months, unit: months === 1 ? 'month' : 'months' };
+    }
+    return { value: age, unit: age === 1 ? 'year' : 'years' };
+};
+
+const age = computed(() => computeAge(props.survey.birth_date));
+
 </script>
 
 <template>
@@ -34,8 +56,8 @@ const router = useRouter();
                 <tr><td class="label">First Name: </td><td>{{ survey.first_name }}</td></tr>
                 <tr><td class="label">Middle Name: </td><td>{{ survey.middle_name }}</td></tr>
                 <tr><td class="label">Suffix: </td><td>{{ suffix }}</td></tr>
-                <tr><td class="label">Birthdate: </td><td>{{ survey.birth_date }}</td></tr>
-                <tr><td class="label">Age: </td><td>{{ survey.age }} {{ survey.age === 1 && survey.age_unit === 'years' ? 'year' : survey.age_unit }} </td></tr>
+                <tr><td class="label">Birthdate: </td><td>{{ formattedBirthDate }}</td></tr>
+                <tr><td class="label">Age: </td><td>{{ age.value }} {{ age.unit }}</td></tr>
                 <tr><td class="label">Sex: </td><td>{{ survey.sex }}</td></tr>
                 <tr><td class="label">Civil Status: </td><td>{{ survey.civil_status }}</td></tr>
                 <tr><td class="label">Religion: </td><td>{{ survey.religion }}</td></tr>

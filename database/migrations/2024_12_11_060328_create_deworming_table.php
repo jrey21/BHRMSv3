@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('child_id')->references('id')->on('child_care_forms')->onDelete('cascade');
             $table->date('date');
             $table->integer('age');
-            $table->enum('age_unit', ['months', 'years']);
+            $table->string('age_unit');
             $table->enum('deworming_medicine', ['Albendazole', 'Mebendazole', 'Pyrantel Pamoate', 'Others']);
             $table->string('other_deworming_medicine')->nullable();
             $table->string('administered_by');

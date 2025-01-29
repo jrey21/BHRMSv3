@@ -131,8 +131,8 @@ class ChildCareFormController extends Controller
     public function addVitA(Request $request, $child_id)
     {
         $validatedData = $request->validate([
-            'age'=> 'required|integer|max:255',
-            'age_unit' => 'required|string|max:255',
+            'age'=> 'integer|max:255',
+            'age_unit' => 'string|max:255',
             'dose' => 'required|string|max:255',
             'date' => 'required|date',
         ]);
@@ -205,8 +205,8 @@ class ChildCareFormController extends Controller
     {
         $validatedData = $request->validate([
             'date' => 'required|date',
-            'age' => 'required|integer',
-            'age_unit' => 'required|string|max:255',
+            'age' => 'integer',
+            'age_unit' => 'string|max:255',
             'deworming_medicine' => 'required|string|max:255',
             'other_deworming_medicine' => 'nullable|string|max:255',
             'administered_by' => 'required|string|max:255',
