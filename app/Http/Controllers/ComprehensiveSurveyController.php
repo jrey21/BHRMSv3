@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ComprehensiveSurvey;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class ComprehensiveSurveyController extends Controller
 {
@@ -98,7 +99,8 @@ class ComprehensiveSurveyController extends Controller
     //Fetch senior citizen data
     public function seniorCitizen()
     {
-        $seniorCitizen = ComprehensiveSurvey::where('age', '>=', 60)->get();
+        $today = Carbon::today();
+        $seniorCitizen = ComprehensiveSurvey::whereRaw("TIMESTAMPDIFF(YEAR, birth_date, ?) >= 60", [$today])->get();
         return response()->json($seniorCitizen);   
     }
 

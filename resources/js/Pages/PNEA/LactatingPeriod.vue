@@ -26,6 +26,7 @@ const newRecord = ref({
     muac: '',
     muac_color: '',
     muac_status: '',
+    date:'',
 });
 
 const calculateBMI = (weight, height) => {
@@ -67,6 +68,7 @@ const resetForm = () => {
         muac: '',
         muac_color: '',
         muac_status: '',
+        date: '',
     };
 };
 
@@ -197,6 +199,10 @@ const getStatusStyle = (status) => {
             <form @submit.prevent="addRecord">
                 <!-- Form fields for adding a new record -->
                 <div class="form-row">
+                    <div class="form-group duration">
+                        <label for="date">Record Date</label>
+                        <input type="date" v-model="newRecord.date" required />  
+                    </div>
                     <div class="form-group">
                         <label for="month">Month</label>
                         <select v-model="newRecord.month" required>

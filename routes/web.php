@@ -97,7 +97,14 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::inertia('/pwd-view', 'PWD/View')->name('pwd-view');
     Route::get('/pwd-data', [ComprehensiveSurveyController::class, 'pwd'])->name('pwd-data');
     Route::inertia('/age-grouping-view', 'AgeGrouping/View')->name('age-grouping-view');
+
+    // Monitoring Form
+    Route::inertia('monitoring-form', 'MonitoringForm/View')->name('monitoring-form');
+    Route::get('/monitoring-data', [PNEAEnrollmentController::class, 'displayPregnancyPeriodData'])->name('monitoring-data');
     
+    //Lactating Form
+    Route::inertia('lactating-form', 'Lactating/View')->name('lactating-form');
+    Route::get('/lactating-data', [PNEAEnrollmentController::class, 'displayLactatingPeriodData'])->name('lactating-data');
     // -- ----- -- - - - --  - - - - - -  -- -  -- - - - --  - - - - - - - -//
 
     // Child Care Form

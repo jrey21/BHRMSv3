@@ -4,6 +4,9 @@ import FormLayout from '../../Layouts/FormLayout.vue';
 import Enrollment from './Enrollment.vue';
 import PregnancyPeriod from './PregnancyPeriod.vue';
 import LactatingPeriod from './LactatingPeriod.vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+
 // import OPData from './OPData.vue';
 
 
@@ -36,9 +39,9 @@ const toggleTables = () => {
             </transition>
 
         <transition name="fade">
-                <button class="t-btn" @click="toggleTables">
-                    {{ showTables ? 'Hide' : 'View' }}
-                </button>
+            <button class="t-btn" @click="toggleTables">
+                <FontAwesomeIcon :icon="showTables ? faChevronUp : faChevronDown" />
+            </button>
         </transition>
     </div>
 
@@ -73,5 +76,18 @@ const toggleTables = () => {
     align-items: center;
     margin-bottom: 20px;
     margin-left: 20px;
+}
+button {
+    padding: 5px 10px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #488a99;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+button:hover {
+    background-color: #3a6f7a;
 }
 </style>

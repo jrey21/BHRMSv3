@@ -227,6 +227,7 @@ class PNEAEnrollmentController extends Controller
             'muac' => 'nullable|numeric',  
             'muac_color' => 'nullable|string',
             'muac_status' => 'nullable|string', 
+            'date' => 'required|date',
         ]);
 
         $pnea = PNEAEnrollment::findOrFail($pnea_id);
@@ -247,6 +248,7 @@ class PNEAEnrollmentController extends Controller
             'muac' => 'nullable|numeric',  
             'muac_color' => 'nullable|string',
             'muac_status' => 'nullable|string', 
+            'date' => 'required|date',
         ]);
 
         $pnea = PNEAEnrollment::findOrFail($pnea_id);
@@ -630,6 +632,20 @@ class PNEAEnrollmentController extends Controller
         $pnea = PNEAEnrollment::findOrFail($id);
         $pnea->delete();
 
+        return response()->json($pnea);
+    }
+
+    //display all pregnancy period data of all pregnant records who has pregnancy period data
+    public function displayPregnancyPeriodData()
+    {
+        $pnea = PNEAEnrollment::whereHas('pregnancyPeriods')->with('pregnancyPeriods')->get();
+        return response()->json($pnea);
+    }
+
+    //display lactating 
+    public function displayLactatingPeriodData()
+    {
+        $pnea = PNEAEnrollment::whereHas('lactatingPeriods')->with('lactatingPeriods')->get();
         return response()->json($pnea);
     }
     

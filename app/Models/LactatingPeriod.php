@@ -21,6 +21,7 @@ class LactatingPeriod extends Model
         'muac',
         'muac_color',
         'muac_status',
+        'date'
     ];
 
     public function pnea()

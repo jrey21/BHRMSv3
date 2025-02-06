@@ -124,9 +124,9 @@ const setActiveLink = (link) => {
                         </svg>
                     </button>
                     <ul :class="{ 'sub-menu': true, 'show': maternalCareOpen }">
-                        <li><Link :href="route('pnea-enrollment-view')" class="menu" :class="{ active: route().current('pnea-enrollment-view') }" @click="setActiveLink($event.target.closest('.menu'))">Pregnant Women</Link></li>
-                        <li><Link href="#" class="menu" @click="setActiveLink($event.target.closest('.menu'))">Monitoring Form</Link></li>
-                        <li><Link href="#" class="menu" @click="setActiveLink($event.target.closest('.menu'))">Breastfeeding</Link></li>
+                        <li><Link :href="route('pnea-enrollment-view')" class="menu" :class="{ active: route().current('pnea-enrollment-view') }" @click="setActiveLink($event.target.closest('.menu'))">Pregnant Mothers</Link></li>
+                        <li><Link :href="route('monitoring-form')" class="menu" :class="{active: route().current('monitoring-form')}" @click="setActiveLink($event.target.closest('.menu'))">Pregnant Monitoring</Link></li>
+                        <li><Link :href="route('lactating-form')" class="menu" :class="{active: route().current('lactating-form')}" @click="setActiveLink($event.target.closest('.menu'))">Lactating Mothers</Link></li>
                     </ul>
                 </li>
 

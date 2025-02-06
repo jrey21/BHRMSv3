@@ -11,6 +11,8 @@ import DevelopmentalScreening from './DevelopmentalScreening.vue';
 import Deworming from './Deworming.vue';
 import Dental from './Dental.vue';
 import Space from '../../Components/Space.vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 defineOptions({
     layout: FormLayout,
@@ -51,7 +53,7 @@ const today = computed(() => {
         </transition>
         <transition name="fade">
             <button class="t-btn" @click="toggleTables">
-                {{ showTables ? 'Hide' : 'View' }} Full Information
+                <FontAwesomeIcon :icon="showTables ? faChevronUp : faChevronDown" />
             </button>
         </transition>
     </div>

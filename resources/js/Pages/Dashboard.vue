@@ -13,6 +13,27 @@ defineOptions({ layout: Layout });
 
 const isMobile = ref(false);
 
+const lactatingMothers = ref([]);
+
+onMounted(async () => {
+    try {
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+});
+
+watchEffect(async () => {
+    try {
+        const response = await axios.get(route('lactating-data'));
+        lactatingMothers.value = response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+});
+
+const totalLactating = computed(() => lactatingMothers.value.length);
+
+
 
 const dataCitizens = ref([]);
 
@@ -174,6 +195,7 @@ watchEffect(async () => {
 
 const totalPregnants = computed(() => pneaData.value.length);
 
+
 const dataUnderweights = ref([]);
 
 onMounted(async () => {
@@ -239,9 +261,9 @@ onUnmounted(() => {
                         <i class="fas fa-chart-bar" style="position: absolute; top: 25px; right: 15px; color: white; opacity:45%; font-size: 50px"></i>
                     </div>
                     <div class="breastfeeding">
-                        <h2 class="numbers">145</h2>
-                        <p class="labels">Number of Breastfeeding</p>
-                        <p class="view-dets">View Details</p>
+                        <h2 class="numbers">{{ totalLactating }}</h2>
+                        <p class="labels">Number of Lactating Mothers</p>
+                        <Link :href="route('lactating-form')" class="view-dets">View Details</Link>
                         <i class="fas fa-baby" style="position: absolute; top: 25px; right: 15px; color: white; opacity:45%; font-size: 50px"></i>
                     </div>
                     <div class="pregnant">

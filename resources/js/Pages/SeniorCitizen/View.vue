@@ -11,6 +11,12 @@ defineOptions({
     layout: FormLayout
 });
 
+const showQR = ref(false);
+
+const toggleQR = () => {
+    showQR.value = !showQR.value;
+};
+
 const dataCitizens = ref([]);
 
 onMounted(async () => {
@@ -45,6 +51,24 @@ const filteredData = computed(() => {
 
 const sortOption = ref('');
 
+const calculateAge = (birthDate) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+
+    if (age === 0) {
+        const months = monthDifference + 12 * (today.getFullYear() - birth.getFullYear());
+        return `${months} ${months === 1 ? 'month' : 'months'}`;
+    }
+
+    return `${age} ${age === 1 ? 'year' : 'years'}`;
+};
+
 const sortedData = computed(() => {
     let data = [...filteredData.value];
     if (sortOption.value === 'asc') {
@@ -56,7 +80,10 @@ const sortedData = computed(() => {
     } else if (sortOption.value === 'zone') {
         data.sort((a, b) => a.zone.localeCompare(b.zone));
     }
-    return data;
+    return data.map(item => ({
+        ...item,
+        age_display: calculateAge(item.birth_date)
+    }));
 });
 
 const paginatedData = computed(() => {
@@ -124,7 +151,7 @@ const downloadPDF = async () => {
     const dataWithoutQR = data.map((data, index) => [
         `${index + 1}.`,
         `${data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1)}, ${data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1)}`,
-        `${data.age}`,
+        `${data.age_display}`,
         data.sex.charAt(0).toUpperCase(),
         data.zone
     ]);
@@ -281,12 +308,15 @@ defineExpose({
                     </tr>
                     <tr v-for="data in paginatedDataWithQR" :key="data.id">
                         <td>{{ data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1) + ", " + data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1) }}</td>
-                        <td>{{ data.age }}</td>
+                        <td>{{ data.age_display }}</td>
                         <td>{{ data.sex.charAt(0).toUpperCase() }}</td>
                         <td>{{ data.zone }}</td>
-                        <td>
-                            <img :src="data.qrCode" alt="QR Code" />
-                            <button @click="downloadQRCode(data)" style="font-size: 10px; color: maroon;">Download</button>
+                        <td @click="toggleQR" style="cursor: pointer; color: #007bff; font-size: 12px;">
+                            {{ showQR ? 'Hide' : 'View' }}
+                            <div v-if="showQR">
+                                <img :src="data.qrCode" alt="QR Code" />
+                                <button @click="downloadQRCode(data)" style="font-size: 10px; color: maroon;">Download</button>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

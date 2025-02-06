@@ -87,7 +87,7 @@ onMounted(async () => {
     try {
         const response = await axios.get(route('pnea-enrollment-data'));
         pneaData.value = response.data;
-        incrementAge(); // Call the function to increment age on mount
+        incrementAge(); 
     } catch (error) {
         console.error('Error fetching pnea enrollment data:', error);
     }
@@ -108,7 +108,7 @@ const pneaCopy = ref({});
 
 const editData = (child) => {
     selectedPnea.value = child;
-    pneaCopy.value = { ...child }; // Create a copy of the selected child
+    pneaCopy.value = { ...child }; 
     showModal.value = true;
 };
 
@@ -227,7 +227,7 @@ const downloadPDF = () => {
 
     // Bold font for the "Vaccination Records" title
     doc.setFont('helvetica', 'normal');
-    doc.text('List of Pregnant Women', pageWidth / 2, 40, { align: 'center' });
+    doc.text('List of Pregnant Mothers', pageWidth / 2, 40, { align: 'center' });
 
     // Bold font for the "BHS PATAG" title
     doc.setFont('helvetica', 'bold');
@@ -255,19 +255,19 @@ const downloadPDF = () => {
             doc.text(`Page ${data.pageNumber} of ${pageCount}`, pageWidth - 10, pageHeight - 10, { align: 'right' });
         }
     });
-    doc.save('Pregnant_Women_List.pdf');
+    doc.save('Pregnant_Mothers_List.pdf');
 };
 </script>
 
 <template>
-    <Head title=" | Pregnant Women"/>
+    <Head title=" | Pregnant Mothers"/>
     <transition name="fade">
         <div v-if="showFlashMessage" class="flash-modal">
             <div class="flash-content">{{ flashMessage }}</div>
         </div>
     </transition>
     <div class="header">
-        <h1 class="child-head text-slate-500">List of Pregnant Women</h1>
+        <h1 class="child-head text-slate-500">List of Pregnant Mothers</h1>
     </div>
     <div class="data-container">
         <div class="action-bar">

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->float('muac');
             $table->string('muac_color');
             $table->string('muac_status');
+            $table->date('date');
             $table->timestamps();
         });
     }
