@@ -258,6 +258,7 @@ const toggleCounseling = () => {
     text-align: center;
     font-weight: bold;
     z-index: 1;
+    color: white;
 }
 .info-table td {
     border: 1px solid #ddd;

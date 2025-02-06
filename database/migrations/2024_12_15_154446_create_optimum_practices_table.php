@@ -12,24 +12,54 @@ class CreateOptimumPracticesTable extends Migration
             $table->id()->primary();
             $table->unsignedBigInteger('pnea_id');
             $table->foreign('pnea_id')->references('id')->on('pnea_enrollment')->onDelete('cascade');
+
+            //Row 1
             $table->boolean('prenatal_care_counseled')->default(false)->nullable();
             $table->date('prenatal_care_date_counseled')->nullable();
             $table->enum('prenatal_care_practiced',['Rural Health Unit','Private Hospital/Clinic'])->nullable();
+
+            //Row 2
             $table->boolean('prenatal_checkup_counseled')->default(false)->nullable();
             $table->date('prenatal_checkup_date_counseled')->nullable();
-            $table->enum('prenatal_checkup_trimester_practiced',['1st Trimester','2nd Trimester','3rd Trimester'])->nullable();
-            $table->date('prenatal_checkup_date_practiced')->nullable();
+            $table->date(' prenatal_care_date_1')->nullable();
+            $table->date(' prenatal_care_date_2')->nullable();
+            $table->date(' prenatal_care_date_3')->nullable();
+            $table->date(' prenatal_care_date_4')->nullable();
+            $table->date(' prenatal_care_date_5')->nullable();
+            $table->date(' prenatal_care_date_6')->nullable();
+            $table->date(' prenatal_care_date_7')->nullable();
+            $table->date(' prenatal_care_date_8')->nullable();
+            $table->date(' prenatal_care_date_9')->nullable();
+
+            //Row 3
             $table->boolean('iron_folic_acid_counseled')->default(false)->nullable();
             $table->date('iron_folic_acid_date_counseled')->nullable();
-            $table->enum('iron_folic_acid_trimester_practiced',['1st Trimester','2nd Trimester','3rd Trimester'])->nullable();
-            $table->date('iron_folic_acid_date_practiced')->nullable();
+            $table->date('iron_folic_acid_date_1')->nullable();
+            $table->date('iron_folic_acid_date_2')->nullable();
+            $table->date('iron_folic_acid_date_3')->nullable();
+            $table->date('iron_folic_acid_date_4')->nullable();
+            $table->date('iron_folic_acid_date_5')->nullable();
+            $table->date('iron_folic_acid_date_6')->nullable();
+            $table->date('iron_folic_acid_date_7')->nullable();
+            $table->date('iron_folic_acid_date_8')->nullable();
+            $table->date('iron_folic_acid_date_9')->nullable();
+
+            //Row 4
             $table->boolean('iodized_salt_counseled')->default(false)->nullable();
             $table->date('iodized_salt_date_counseled')->nullable();
             $table->date('iodized_salt_practiced')->nullable();
+
+            //Row 5
             $table->boolean('tetanus_counseled')->default(false)->nullable();
             $table->date('tetanus_date_counseled')->nullable();
-            $table->enum('tetanus_dose_practiced',['First Dose','Second Dose','Third Dose','Fourth Dose','Fifth Dose'])->nullable();
-            $table->date('tetanus_date_practiced')->nullable();
+           
+            $table->date('dose_date_1')->nullable();
+            $table->date('dose_date_2')->nullable();
+            $table->date('dose_date_3')->nullable();
+            $table->date('dose_date_4')->nullable();
+            $table->date('dose_date_5')->nullable();
+
+            //Row 6
             $table->tinyInteger('initiation')->default(0)->nullable();
             $table->tinyInteger('exclusivity')->default(0)->nullable();
             $table->tinyInteger('duration')->default(0)->nullable();
@@ -92,47 +122,47 @@ class CreateOptimumPracticesTable extends Migration
             $table->boolean('no_other_liquid_given')->default(false)->nullable();
 
             // Dropdown for multiple instances (1st to 6th)
-            $table->string('exclusive_breastfeeding_colostrums_1')->nullable();
-            $table->string('exclusive_breastfeeding_colostrums_2')->nullable();
-            $table->string('exclusive_breastfeeding_colostrums_3')->nullable();
-            $table->string('exclusive_breastfeeding_colostrums_4')->nullable();
-            $table->string('exclusive_breastfeeding_colostrums_5')->nullable();
-            $table->string('exclusive_breastfeeding_colostrums_6')->nullable();
+            $table->enum('exclusive_breastfeeding_colostrums_1',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_colostrums_2',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_colostrums_3',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_colostrums_4',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_colostrums_5',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_colostrums_6',['Yes','No'])->nullable();
 
-            $table->string('exclusive_breastfeeding_water_1')->nullable();
-            $table->string('exclusive_breastfeeding_water_2')->nullable();
-            $table->string('exclusive_breastfeeding_water_3')->nullable();
-            $table->string('exclusive_breastfeeding_water_4')->nullable();
-            $table->string('exclusive_breastfeeding_water_5')->nullable();
-            $table->string('exclusive_breastfeeding_water_6')->nullable();
+            $table->enum('exclusive_breastfeeding_water_1',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_water_2',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_water_3',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_water_4',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_water_5',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_water_6',['Yes','No'])->nullable();
 
-            $table->string('exclusive_breastfeeding_food_1')->nullable();
-            $table->string('exclusive_breastfeeding_food_2')->nullable();
-            $table->string('exclusive_breastfeeding_food_3')->nullable();
-            $table->string('exclusive_breastfeeding_food_4')->nullable();
-            $table->string('exclusive_breastfeeding_food_5')->nullable();
-            $table->string('exclusive_breastfeeding_food_6')->nullable();
+            $table->enum('exclusive_breastfeeding_food_1',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_food_2',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_food_3',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_food_4',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_food_5',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_food_6',['Yes','No'])->nullable();
 
-            $table->string('exclusive_breastfeeding_vitamins_1')->nullable();
-            $table->string('exclusive_breastfeeding_vitamins_2')->nullable();
-            $table->string('exclusive_breastfeeding_vitamins_3')->nullable();
-            $table->string('exclusive_breastfeeding_vitamins_4')->nullable();
-            $table->string('exclusive_breastfeeding_vitamins_5')->nullable();
-            $table->string('exclusive_breastfeeding_vitamins_6')->nullable();
+            $table->enum('exclusive_breastfeeding_vitamins_1',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_vitamins_2',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_vitamins_3',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_vitamins_4',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_vitamins_5',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_vitamins_6',['Yes','No'])->nullable();
 
-            $table->string('exclusive_breastfeeding_formula_milk_1')->nullable();
-            $table->string('exclusive_breastfeeding_formula_milk_2')->nullable();
-            $table->string('exclusive_breastfeeding_formula_milk_3')->nullable();
-            $table->string('exclusive_breastfeeding_formula_milk_4')->nullable();
-            $table->string('exclusive_breastfeeding_formula_milk_5')->nullable();
-            $table->string('exclusive_breastfeeding_formula_milk_6')->nullable();
+            $table->enum('exclusive_breastfeeding_formula_milk_1',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_formula_milk_2',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_formula_milk_3',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_formula_milk_4',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_formula_milk_5',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_formula_milk_6',['Yes','No'])->nullable();
 
-            $table->string('exclusive_breastfeeding_other_liquid_1')->nullable();
-            $table->string('exclusive_breastfeeding_other_liquid_2')->nullable();
-            $table->string('exclusive_breastfeeding_other_liquid_3')->nullable();
-            $table->string('exclusive_breastfeeding_other_liquid_4')->nullable();
-            $table->string('exclusive_breastfeeding_other_liquid_5')->nullable();
-            $table->string('exclusive_breastfeeding_other_liquid_6')->nullable();
+            $table->enum('exclusive_breastfeeding_other_liquid_1',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_other_liquid_2',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_other_liquid_3',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_other_liquid_4',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_other_liquid_5',['Yes','No'])->nullable();
+            $table->enum('exclusive_breastfeeding_other_liquid_6',['Yes','No'])->nullable();
             
 
             //Continue breastfeeding

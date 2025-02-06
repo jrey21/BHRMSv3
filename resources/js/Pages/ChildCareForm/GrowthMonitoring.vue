@@ -931,6 +931,19 @@ const addRecord = () => {
 const togglegrowth_monitorings = () => {
     showGrowthMonitoring.value = !showGrowthMonitoring.value;
 };
+
+const getClassificationStyle = (classification) => {
+    if (classification === 'Severely Stunted' || classification === 'Stunted') {
+        return { fontWeight: 'bold', color: 'green' };
+    }
+    if (classification === 'Severely Underweight' || classification === 'Underweight') {
+        return { fontWeight: 'bold', color: 'red' };
+    }
+    if (classification === 'Severely Wasted' || classification === 'Wasted') {
+        return { fontWeight: 'bold', color: 'orange' };
+    }
+    return {};
+};
 </script>
 
 <template>
@@ -971,9 +984,9 @@ const togglegrowth_monitorings = () => {
                             <td>{{ record.weight }}</td>
                             <td>{{ record.height }}</td>
                             <td>{{ record.sex }}</td>
-                            <td>{{ record.weight_age_status }}</td>
-                            <td>{{ record.height_age_status }}</td>
-                            <td>{{ record.weight_height_status }}</td>
+                            <td :style="getClassificationStyle(record.weight_age_status)">{{ record.weight_age_status }}</td>
+                            <td :style="getClassificationStyle(record.height_age_status)">{{ record.height_age_status }}</td>
+                            <td :style="getClassificationStyle(record.weight_height_status)">{{ record.weight_height_status }}</td>
                             <td>{{ formatDate(record.date) }}</td>
                         </tr>
                     </tbody>
@@ -1108,6 +1121,7 @@ const togglegrowth_monitorings = () => {
     text-align: center;
     font-weight: bold;
     z-index: 1;
+    color: white;
 }
 .info-table td {
     border: 1px solid #ddd;

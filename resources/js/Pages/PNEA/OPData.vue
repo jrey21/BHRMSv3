@@ -168,9 +168,9 @@ console.log(props.pnea.optimum_practice);
 </script>
 
 <template>
-<Head title=" | Optimum Practices"/>
+<Head title=" | Maternal Care"/>
 <div class="container">
-    <h2 style="text-align: center; color: #1c4e80">Optimum Practices Form</h2>
+    <h2 style="text-align: center; color: #1c4e80">Optimum Practices</h2>
     <form @submit.prevent="handleSubmit">
       <table class="info-table"  v-for="record in sortedPneaRecords" :key="record.date">
         <thead>
@@ -1005,6 +1005,7 @@ h2 {
   text-align: center;
   font-weight: bold;
   z-index: 1;
+  color:white;
 }
 
 .info-table td {

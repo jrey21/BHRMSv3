@@ -12,7 +12,6 @@ class AuthController extends Controller
 {
     public function register (Request $request)
     {   
-
         //Validate
         $fields = $request->validate([  
             'avatar' => ['file', 'nullable', 'max:5074'],
@@ -26,12 +25,8 @@ class AuthController extends Controller
            $fields['avatar'] = Storage::disk('public')->put('avatars', $request->avatar);
         }
 
-        // Set default approval status
-        $fields['is_approved'] = false;
-
-         // Hash the password before saving
-        $fields['password'] = Hash::make($fields['password']);
-
+        // Hash the password before saving
+        // $fields['password'] = Hash::make($fields['password']);
 
         //Register
         $user = User::create([
@@ -40,19 +35,13 @@ class AuthController extends Controller
             'password' => Hash::make($fields['password']),
             'position' => $fields['position'],
             'avatar' => $fields['avatar'] ?? null,
-            'is_approved' => false, 
         ]);
 
-        // Redirect
-        return redirect()->route('login')->with('success', 'Registration successful! Please wait for admin approval.');
-
-
         //Login
-        // Auth::login($user);
+        Auth::login($user);
 
         //Redirect
-        // return redirect('/dashboard')->with ('success', 'Registration Successful!');
-        // return redirect()->route('dashboard')->with('success', 'Registration Successful!');
+        return redirect()->route('dashboard')->with('success', 'Registration Successful!');
     }
 
     public function login(Request $request)
@@ -61,14 +50,6 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-    
-        $user = User::where('email', $request->email)->first();
-    
-        if ($user && !$user->is_approved) {
-            return back()->withErrors([
-                'email' => 'Your account is not approved yet. Please wait for admin approval.',
-            ]);
-        }
     
         if (Auth::attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
@@ -81,7 +62,6 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
     
-
     public function logout (Request $request)
     {
         Auth::logout();
@@ -91,13 +71,10 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
-
     //retrive the users
     public function retrieve()
     {
         $users = User::all();
         return response()->json($users);
     }
-
-
 }

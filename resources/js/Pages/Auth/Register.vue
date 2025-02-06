@@ -32,6 +32,8 @@ const submit = () => {
 </script>
 
 <template>
+    <Head title=" | Register"/>
+
     <div class="min-h-screen flex items-center justify-center">
         <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
             <h3 class="text-2xl font-bold mb-6 text-center">Create a new Account</h3>

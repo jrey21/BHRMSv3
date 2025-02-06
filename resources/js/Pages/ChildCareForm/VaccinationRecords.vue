@@ -82,7 +82,7 @@ const addRecord = () => {
             showVacModal.value = false;
             flashMessage.value = 'Record added successfully!';
             showFlashMessage.value = true;
-            setTimeout(() => (showFlashMessage.value = false), 5000);
+            setTimeout(() => (showFlashMessage.value = false), 3000);
             props.child.vaccination_records.push(response.data.record); 
             updateVaccinationStatus(); 
         })
@@ -346,6 +346,7 @@ const formatDate = (dateString) => {
 .info-table th{
     position:sticky;
     top:-1px;
+    color: white;
 }
 .info {
     font-weight: bold;

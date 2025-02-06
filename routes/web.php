@@ -16,10 +16,11 @@ use App\Http\Controllers\DistributionController;
 use App\Http\Controllers\DistributedMedicineController;
 use App\Http\Controllers\PNEAEnrollmentController;
 use App\Http\Controllers\GrowthMonitoringController;
-use App\Http\Controllers\OptimumPracticeController;
+use App\Http\Controllers\PregnancyPeriodController;
+// use App\Http\Controllers\OptimumPracticeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserConfirmationController;
+// use App\Http\Controllers\UserConfirmationController;
 
 Route::inertia('/', 'Auth/Login' )->name('Login');
 // Route::middleware(['auth', 'approved', 'admin'])->group(function () {
@@ -129,7 +130,10 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::post('/child/{id}/addDental', [ChildCareFormController::class, 'addDental'])->name('child.addDental');
     //Route::get('/child/{id}', [ChildCareFormController::class, 'showVitA'])->name('child.showVitA');
     
-
+    //PNEA Enrollment
+    Route::post('/pnea/{id}/addPregnancyPeriod', [PNEAEnrollmentController::class, 'addPregnancyPeriod'])->name('pnea.addPregnancyPeriod');
+    Route::post('/pnea/{id}/addLactatingPeriod', [PNEAEnrollmentController::class, 'addLactatingPeriod'])->name('pnea.addLactatingPeriod');
+    
     Route::put('/medicine-list-distribute/{id}', [DistributedMedicineController::class, 'distribute'])->name('medicine-list-distribute');
 
      // -- ----- -- - - - --  - - - - - -  -- -  -- - - - --  - - - - - - - -//
@@ -137,7 +141,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
      // PNEA Enrollment
     Route::inertia('pnea-enrollment', 'PNEA/Form')->name('pnea-enrollment');
     Route::inertia('pnea-enrollment-view', 'PNEA/View')->name('pnea-enrollment-view');
-    Route::inertia('optimum-practice', 'PNEA/OptimumPractice')->name('optimum-practice');
+    // Route::inertia('optimum-practice', 'PNEA/OptimumPractice')->name('optimum-practice');
     //Save new data
     Route::post('/pnea-enrollment', [PNEAEnrollmentController::class, 'store'])->name('pnea-enrollment');
     // Route::post('/optimum-practices-data', [OptimumPracticeController::class, 'store']);
@@ -154,7 +158,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
 
     //Retrieve details of specific data from pnea
     Route::get('/pnea/{id}', [PNEAEnrollmentController::class, 'show'])->name('pnea.show');
-    Route::post('/pnea/{id}/addOptimumPractice', [PNEAEnrollmentController::class, 'addOptimumPractices'])->name('pnea.addOptimumPractice');
+    // Route::post('/pnea/{id}/addOptimumPractice', [PNEAEnrollmentController::class, 'addOptimumPractices'])->name('pnea.addOptimumPractice');
 
 
     // -- ----- -- - - - --  - - - - - -  -- -  -- - - - --  - - - - - - - -//
@@ -171,10 +175,10 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     // -- ----- -- - - - --  - - - - - -  -- -  -- - - - --  - - - - - - - -//
     //Optimum Practice
     // Route::inertia('/optimum-practice', 'OptimumPractice/View')->name('optimum-practice');
-    Route::get('/optimum-practice-data', [PNEAEnrollmentController::class, 'retrieveWithOptimumPractices'])->name('optimum-practice-data');
-    Route::inertia('another-form', 'PNEA/AnotherForm')->name('another-form');
+    // Route::get('/optimum-practice-data', [PNEAEnrollmentController::class, 'retrieveWithOptimumPractices'])->name('optimum-practice-data');
+    // Route::inertia('another-form', 'PNEA/AnotherForm')->name('another-form');
 
-    Route::inertia('/form-2', 'PNEA/EnrollmentAndOptimumPractice')->name('form-2');
+    // Route::inertia('/form-2', 'PNEA/EnrollmentAndOptimumPractice')->name('form-2');
 
 
     // -- ----- -- - - - --  - - - - - -  -- -  -- - - - --  - - - - - - - -//

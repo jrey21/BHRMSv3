@@ -239,10 +239,10 @@ onMounted(() => {
         </div>
         <div v-if="showPastEvents">
             <div class="past-event-header">Past Events</div>
-            <div v-for="(event, index) in pastEvents" :key="index" class="past-event-item">
+            <div v-for="(event, index) in pastEvents" :key="index"  @click="confirmDelete(event.date)" class="past-event-item">
                 <p class="past-event-date">{{ formatDate(event.date) }}</p>
                 <p class="past-event-title">{{ event.title }}</p>
-                <button @click="deletePastEvent(event.date)">Delete</button>
+                <!-- <button @click="deletePastEvent(event.date)">Delete</button> -->
             </div>
             <div style="margin-top:35%;"></div>
         </div>
