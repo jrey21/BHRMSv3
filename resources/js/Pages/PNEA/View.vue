@@ -315,6 +315,9 @@ const downloadPDF = () => {
                             <button @click="router.get(route('pnea.show', { id: data.id }))" class="address-button">
                                 <i class="fas fa-address-card"></i>
                             </button>
+                            <button @click="markAsGivenBirth(data)" class="birth-button">
+                                <i class="fas fa-check"></i>
+                            </button>
                             <button @click="confirmDelete(data)" class="delete-button">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -837,7 +840,8 @@ h2{
 .modal-content button {
     margin-top: 20px;
     padding: 8px 12px;
-    background-color: #007bff;
+    /* background-color: #007bff; */
+    background-color: #dc3545;
     color: white;
     border: none;
     border-radius: 5px;
@@ -847,16 +851,17 @@ h2{
 }
 
 .modal-content button:hover {
-    background-color: #0056b3;
+    background-color: #c82333;
 }
 
 .modal-content button:last-child {
-    background-color: #dc3545;
+    /* background-color: #dc3545; */
+    background-color: #007bff;
     margin-left: 10px;
 }
 
 .modal-content button:last-child:hover {
-    background-color: #c82333;
+    background-color: #0056b3;
 }
 
 .modal-buttons {

@@ -257,4 +257,11 @@ class ChildCareFormController extends Controller
 
         return response()->json($child);
     }
+
+    // Function to retrieve and sort zones
+    public function retrieveAndSortZones()
+    {
+        $zones = ChildCareForm::select('zone')->get();
+        return response()->json($zones);
+    }
 }

@@ -4,6 +4,9 @@ import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 import FormLayout from '../../Layouts/FormLayout.vue';
 import Distribution from './Distribution.vue';
+import { format } from 'date-fns';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 defineOptions({ layout: FormLayout });
 
@@ -78,7 +81,7 @@ const editData = async (medicineList) => {
 const closeModal = () => {
     showModal.value = false;
     selectedMedicineList.value = null;
-    originalMedicineList.value = null; // Reset original data
+    originalMedicineList.value = null; 
 };
 
 const flashMessage = ref('');
@@ -111,25 +114,37 @@ const saveChanges = async () => {
 };
 
 
-const deleteData = async (medicineList) => {
-    if (confirm('Are you sure you want to delete this medicine?')) {
-        try {
-            await axios.delete(route('medicine-list-delete', { id: medicineList.id }));
-            medicineListData.value = medicineListData.value.filter(item => item.id !== medicineList.id);
-            flashMessage.value = 'Medicine deleted successfully!';
-            showFlashMessage.value = true;
-            setTimeout(() => {
-                showFlashMessage.value = false;
-            }, 500);
-        } catch (error) {
-            console.error('Error deleting medicineList data:', error);
-            flashMessage.value = `Error deleting medicine: ${JSON.stringify(error.response.data)}`;
-            showFlashMessage.value = true;
-            setTimeout(() => {
-                showFlashMessage.value = false;
-            }, 900);
-        }
+const showDeleteModal = ref(false);
+const medicineToDelete = ref(null);
+
+const confirmDelete = (medicine) => {
+    medicineToDelete.value = medicine;
+    showDeleteModal.value = true;
+};
+
+const deleteData = async () => {
+    try {
+        await axios.delete(route('medicine-list-delete', { id: medicineToDelete.value.id }));
+        medicineListData.value = medicineListData.value.filter(item => item.id !== medicineToDelete.value.id);
+        flashMessage.value = 'Medicine deleted successfully!';
+        showFlashMessage.value = true;
+        setTimeout(() => {
+            showFlashMessage.value = false;
+        }, 900);
+        closeDeleteModal();
+    } catch (error) {
+        console.error('Error deleting medicine:', error);
+        flashMessage.value = `Error deleting medicine: ${JSON.stringify(error.response.data)}`;
+        showFlashMessage.value = true;
+        setTimeout(() => {
+            showFlashMessage.value = false;
+        }, 5000);
     }
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    medicineToDelete.value = null;
 };
 
 const showAddModal = ref(false);
@@ -262,6 +277,58 @@ const distributeMedicine = async () => {
 const flashMessageClass = computed(() => {
     return flashMessage.value.includes('Error') ? 'flash-modal error' : 'flash-modal success';
 });
+
+const formatDate = (dateString) => {
+    return format(new Date(dateString), 'MMMM dd, yyyy');
+};
+
+const downloadPDF = () => {
+    let data = [...filteredData.value]; // Use filteredData to ensure the data is filtered according to the search query
+
+    const doc = new jsPDF();
+
+    // Set font size and alignment
+    doc.setFontSize(12);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header section (Regular font for other titles)
+    doc.setFont('helvetica', 'normal');
+    doc.text('Republic of the Philippines', pageWidth / 2, 10, { align: 'center' });
+    doc.text('Province of Leyte', pageWidth / 2, 16, { align: 'center' });
+    doc.text('City of Baybay', pageWidth / 2, 22, { align: 'center' });
+
+    // Add more space before the "Medicine List" title
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('List of Medicines', pageWidth / 2, 40, { align: 'center' });
+    
+    // Bold font for the "BHS PATAG" title
+    doc.setFont('helvetica', 'bold');
+    doc.text('BHS PATAG', pageWidth / 2, 50, { align: 'center' });
+    
+    // Adjusted top margin for the table
+    const tableStartY = 60;
+    
+    doc.autoTable({
+        head: [['', 'Medicine Name', 'Type', 'Available', 'Expiry Date']],
+        body: data.map((data, index) => [
+            `${index + 1}.`, 
+            data.name + " " + "( " + data.measurement +" )",
+            data.type,
+            data.quantity,
+            formatDate(data.expiry_date)
+        ]),
+        startY: tableStartY, // Adjusted top margin
+        didDrawPage: function (data) {
+            // Add page number
+            let pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(10);
+            doc.setTextColor(150); 
+            doc.text(`Page ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+        }
+    });
+    doc.save('Medicine-list.pdf');
+};
 </script>
 
 <template>
@@ -287,6 +354,9 @@ const flashMessageClass = computed(() => {
                 <!-- <button @click="router.get(route('beneficiaries-form'))" class="add-button">
                     <i class="fas fa-plus"></i>
                 </button> -->
+                <button class="download-button" @click="downloadPDF">
+                    <i class="fas fa-download"></i>
+                </button>
                 <button @click="openAddModal" class="add-button">
                     <i class="fas fa-plus"></i> Medicine
                 </button>
@@ -313,12 +383,12 @@ const flashMessageClass = computed(() => {
                         <td>{{ data.name + " " + "( " + data.measurement +" )"}}</td>
                         <td>{{ data.type }}</td>
                         <td>{{ data.quantity }}</td>
-                        <td>{{ data.expiry_date }}</td>
+                        <td>{{ formatDate(data.expiry_date) }}</td>
                         <td>
                             <button @click="editData(data)" class="edit-button">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button @click="deleteData(data)" class="delete-button">
+                            <button @click="confirmDelete(data)" class="delete-button">
                                 <i class="fas fa-trash"></i>
                             </button>
                             <button @click="openDistributeModal(data)" class="distribute-button">
@@ -446,10 +516,36 @@ const flashMessageClass = computed(() => {
             </form>
         </div>
     </div>
+    <div v-if="showDeleteModal" class="modal">
+        <div class="modal-content-btn">
+            <h2>Confirm Delete</h2>
+            <hr style="margin-top: 10px; margin-bottom:10px; padding: 0;">
+            <p>Are you sure you want to delete <strong style="color: #007bff;">{{ medicineToDelete.name }} </strong> ?</p>
+            <div class="modal-buttons">
+                <button @click="deleteData" class="delete-btn">Delete</button>
+                <button @click="closeDeleteModal" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
     <Distribution />
 </template>
 
 <style scoped>
+.download-button{
+    border-radius: 8px; 
+}
+.delete-btn{
+    background-color: #dc3545;
+    border: none;
+    color: white;
+    padding: 3px 8px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.delete-btn :hover{
+    background-color: #c82333;
+}
 h2{
     color: #488a99;
     font-size: 18px;
@@ -749,6 +845,44 @@ h2{
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     animation: fadeIn 0.3s ease-in-out;
 }
+.modal-content-btn {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content-btn button {
+    margin-top: 20px;
+    padding: 8px 12px;
+    /* background-color: #007bff; */
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; 
+    transition: background-color 0.3s ease;
+}
+
+.modal-content-btn button:hover {
+    background-color: #c82333;
+}
+
+.modal-content-btn button:last-child {
+    /* background-color: #dc3545; */
+    background-color: #007bff;
+    margin-left: 10px;
+}
+
+.modal-content-btn button:last-child:hover {
+    background-color: #0056b3;
+}
 
 @keyframes fadeIn {
     from {
@@ -914,5 +1048,10 @@ h2{
 .distribute-button:hover {
     background-color: #138496;
     transform: scale(1.1);
+}
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
 }
 </style>

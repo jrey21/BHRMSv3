@@ -3,6 +3,8 @@ import { ref, onMounted, computed, watchEffect } from 'vue';
 import { router } from '@inertiajs/vue3'; 
 import axios from 'axios';
 import FormLayout from '../../Layouts/FormLayout.vue';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 defineOptions({ layout: FormLayout });
 
@@ -26,8 +28,8 @@ const sortOrder = ref('asc'); // Default sort order
 
 const sortedData = computed(() => {
     return [...filteredData.value].sort((a, b) => {
-        const nameA = a.first_name.toLowerCase() + ' ' + a.last_name.toLowerCase();
-        const nameB = b.first_name.toLowerCase() + ' ' + b.last_name.toLowerCase();
+        const nameA = a.last_name.toLowerCase() + ' ' + a.first_name.toLowerCase();
+        const nameB = b.last_name.toLowerCase() + ' ' + b.first_name.toLowerCase();
         if (sortOrder.value === 'asc') {
             return nameA.localeCompare(nameB);
         } else {
@@ -153,6 +155,54 @@ const closeDeleteModal = () => {
     showDeleteModal.value = false;
     childToDelete.value = null;
 };
+
+const downloadPDF = () => {
+    let data = [...sortedData.value]; 
+
+    const doc = new jsPDF();
+
+    // Set font size and alignment
+    doc.setFontSize(12);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header section (Regular font for other titles)
+    doc.setFont('helvetica', 'normal');
+    doc.text('Republic of the Philippines', pageWidth / 2, 10, { align: 'center' });
+    doc.text('Province of Leyte', pageWidth / 2, 16, { align: 'center' });
+    doc.text('City of Baybay', pageWidth / 2, 22, { align: 'center' });
+
+    // Add more space before the "Child Care Data" title
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Early Childhood Care and Development (ECCD) ', pageWidth / 2, 40, { align: 'center' }); 
+    
+    // Bold the "List of Children" title
+    doc.setFont('helvetica', 'normal');
+    doc.text('Records', pageWidth / 2, 50, { align: 'center' });
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('BHS PATAG', pageWidth / 2, 60, { align: 'center' });
+
+    const tableStartY = 70;
+    doc.autoTable({
+        head: [['', 'Name', 'Birth Date', 'Address']],
+        body: data.map((data, index) => [
+            `${index + 1}.`, 
+            `${data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1)}, ${data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1)}`,
+            formatDate(data.birth_date),
+            data.complete_address
+        ]),
+        startY: tableStartY, // Adjusted top margin
+        didDrawPage: function (data) {
+            // Add page number
+            let pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(10);
+            doc.setTextColor(150); // Make the font color lighter
+            doc.text(`Page ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+        }
+    });
+    doc.save('Child Care Data.pdf');
+};
 </script>
 
 <template>
@@ -177,9 +227,12 @@ const closeDeleteModal = () => {
                 <button @click="toggleSortOrder" class="sort-button">
                     <i :class="sortOrder === 'asc' ? 'fas fa-sort-alpha-down' : 'fas fa-sort-alpha-up'"></i>
                 </button>
+                <button @click="downloadPDF" class="download-button">
+                    <i class="fas fa-download"></i>
+                </button>
                 <button @click="router.get(route('childcare-form'))" class="add-button">
                     <i class="fas fa-plus"></i>
-                </button>
+                </button>    
             </div>
         </div>
         <div class="scrollable-table">
@@ -273,6 +326,9 @@ const closeDeleteModal = () => {
 </template>
 
 <style scoped>
+.download-button{
+    border-radius: 8px;
+}
 .delete-button:hover {
     background-color: #c82333; 
     transform: scale(1.1);
@@ -678,7 +734,7 @@ h2{
 }
 
 .sort-button {
-    background-color: #007bff;
+    background-color:  #ffc107;
     border: none;
     color: white;
     padding: 5px 15px;
@@ -687,7 +743,7 @@ h2{
     display: inline-block;
     font-size: 14px;
     margin-top: 0;
-    margin-right: 10px;
+    margin-right: 2px;
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.3s ease;
@@ -698,7 +754,7 @@ h2{
 }
 
 .sort-button:hover {
-    background-color: #0056b3;
+    background-color: #e0a800; 
 }
 
 .delete-button {
@@ -719,7 +775,8 @@ h2{
 .modal-content button {
     margin-top: 20px;
     padding: 8px 12px;
-    background-color: #007bff;
+    /* background-color: #007bff; */
+    background-color: #dc3545;
     color: white;
     border: none;
     border-radius: 5px;
@@ -729,16 +786,19 @@ h2{
 }
 
 .modal-content button:hover {
-    background-color: #0056b3;
+    /* background-color: #0056b3; */
+    background-color: #c82333;
 }
 
 .modal-content button:last-child {
-    background-color: #dc3545;
+    /* background-color: #dc3545; */
+    background-color: #007bff;
     margin-left: 10px;
 }
 
 .modal-content button:last-child:hover {
-    background-color: #c82333;
+    /* background-color: #c82333; */
+    background-color: #0056b3;
 }
 
 .modal-buttons {

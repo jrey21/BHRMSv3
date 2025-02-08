@@ -2,6 +2,8 @@
 import { ref, onMounted, computed, watchEffect } from 'vue';
 import axios from 'axios';
 import FormLayout from '../../Layouts/FormLayout.vue';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 defineOptions({ layout: FormLayout });
 
@@ -117,6 +119,59 @@ const deleteData = async (benificiary) => {
     }
 };
 
+const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+const downloadPDF = () => {
+    let data = [...filteredData.value]; // Use filteredData to ensure the data is filtered according to the search query
+
+    const doc = new jsPDF();
+
+    // Set font size and alignment
+    doc.setFontSize(12);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header section (Regular font for other titles)
+    doc.setFont('helvetica', 'normal');
+    doc.text('Republic of the Philippines', pageWidth / 2, 10, { align: 'center' });
+    doc.text('Province of Leyte', pageWidth / 2, 16, { align: 'center' });
+    doc.text('City of Baybay', pageWidth / 2, 22, { align: 'center' });
+
+    // Add more space before the "Distribution Data" title
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Medicine Distribution', pageWidth / 2, 40, { align: 'center' });
+    
+    // Bold font for the "BHS PATAG" title
+    doc.setFont('helvetica', 'bold');
+    doc.text('BHS PATAG', pageWidth / 2, 50, { align: 'center' });
+    
+    // Adjusted top margin for the table
+    const tableStartY = 60;
+    
+    doc.autoTable({
+        head: [['', 'Beneficiary Name', 'Medicine Name', 'Quantity', 'Date']],
+        body: data.map((data, index) => [
+            `${index + 1}.`, 
+            data.beneficiary_name,
+            data.medicine_name,
+            data.distributed_quantity,
+            formatDate(data.distribution_date)
+        ]),
+        startY: tableStartY, // Adjusted top margin
+        didDrawPage: function (data) {
+            // Add page number
+            let pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(10);
+            doc.setTextColor(150); 
+            doc.text(`Page ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+        }
+    });
+    doc.save('Medicine-distribution.pdf');
+};
+
 </script>
 
 <template>
@@ -136,6 +191,7 @@ const deleteData = async (benificiary) => {
                     <input type="text" v-model="searchQuery" placeholder="Search by name ..." />
                 </div>
             </div>
+            <button class="download-button" @click="downloadPDF"><i class="fas fa-download"></i></button>
         </div>
         <div class="scrollable-table">
             <table class="data-table">
@@ -153,11 +209,11 @@ const deleteData = async (benificiary) => {
                         <td colspan="6">No data found</td>
                     </tr>
                     <tr v-for="data in paginatedData" :key="data.id">
-                        <td>{{ distributionData.indexOf(data) + 1 }}</td>
+                        <td>{{ distributionData.indexOf(data) + 1 +"." }}</td>
                         <td>{{ data.beneficiary_name }}</td>
                         <td>{{ data.medicine_name }}</td>
                         <td>{{ data.distributed_quantity }}</td>
-                        <td>{{ data.distribution_date }}</td>
+                        <td>{{ formatDate(data.distribution_date) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -565,5 +621,22 @@ h2 {
 .toggle-indicator {
     font-size: 18px;
     margin-left: 10px;
+}
+.download-button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 5px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+.download-button:hover {
+    background-color: #0056b3;
 }
 </style>

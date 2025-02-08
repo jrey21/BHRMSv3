@@ -147,4 +147,11 @@ class ComprehensiveSurveyController extends Controller
 
         return response()->json($survey);
     }
+
+    // Function to retrieve all zones without sorting
+    public function retrieveAndSortZones()
+    {
+        $zones = ComprehensiveSurvey::select('zone')->get();
+        return response()->json($zones);
+    }
 }

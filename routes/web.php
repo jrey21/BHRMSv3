@@ -156,7 +156,15 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     //Retrieve all data
     Route::get('/pnea-enrollment-data', [PNEAEnrollmentController::class, 'retrieve'])->name('pnea-enrollment-data');
     
-    
+    //Retrieve zone data
+    Route::get('/pnea-zone-data', [PNEAEnrollmentController::class, 'retrieveAndSortZones'])->name('pnea-zone-data');
+    Route::get('/childcare-zone-data', [ChildCareFormController::class, 'retrieveAndSortZones'])->name('childcare-zone-data');
+    Route::get('/comprehensive-survey-zone-data', [ComprehensiveSurveyController::class, 'retrieveAndSortZones'])->name('comprehensive-survey-zone-data');
+
+    //Retrieve sex
+    Route::get('/childcare-sex-data', [ChildCareFormController::class, 'retrieveSex'])->name('childcare-sex-data');
+    Route::get('/comprehensive-survey-sex-data', [ComprehensiveSurveyController::class, 'retrieveSex'])->name('comprehensive-survey-sex-data');
+
     //Edit specific data
     // Route::get('/maternal-care/{id}', [PNEAEnrollmentController::class, 'show'])->name('maternal-care.show');
     Route::get('/pnea-enrollment-edit/{id}', [PNEAEnrollmentController::class, 'edit'])->name('pnea-enrollment-edit');

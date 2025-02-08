@@ -43,6 +43,14 @@ const calculateAge = (birthDate, recordDate) => {
     return { age, age_unit };
 };
 
+const resetForm = () => {
+    newRecord.value = {
+        date:'',
+        deworming_medicine: '',
+        other_deworming_medicine: '',
+        administered_by: '',
+    };
+};
 const sortedDewormingRecords = computed(() => {
     const records = props.child.deworming.map(record => {
         const { age, age_unit } = calculateAge(props.child.birth_date, record.date);
@@ -93,6 +101,7 @@ const addRecord = () => {
             showFlashMessage.value = true;
             setTimeout(() => (showFlashMessage.value = false), 5000);
             props.child.deworming.push(response.data.record);
+            resetForm();
         })
         .catch(error => {
             flashMessage.value = 'Failed to add record! ' + (error.response?.data?.message || error.message);
@@ -151,12 +160,12 @@ const toggledeworming = () => {
     <transition name="fade">
         <div v-if="showAddModal" class="modal-overlay">
             <div class="modal-content">
-                <h2 class="add-vac" style="color: #488a99;">Add deworming Record</h2>
+                <h2 class="add-vac" style="color: #488a99;">Add Deworming Record</h2>
                 <form @submit.prevent="addRecord">
                     <!-- Form fields for adding a new record -->
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="date">Date:</label>
+                            <label for="date">Record Date:</label>
                             <input type="date" v-model="newRecord.date" :max="today" required />
                         </div>
                     </div>

@@ -265,6 +265,13 @@ class PNEAEnrollmentController extends Controller
         return response()->json($PNEAEnrollment);
     }
 
+    // Function to retrieve and sort zones
+    public function retrieveAndSortZones()
+    {
+        $zones = PNEAEnrollment::select('zone')->get();
+        return response()->json($zones);
+    }
+
     //edit specific data
     public function edit($id)
     {

@@ -18,6 +18,14 @@ const newRecord = ref({
     status: '',
 });
 
+const resetForm = () => {
+    newRecord.value = {
+        vaccine_name: '',
+        dose_number:'',
+        date:''
+    };
+};
+
 const vaccineDoses = {
     BCG: 1,
     DPT: 4,
@@ -85,6 +93,7 @@ const addRecord = () => {
             setTimeout(() => (showFlashMessage.value = false), 3000);
             props.child.vaccination_records.push(response.data.record); 
             updateVaccinationStatus(); 
+            resetForm();
         })
         .catch(error => {
             flashMessage.value = 'Failed to add record! ' + (error.response?.data?.message || error.message);

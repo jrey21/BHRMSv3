@@ -146,31 +146,162 @@ watchEffect(async () => {
 
 const totalChildcare = computed(() => childcareData.value.length);
 
-const lineChartData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+const lineChartData = computed(() => ({
+    labels: Object.keys(totalZoneCounts.value),
     datasets: [
         {
-            label: 'Dataset 1',
-            backgroundColor: '#f87979',
-            data: [40, 39, 10, 40, 39, 80, 40, 60, 55, 30, 20, 70]
-        },
-        {
-            label: 'Dataset 2',
-            backgroundColor: '#36A2EB',
-            data: [20, 30, 50, 60, 70, 90, 100, 110, 120, 130, 140, 150]
+            label: 'Number of Records',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2,
+            pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(75, 192, 192, 1)',
+            tension: 0.4, 
+            fill: true,
+            data: Object.values(totalZoneCounts.value)
         }
     ]
+}));
+
+const lineChartOptions = {
+    responsive: true,
+    plugins: {
+        legend: {
+            display: true,
+            position: 'top',
+            labels: {
+                color: '#333',
+                font: {
+                    size: 14,
+                    weight: 'bold'
+                }
+            }
+        },
+        tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            titleFont: {
+                size: 16,
+                weight: 'bold'
+            },
+            bodyFont: {
+                size: 14
+            },
+            footerFont: {
+                size: 12,
+                style: 'italic'
+            }
+        }
+    },
+    scales: {
+        x: {
+            grid: {
+                display: false
+            },
+            ticks: {
+                color: '#333',
+                font: {
+                    size: 12
+                }
+            }
+        },
+        y: {
+            grid: {
+                color: 'rgba(200, 200, 200, 0.2)'
+            },
+            ticks: {
+                color: '#333',
+                font: {
+                    size: 12
+                }
+            }
+        }
+    }
 };
 
-const pieChartData = {
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+const pieChartData = computed(() => ({
+    labels: ['Lactating Mothers', 'Pregnants', '4P\'s', 'PWD\'s', 'Senior Citizens', 'Residents', 'Underweights', 'Childcare'],
     datasets: [
         {
-            label: 'Dataset 1',
-            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-            data: [300, 50, 100, 200, 150]
+            label: 'Legend',
+            backgroundColor: ['#007BFF', '#FFC107', '#6F42C1', '#C2B11D', '#191FC5', '#038624', '#994B10', '#A12873'],
+            hoverBackgroundColor: ['#0056b3', '#e0a800', '#5a2d91', '#a89b1a', '#1418a5', '#02691b', '#7a3a0d', '#7d2056'],
+            borderWidth: 1,
+            data: [
+                totalLactating.value,
+                totalPregnants.value,
+                total4Ps.value,
+                totalPWDs.value,
+                totalCitizens.value,
+                totalResidents.value,
+                totalUnderweights.value,
+                totalChildcare.value
+            ]
         }
     ]
+}));
+
+const pieChartOptions = {
+    responsive: true,
+    plugins: {
+        legend: {
+            display: true,
+            position: 'bottom', 
+            align: 'start',
+            labels: {
+                color: '#333',
+                font: {
+                    size: 10, 
+                    weight: 'bold'
+                }
+            },
+            padding:{
+                top: 20,
+                bottom: 0
+            }
+        },
+        tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            titleFont: {
+                size: 16,
+                weight: 'bold'
+            },
+            bodyFont: {
+                size: 14
+            },
+            footerFont: {
+                size: 12,
+                style: 'italic'
+            },
+            callbacks: {
+                label: function(tooltipItem) {
+                    const dataset = tooltipItem.dataset;
+                    const total = dataset.data.reduce((sum, value) => sum + value, 0);
+                    const currentValue = dataset.data[tooltipItem.dataIndex];
+                    const percentage = ((currentValue / total) * 100).toFixed(2);
+                    return `${tooltipItem.label}: ${currentValue} (${percentage}%)`;
+                }
+            }
+        },
+        datalabels: {
+            display: true,
+            color: 'white',
+            formatter: (value, context) => {
+                const total = context.dataset.data.reduce((sum, val) => sum + val, 0);
+                const percentage = ((value / total) * 100).toFixed(2);
+                return `${percentage}%`;
+            }
+        }
+    },
+    layout: {
+        padding: {
+            top: 20,
+            bottom: 0 
+        }
+    }
 };
 
 const pneaData = ref([]);
@@ -229,6 +360,107 @@ onMounted(() => {
 
 onUnmounted(() => {
     window.removeEventListener('resize', handleResize);
+});
+
+const pneaZoneData = ref([]);
+
+onMounted(async () => {
+    try {
+        const response = await axios.get(route('pnea-zone-data'));
+    pneaZoneData.value = response.data;
+    } catch (error) {
+        console.error('Error fetching zone data:', error);
+    }
+});
+
+const totalPneaZones = computed(() => {
+    const pneaZoneCounts = {};
+    pneaZoneData.value.forEach(item => {
+        if (pneaZoneCounts[item.zone]) {
+            pneaZoneCounts[item.zone]++;
+        } else {
+            pneaZoneCounts[item.zone] = 1;
+        }
+    });
+    return Object.keys(pneaZoneCounts).sort().reduce((obj, key) => {
+        obj[key] = pneaZoneCounts[key];
+        return obj;
+    }, {});
+});
+
+const childZoneData = ref([]);
+
+onMounted(async () => {
+    try {
+        const response = await axios.get(route('childcare-zone-data'));
+        childZoneData.value = response.data;
+    } catch (error) {
+        console.error('Error fetching zone data:', error);
+    }
+});
+
+const totalChildZones = computed(() => {
+    const zoneCounts = {};
+    childZoneData.value.forEach(item => {
+        if (zoneCounts[item.zone]) {
+            zoneCounts[item.zone]++;
+        } else {
+            zoneCounts[item.zone] = 1;
+        }
+    });
+    return Object.keys(zoneCounts).sort().reduce((obj, key) => {
+        obj[key] = zoneCounts[key];
+        return obj;
+    }, {});
+});
+
+const surveyZoneData = ref([]);
+
+onMounted(async () => {
+    try {
+        const response = await axios.get(route('comprehensive-survey-zone-data'));
+        surveyZoneData.value = response.data;
+    } catch (error) {
+        console.error('Error fetching zone data:', error);
+    }
+});
+
+const totalSurveyZones = computed(() => {
+    const zoneCounts = {};
+    surveyZoneData.value.forEach(item => {
+        if (zoneCounts[item.zone]) {
+            zoneCounts[item.zone]++;
+        } else {
+            zoneCounts[item.zone] = 1;
+        }
+    });
+    return Object.keys(zoneCounts).sort().reduce((obj, key) => {
+        obj[key] = zoneCounts[key];
+        return obj;
+    }, {});
+});
+
+const totalZoneCounts = computed(() => {
+    const combinedZoneCounts = {};
+
+    const addCounts = (zoneData) => {
+        zoneData.forEach(item => {
+            if (combinedZoneCounts[item.zone]) {
+                combinedZoneCounts[item.zone]++;
+            } else {
+                combinedZoneCounts[item.zone] = 1;
+            }
+        });
+    };
+
+    addCounts(pneaZoneData.value);
+    addCounts(childZoneData.value);
+    addCounts(surveyZoneData.value);
+
+    return Object.keys(combinedZoneCounts).sort().reduce((obj, key) => {
+        obj[key] = combinedZoneCounts[key];
+        return obj;
+    }, {});
 });
 
 </script>
@@ -320,13 +552,44 @@ onUnmounted(() => {
                 <div class="border-line"></div>
                 
                 <div class="additional-boxes">
-                    <div class="box">
-                        <Line :data="lineChartData" />
-                        <p class="labels">Line Chart</p>
+                    <p class="overview">Records Overview</p>
+                    <div class="box" >
+                        <Pie :data="pieChartData" :options="pieChartOptions" />
+                        <div style="margin-left: 80px;"></div>
+                        <Line :data="lineChartData" :options="lineChartOptions" />
                     </div>
-                    <div class="box">
-                        <Pie :data="pieChartData" />
-                        <p class="labels">Pie Chart</p>
+                    <!-- <div class="box">
+                        <Line :data="lineChartData" :options="lineChartOptions" />
+                        <p class="labels"></p>
+                    </div> -->
+                </div>
+                <div class="zone-counts">
+                    <h2 class="zone-title">Population Distribution by Zone</h2>
+                    <div class="zone-data-container">
+                        <div>
+                            <h1>PNEA Enrollment</h1>
+                            <ul>
+                                <li v-for="(count, zone) in totalPneaZones" :key="zone">
+                                    {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h1>ECCD Records</h1>
+                            <ul>
+                                <li v-for="(count, zone) in totalChildZones" :key="zone">
+                                    {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h1>Comprehensive Survey</h1>
+                            <ul>
+                                <li v-for="(count, zone) in totalSurveyZones" :key="zone">
+                                    {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -336,6 +599,15 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.overview {
+    margin-top: 10px;  
+    left: 10;
+    font-size: 18px;
+    font-weight: bold;
+    color: #5713e9;
+    position: absolute; 
+   
+}
 .dashboard-boxes {
     display: grid;
     grid-template-columns: repeat(5, 1fr); 
@@ -522,24 +794,30 @@ onUnmounted(() => {
     flex-wrap: wrap; 
     gap: 20px;
     margin-top: 20px; 
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f2edf9; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* background-color: red; */
+
 }
 
 .additional-boxes .box {
     flex: 1 1 45%; 
     padding: 30px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
     position: relative;
     cursor: pointer;
     text-align: left;
-    min-width: 200px; 
-    max-width: 400px; 
-    min-height: 300px;
-    background-color: #6F42C1ff; 
+    min-width: 200px;
+    max-width: 480px; 
+    min-height: 400px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .additional-boxes .numbers, .additional-boxes .labels, .additional-boxes .view-dets {
-    color: white;
+    color: rgb(87, 19, 233);
     margin: 0; 
     position: absolute; 
 }
@@ -556,6 +834,7 @@ onUnmounted(() => {
     left: 20px; 
     font-size: 18px;
     font-weight: bold;
+    color: #5713e9;
 }
 .additional-boxes .view-dets {
     font-size: 13px;
@@ -578,7 +857,7 @@ onUnmounted(() => {
     width: 250px;
     position: fixed;
     left: 0;
-    top: 5%; /* Adjusted value to reduce space */
+    top: 5%; 
     bottom: 0;
     background-color: #f8f9fa;
     padding: 20px;
@@ -586,8 +865,6 @@ onUnmounted(() => {
 }
 
 .main-content {
-    /* margin-left: 270px; /* Adjust this value based on the sidebar width */
-    /* padding: 20px; */
     flex: 2;
     display: flex;
     justify-content: center;
@@ -613,5 +890,64 @@ onUnmounted(() => {
     .dashboard-boxes {
         grid-template-columns: 1fr;
     }
+}
+
+.zone-counts {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.zone-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.zone-data-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-around;
+}
+
+.zone-data-container > div {
+    flex: 1 1 30%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.zone-data-container h1 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #5713e9;
+    margin-bottom: 10px;
+}
+
+.zone-counts ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.zone-counts li {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 5px;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.zone-counts li:last-child {
+    border-bottom: none;
 }
 </style>

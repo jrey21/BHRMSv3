@@ -118,7 +118,7 @@ const toggleDevelopmentalScreening = () => {
                     <!-- Form fields for adding a new record -->
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="date">Date:</label>
+                            <label for="date"> Record Date:</label>
                             <input type="date" v-model="newRecord.date" :max="today" required />
                         </div>
                     </div>

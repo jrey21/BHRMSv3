@@ -206,6 +206,7 @@ class PNEAEnrollment extends Model
         'sanitary_counseled',
         'sanitary_practiced',
         'potable_water_counseled',
+        'potable_water_practiced',
         
 
     ];
