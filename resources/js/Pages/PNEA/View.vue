@@ -315,9 +315,9 @@ const downloadPDF = () => {
                             <button @click="router.get(route('pnea.show', { id: data.id }))" class="address-button">
                                 <i class="fas fa-address-card"></i>
                             </button>
-                            <button @click="markAsGivenBirth(data)" class="birth-button">
+                            <!-- <button @click="markAsGivenBirth(data)" class="birth-button">
                                 <i class="fas fa-check"></i>
-                            </button>
+                            </button> -->
                             <button @click="confirmDelete(data)" class="delete-button">
                                 <i class="fas fa-trash"></i>
                             </button>

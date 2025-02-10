@@ -1,33 +1,43 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useForm, Head } from '@inertiajs/vue3';
 import TextInput from "../Components/TextInput.vue";
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { useRouter } from 'vue-router';
 
 const form = useForm({
     email: null,
     password: null,
-    remember: null,
+    remember: false, // Ensure default value is false
 });
 
 const showPassword = ref(false);
-const router = useRouter();
-const refreshed = ref(false);
 const flashMessage = ref('');
 
 const togglePasswordVisibility = () => {
     showPassword.value = !showPassword.value;
 };
 
+// Load remembered email from localStorage when component mounts
+onMounted(() => {
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    if (rememberedEmail) {
+        form.email = rememberedEmail;
+        form.remember = true;
+    }
+});
+
 const submit = () => {
     form.post(route('login'), {
         onSuccess: () => {
             flashMessage.value = 'Successfully logged in!';
-            // setTimeout(() => {
-            //     window.location.reload();
-            // }, 500); 
+            
+            // Store email if "Remember Me" is checked
+            if (form.remember) {
+                localStorage.setItem('rememberedEmail', form.email);
+            } else {
+                localStorage.removeItem('rememberedEmail');
+            }
         },
         onError: () => {
             form.reset("password");
@@ -41,17 +51,14 @@ const submit = () => {
 
     <div class="flex items-center justify-center min-h-screen bg-cover bg-center">
         <div class="flex flex-col items-center w-full max-w-md p-8 bg-white bg-opacity-90 rounded-lg shadow-lg backdrop-blur-md shadow-2xl shadow-gray-500/50">
-            <!-- BHRMS Title -->
             <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">Barangay Health Record Management System (BHRMS)</h1>
-            <!-- Logo centered below the text -->
             <div class="w-24 h-24 mb-6">
                 <img src="../Components/image/patag_logo.png" alt="logo" class="w-full h-full object-contain"/>
             </div>
             <hr class="w-full border-t border-gray-300 mb-2">
 
-            <!-- Login form -->
             <form @submit.prevent="submit" class="w-full">
-                <TextInput
+                <TextInput 
                     class="mb-4" 
                     name="email" 
                     type="email"
@@ -86,7 +93,7 @@ const submit = () => {
                     <p class="text-gray-600">Need an account? <a :href="route('register')" class="text-link">Register</a></p>
                 </div>
             </form>
-            <!-- <div v-if="refreshed" class="text-green-500 mt-2">Page has been refreshed</div> -->
+
             <div v-if="flashMessage" class="text-green-500 mt-2">{{ flashMessage }}</div>
         </div>
     </div>

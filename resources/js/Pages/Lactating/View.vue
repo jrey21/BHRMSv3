@@ -32,6 +32,23 @@ watchEffect(async () => {
     }
 });
 
+const interpretMuacStatus = (muacStatus) => {
+    if (!muacStatus) return '';
+    if (muacStatus === 'N') return 'Normal';
+    if (muacStatus === 'MM') return 'Moderately Malnutrition';
+    if (muacStatus === 'SM') return 'Severe Malnutrition';
+    return '';
+};
+
+const interpretStatus = (status) => {
+    if (!status) return '';
+    if (status === 'UW') return 'Underweight';
+    if (status === 'N') return 'Normal';
+    if (status === 'OW') return 'Overweight';
+    return 'Obese';
+};
+
+
 const currentPage = ref(1);
 const itemsPerPage = 20;
 
@@ -209,11 +226,11 @@ const downloadPDF = () => {
                             <td v-else>-</td>
                             <td v-if="data.lactating_periods.length">{{ getLatestlactating(data).bmi }}</td>
                             <td v-else>-</td>
-                            <td v-if="data.lactating_periods.length">{{ getLatestlactating(data).status }}</td>
+                            <td v-if="data.lactating_periods.length">{{ interpretStatus(getLatestlactating(data).status) }}</td>
                             <td v-else>-</td>
                             <td v-if="data.lactating_periods.length">{{ getLatestlactating(data).muac_color }}</td>
                             <td v-else>-</td>
-                            <td v-if="data.lactating_periods.length">{{ getLatestlactating(data).muac_status }}</td>
+                            <td v-if="data.lactating_periods.length">{{ interpretMuacStatus(getLatestlactating(data).muac_status) }}</td>
                             <td v-else>-</td>
                             <td>
                                 <button @click="router.get(route('pnea.show', { id: data.id }))" class="address-button">
@@ -238,11 +255,17 @@ const downloadPDF = () => {
 </template>
 
 <style scoped>
+.data-pwd-list{
+    width: 100%;
+}
 .data-table th:nth-child(1){
     width: 30%; 
 }
+.data-table th:nth-child(2){
+    width: 10%; 
+}
 
-.data-table th:nth-child(2),.data-table th:nth-child(3),.data-table th:nth-child(4),.data-table th:nth-child(5) {
+.data-table th:nth-child(3),.data-table th:nth-child(4),.data-table th:nth-child(5) {
     width: 8%; 
 }
 

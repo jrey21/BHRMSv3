@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\ChildCareForm;
 use App\Models\ComprehensiveSurvey;
 use App\Models\PNEAEnrollment;
+use App\Models\SeniorEvent;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ComprehensiveSurveyController;
 use App\Http\Controllers\ChildCareFormController;
@@ -20,6 +21,11 @@ use App\Http\Controllers\PregnancyPeriodController;
 // use App\Http\Controllers\OptimumPracticeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SeniorEventController;
+use App\Http\Controllers\ClaimController;
+use App\Http\Controllers\QRScanController;
+use App\Http\Controllers\ScanController;
+use App\Http\Controllers\ScannedCodeController;
 // use App\Http\Controllers\UserConfirmationController;
 
 Route::inertia('/', 'Auth/Login' )->name('Login');
@@ -195,15 +201,28 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
 
     // Route::inertia('/form-2', 'PNEA/EnrollmentAndOptimumPractice')->name('form-2');
 
-
     // -- ----- -- - - - --  - - - - - -  -- -  -- - - - --  - - - - - - - -//
     //Calendar
     
     // Fetch all events
-    Route::get('/events-data', [EventController::class, 'index']);
+    Route::inertia('/senior-events', 'SeniorCitizen/Events')->name('senior-events');
+    Route::get('/events-data', [SeniorEventController::class, 'retrieve'])->name('events-data');
+    Route::get('/events-data/{id}', [SeniorEventController::class, 'show'])->name('events-data.show');
 
     // Store a new event
-    Route::post('/events', [EventController::class, 'store']);
+    Route::post('/events-create', [SeniorEventController::class, 'store'])->name('events-create');
+    
+    // Save scanned code
+    Route::post('/save-scanned-data', [ScannedCodeController::class, 'store'])->name('save-scanned-data');
+    Route::post('/event/{id}/addScannedCode', [SeniorEventController::class, 'addScannedCode'])->name('event.addScannedCode');
+    
+    //Retrieve Scanned Codes
+    Route::get('event-scanned-data/{id}', [SeniorEventController::class,'showScannedCodes'])->name('event-scanned-data');
+
+    Route::get('scanned-events', [ScannedCodeController::class, 'retrieveData'])->name('scanned-events');
+
+    //add scanned code
+    // Route::post('/event/{id}/addCodes', [SeniorEventController::class, 'addScannedCode'])->name('event.addCodes');
 });
 
 // Guest routes

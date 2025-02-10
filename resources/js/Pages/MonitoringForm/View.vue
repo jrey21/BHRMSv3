@@ -148,13 +148,24 @@ const downloadPDF = () => {
         }
     });
     doc.save('pregnancy_period_monitoring_data.pdf');
+};
 
-    const viewDetails = (data) => {
-    alert(`Viewing details for ${data.fullName}`);
-    // You can also route to another page with the details
-    // router.push({ name: 'DetailsPage', params: { id: data.id } });
+const interpretMuacStatus = (muacStatus) => {
+    if (!muacStatus) return '';
+    if (muacStatus === 'N') return 'Normal';
+    if (muacStatus === 'MM') return 'Moderately Malnutrition';
+    if (muacStatus === 'SM') return 'Severe Malnutrition';
+    return '';
 };
+
+const interpretStatus = (status) => {
+    if (!status) return '';
+    if (status === 'UW') return 'Underweight';
+    if (status === 'N') return 'Normal';
+    if (status === 'OW') return 'Overweight';
+    return 'Obese';
 };
+
 </script>
 
 <template>
@@ -209,16 +220,16 @@ const downloadPDF = () => {
                             <td v-else>-</td>
                             <td v-if="data.pregnancy_periods.length">{{ getLatestPregnancy(data).bmi }}</td>
                             <td v-else>-</td>
-                            <td v-if="data.pregnancy_periods.length">{{ getLatestPregnancy(data).status }}</td>
+                            <td v-if="data.pregnancy_periods.length">{{ interpretStatus(getLatestPregnancy(data).status) }}</td>
                             <td v-else>-</td>
                             <td v-if="data.pregnancy_periods.length">{{ getLatestPregnancy(data).muac_color }}</td>
                             <td v-else>-</td>
-                            <td v-if="data.pregnancy_periods.length">{{ getLatestPregnancy(data).muac_status }}</td>
+                            <td v-if="data.pregnancy_periods.length">{{ interpretMuacStatus(getLatestPregnancy(data).muac_status) }}</td>
                             <td v-else>-</td>
                             <td>
                                 <button @click="router.get(route('pnea.show', { id: data.id }))" class="address-button">
-                                <i class="fas fa-address-card"></i>
-                            </button>
+                                    <i class="fas fa-address-card"></i>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -238,6 +249,9 @@ const downloadPDF = () => {
 </template>
 
 <style scoped>
+.data-pwd-list{
+    width: 100%;
+}
 .data-table th:nth-child(1){
     width: 30%; 
 }

@@ -3,6 +3,7 @@ import { ref, onMounted, computed, watchEffect } from 'vue';
 import axios from 'axios';
 import QRCode from 'qrcode';
 import FormLayout from '../../Layouts/FormLayout.vue';
+import FinancialAssistance from './Events.vue'
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { useRouter } from 'vue-router';
@@ -11,10 +12,10 @@ defineOptions({
     layout: FormLayout
 });
 
-const showQR = ref(false);
+const showQR = ref(null);
 
-const toggleQR = () => {
-    showQR.value = !showQR.value;
+const toggleQR = (id) => {
+    showQR.value = showQR.value === id ? null : id;
 };
 
 const dataCitizens = ref([]);
@@ -171,27 +172,28 @@ const downloadPDF = async () => {
 };
 
 const downloadQRCode = async (data) => {
-    const qrCode = await generateQRCode(`${data.first_name} ${data.last_name}` + '\n' + `Age: ${data.age}` + '\n' + `Sex: ${data.sex}` + '\n' + `${data.zone}`);
+    const qrCode = await generateQRCode(`${data.id}`);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const img = new Image();
     img.src = qrCode;
     img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height + 70; 
+        const qrCodeSize = 300;
+        canvas.width = qrCodeSize;
+        canvas.height = qrCodeSize + 70; 
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 50);
+        ctx.drawImage(img, 0, 50, qrCodeSize, qrCodeSize);
         ctx.fillStyle = 'black';
-        ctx.font = '12px Arial';
+        ctx.font = '20px Arial'; 
         ctx.textAlign = 'center';
         ctx.fillText(`${data.first_name} ${data.last_name}`, canvas.width / 2, 20);
-        ctx.fillText(`${data.zone}`, canvas.width / 2, 35);
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'; // Lighten the font color
-        ctx.font = '10px Arial'; // Make the font smaller
-        ctx.fillText('© BHRMS 2024', canvas.width / 2, canvas.height - 10);
+        ctx.fillText(`${data.zone}`, canvas.width / 2, 50);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'; 
+        ctx.font = '16px Arial'; 
+        ctx.fillText('© BHRMS 2024', canvas.width / 2, canvas.height - 18);
         const link = document.createElement('a');
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL('image/png', 1.0); 
         link.download = `${data.first_name}_${data.last_name}_QRCode.png`;
         link.click();
     };
@@ -206,7 +208,7 @@ const downloadAllQRCodesPDF = async () => {
     doc.setFontSize(12);
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const qrCodeSize = 50;
+    const qrCodeSize = 50; 
     const margin = 10;
     const qrCodesPerRow = 3;
     const qrCodesPerColumn = 4;
@@ -217,7 +219,7 @@ const downloadAllQRCodesPDF = async () => {
 
     for (let i = 0; i < sortedData.value.length; i++) {
         const data = sortedData.value[i];
-        const qrCode = await generateQRCode(`${data.first_name} ${data.last_name}` + '\n' + `Age: ${data.age}` + '\n' + `Sex: ${data.sex}` + '\n' + `${data.zone}`);
+        const qrCode = await generateQRCode(`${data.id}`);
         const img = new Image();
         img.src = qrCode;
 
@@ -311,9 +313,9 @@ defineExpose({
                         <td>{{ data.age_display }}</td>
                         <td>{{ data.sex.charAt(0).toUpperCase() }}</td>
                         <td>{{ data.zone }}</td>
-                        <td @click="toggleQR" style="cursor: pointer; color: #007bff; font-size: 12px;">
-                            {{ showQR ? 'Hide' : 'View' }}
-                            <div v-if="showQR">
+                        <td @click="toggleQR(data.id)" style="cursor: pointer; color: #007bff; font-size: 12px;">
+                            {{ showQR === data.id ? 'Hide' : 'View' }}
+                            <div v-if="showQR === data.id">
                                 <img :src="data.qrCode" alt="QR Code" />
                                 <button @click="downloadQRCode(data)" style="font-size: 10px; color: maroon;">Download</button>
                             </div>
@@ -332,6 +334,7 @@ defineExpose({
             </button>
         </div>
     </div>
+    <FinancialAssistance/>
 </template>
 
 <style scoped>

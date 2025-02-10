@@ -187,16 +187,16 @@ const downloadPDF = () => {
                 </tr>
             </thead>
             <tbody>
-                    <tr v-if="paginatedData.length === 0">
-                        <td colspan="4">No data found</td>
-                    </tr>
-                    <tr v-for="data in paginatedData" :key="data.id">
-                        <td>{{ data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1) + ", " + data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1)}}</td>
-                        <td>{{ data.age_display }}</td>
-                        <td>{{ data.sex.charAt(0).toUpperCase() }}</td>
-                        <td>{{ data.zone }}</td>
-                    </tr>
-                </tbody>
+                <tr v-if="paginatedData.length === 0">
+                    <td colspan="4">No data found</td>
+                </tr>
+                <tr v-for="data in paginatedData" :key="data.id">
+                    <td>{{ data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1) + ", " + data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1)}}</td>
+                    <td>{{ data.age_display }}</td>
+                    <td>{{ data.sex.charAt(0).toUpperCase() }}</td>
+                    <td>{{ data.zone }}</td>
+                </tr>
+            </tbody>
         </table>
         </div>
         <div class="pagination">

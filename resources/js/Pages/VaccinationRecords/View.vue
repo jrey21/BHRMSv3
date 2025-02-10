@@ -2,7 +2,7 @@
 import FormLayout from '../../Layouts/FormLayout.vue';
 import { ref, onMounted, computed, watchEffect } from 'vue';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { router } from '@inertiajs/vue3'; 
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -192,6 +192,7 @@ const downloadPDF = () => {
                     <th>Vaccine Name</th>
                     <th>Dose Number</th>
                     <th>Date</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -205,6 +206,11 @@ const downloadPDF = () => {
                         <td>{{ getVaccineName(record) }}</td>
                         <td>{{ formatDoseNumber(record.dose_number) }}</td>
                         <td>{{ formatDate(record.date) }}</td>
+                        <td v-if="index === 0" :rowspan="data.vaccination_records.length">
+                            <button @click="router.get(route('child.show', { id: data.id }))" class="address-button">
+                                <i class="fas fa-address-card"></i>
+                            </button>
+                        </td>
                     </tr>
                 </template>
             </tbody>
@@ -223,6 +229,22 @@ const downloadPDF = () => {
 </template>
 
 <style>
+.address-button {
+    background-color: #17a2b8; 
+    border: none;
+    color: white;
+    padding: 3px 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.address-button:hover {
+    background-color: #138496; 
+    transform: scale(1.1);
+}
 .download-button {
     background-color: #007bff;
     border: none;

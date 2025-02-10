@@ -58,10 +58,24 @@ const changePage = (page) => {
     }
 };
 
+const calculateAge = (birthdate) => {
+    const today = new Date();
+    const birthDate = new Date(birthdate);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+};
+
 onMounted(async () => {
     try {
         const response = await axios.get(route('comprehensive-survey-data'));
-        surveyData.value = response.data;
+        surveyData.value = response.data.map(data => ({
+            ...data,
+            age: calculateAge(data.birthdate)
+        }));
     } catch (error) {
         console.error('Error fetching survey data:', error);
     }
@@ -70,7 +84,10 @@ onMounted(async () => {
 watchEffect(async () => {
     try {
         const response = await axios.get(route('comprehensive-survey-data'));
-        surveyData.value = response.data;
+        surveyData.value = response.data.map(data => ({
+            ...data,
+            age: calculateAge(data.birthdate)
+        }));
     } catch (error) {
         console.error('Error fetching survey data:', error);
     }
@@ -144,7 +161,7 @@ const downloadAgeGroupPDF = () => {
     // Add more space before the "Comprehensive Survey" title
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('Comprehensive Survey', pageWidth / 2, 40, { align: 'center' }); // Added more space here
+    doc.text('Comprehensive Survey', pageWidth / 2, 40, { align: 'center' });
     
     // Bold the "Age Grouping Report" and "BHS PATAG" titles
     doc.setFont('helvetica', 'normal');
@@ -159,7 +176,7 @@ const downloadAgeGroupPDF = () => {
 
     // Create table
     doc.autoTable({
-        head: [['Age Group', 'Male', 'Female', 'Total']],
+        head: [['Age', 'Male', 'Female', 'Total']],
         body: [
             ...Object.entries(ageGroups.value).map(([ageRange, group]) => [
                 ageRange,
@@ -167,7 +184,10 @@ const downloadAgeGroupPDF = () => {
                 group.female,
                 group.male + group.female
             ]),
-            ['Total', totalMale.value, totalFemale.value, totalMale.value + totalFemale.value]
+            [{ content: 'Total', styles: { fontStyle: 'bold' } }, 
+             { content: totalMale.value, styles: { fontStyle: 'bold' } }, 
+             { content: totalFemale.value, styles: { fontStyle: 'bold' } }, 
+             { content: totalMale.value + totalFemale.value, styles: { fontStyle: 'bold' } }]
         ],
         styles: { fontSize: 12, halign: 'center' }, // Center align text
         headStyles: { fillColor: [0, 102, 204], textColor: [255, 255, 255] }, // Header styling
@@ -178,22 +198,31 @@ const downloadAgeGroupPDF = () => {
     const finalY = doc.autoTable.previous.finalY + 20; 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
-    doc.text(`TOTAL NUMBER OF HOUSEHOLDS: ${totalHouseholds.value}`, 14, finalY);
-    doc.text(`TOTAL NUMBER OF FAMILIES: ${totalFamilies.value}`, 14, finalY + 10);
-    doc.text(`TOTAL NUMBER OF POPULATION: ${totalPopulation.value}`, 14, finalY + 20);
+    doc.text(`TOTAL NUMBER OF HOUSEHOLDS:`, 14, finalY);
+
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${totalHouseholds.value}`, 90, finalY);
+
+    doc.setFont('helvetica', 'normal');
+    doc.text(`TOTAL NUMBER OF FAMILIES:`, 14, finalY + 10);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${totalFamilies.value}`, 80, finalY + 10);
+
+    doc.setFont('helvetica', 'normal');
+    doc.text(`TOTAL NUMBER OF POPULATION:`, 14, finalY + 20);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${totalPopulation.value}`, 90, finalY + 20);
 
     // Add space before the "Submitted By" and "Noted By" section
     const spaceBeforeSignatures = finalY + 60;
     
-    // "Submitted By" Section
+    // "Submitted By" and "Noted By" Section
+    doc.setFont('helvetica', 'normal');
     doc.text('SUBMITTED BY:', 14, spaceBeforeSignatures);
-    doc.text('_____________________________', 70, spaceBeforeSignatures); 
+    doc.text('NOTED BY:', pageWidth / 2 + 10, spaceBeforeSignatures);
 
-    // "Noted By" Section
-    const spaceForNotedBy = spaceBeforeSignatures + 20;
-    doc.text('NOTE BY:', 14, spaceForNotedBy);
-    doc.text('_____________________________', 70, spaceForNotedBy); 
-
+    doc.text('_____________________________', 14, spaceBeforeSignatures + 15);
+    doc.text('_____________________________', pageWidth / 2 + 10, spaceBeforeSignatures + 15);
 
     // Save the PDF
     doc.save('Age_Grouping_Data.pdf');
@@ -211,20 +240,21 @@ const ageGroups = computed(() => {
     };
 
     surveyData.value.forEach(data => {
+        const age = calculateAge(data.birth_date);
         let ageGroup = '';
-        if (data.age_unit === 'months' && data.age <= 11) {
+        if (age <= 0) {
             ageGroup = '0-11 months';
-        } else if (data.age >= 1 && data.age <= 4) {
+        } else if (age >= 1 && age <= 4) {
             ageGroup = '1-4 years';
-        } else if (data.age >= 5 && data.age <= 9) {
+        } else if (age >= 5 && age <= 9) {
             ageGroup = '5-9 years';
-        } else if (data.age >= 10 && data.age <= 19) {
+        } else if (age >= 10 && age <= 19) {
             ageGroup = '10-19 years';
-        } else if (data.age >= 20 && data.age <= 49) {
+        } else if (age >= 20 && age <= 49) {
             ageGroup = '20-49 years';
-        } else if (data.age >= 50 && data.age <= 64) {
+        } else if (age >= 50 && age <= 64) {
             ageGroup = '50-64 years';
-        } else if (data.age >= 65) {
+        } else if (age >= 65) {
             ageGroup = '65 above';
         }
 
@@ -740,11 +770,12 @@ h2{
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-left: 5%;
+    width: 100%;
 }
 
 .age-group-header {
     display: flex;
-    justify-content: flex-end; /* Change from space-between to flex-end */
+    justify-content: flex-end; 
     align-items: center;
     margin-bottom: 10px;
 }

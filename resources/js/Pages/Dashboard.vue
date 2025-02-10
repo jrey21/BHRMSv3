@@ -4,10 +4,10 @@ import Layout from "../Layouts/Dash.vue";
 import RightSidebar from "./Components/RightSidebar.vue";
 import { ref, onMounted, computed, watchEffect, onUnmounted } from 'vue';
 import axios from 'axios';
-import { Line, Pie } from 'vue-chartjs';
-import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, PointElement, LinearScale, CategoryScale, ArcElement } from 'chart.js';
+import { Line, Pie, Bar } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, BarElement, PointElement, LinearScale, CategoryScale, ArcElement } from 'chart.js';
 
-ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, LinearScale, CategoryScale, ArcElement);
+ChartJS.register(Title, Tooltip, Legend, LineElement, BarElement, PointElement, LinearScale, CategoryScale, ArcElement);
 
 defineOptions({ layout: Layout });
 
@@ -123,6 +123,59 @@ watchEffect(async () => {
 
 const totalResidents = computed(() => surveyData.value.length);
 
+const calculateAge = (birthdate) => {
+    const today = new Date();
+    const birthDate = new Date(birthdate);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+};
+
+
+const ageGroups = computed(() => {
+    const groups = {
+        '0-11 months': { male: 0, female: 0 },
+        '1-4 years': { male: 0, female: 0 },
+        '5-9 years': { male: 0, female: 0 },
+        '10-19 years': { male: 0, female: 0 },
+        '20-49 years': { male: 0, female: 0 },
+        '50-64 years': { male: 0, female: 0 },
+        '65 above': { male: 0, female: 0 },
+    };
+
+    surveyData.value.forEach(data => {
+        const age = calculateAge(data.birth_date);
+        let ageGroup = '';
+        if (age <= 0) {
+            ageGroup = '0-11 months';
+        } else if (age >= 1 && age <= 4) {
+            ageGroup = '1-4 years';
+        } else if (age >= 5 && age <= 9) {
+            ageGroup = '5-9 years';
+        } else if (age >= 10 && age <= 19) {
+            ageGroup = '10-19 years';
+        } else if (age >= 20 && age <= 49) {
+            ageGroup = '20-49 years';
+        } else if (age >= 50 && age <= 64) {
+            ageGroup = '50-64 years';
+        } else if (age >= 65) {
+            ageGroup = '65 above';
+        }
+
+        if (ageGroup) {
+            if (data.sex.toLowerCase() === 'male') {
+                groups[ageGroup].male += 1;
+            } else if (data.sex.toLowerCase() === 'female') {
+                groups[ageGroup].female += 1;
+            }
+        }
+    });
+
+    return groups;
+});
 
 const childcareData = ref([]);
 
@@ -463,6 +516,263 @@ const totalZoneCounts = computed(() => {
     }, {});
 });
 
+const growthMonitoring = ref([]);
+
+onMounted(async () => {
+    try {
+        const response = await axios.get(route('growth-monitoring-data'));
+        console.log('API Response:', response.data); 
+        growthMonitoring.value = response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+});
+
+watchEffect(async () => {
+    try {
+        const response = await axios.get(route('growth-monitoring-data'));
+        console.log('API Response:', response.data);
+        growthMonitoring.value = response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+});
+
+
+const getLatestMonitoring = (person) => {
+    if (person.growth_monitorings.length > 1) {
+        person.growth_monitorings.sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+    return person.growth_monitorings[0];
+};
+
+//Computed properties for weight for age
+const totalSU = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.weight_age_status.toLowerCase() === 'severely underweight';
+    }).length;
+});
+
+const totalUnderweight = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.weight_age_status.toLowerCase() === 'underweight';
+    }).length;
+});
+
+const totalNormalWeight = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.weight_age_status.toLowerCase() === 'normal';
+    }).length;
+});
+
+const totalOverweightWeight = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.weight_age_status.toLowerCase() === 'overweight';
+    }).length;
+});
+
+
+//Computed properties for height for age
+const totalSS = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.height_age_status.toLowerCase() === 'severely stunted';
+    }).length;
+});
+
+const totalStunted = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.height_age_status.toLowerCase() === 'stunted';
+    }).length;
+});
+
+const totalNormalHeight = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.height_age_status.toLowerCase() === 'normal';
+    }).length;
+});
+
+const totalTall = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.height_age_status.toLowerCase() === 'tall';
+    }).length;
+});
+
+//Computed properties for weight for height
+const totalSW = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.weight_height_status.toLowerCase() === 'severely wasted';
+    }).length;
+});
+
+const totalMW = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.weight_height_status.toLowerCase() === 'moderately wasted';
+    }).length;
+});
+
+const totalNormal = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.weight_height_status.toLowerCase() === 'normal';
+    }).length;
+});
+
+const totalOverweight = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.weight_age_status.toLowerCase() === 'overweight';
+    }).length;
+});
+
+const totalObese = computed(() => {
+    return growthMonitoring.value.filter(person => {
+        const latestMonitoring = getLatestMonitoring(person);
+        return latestMonitoring && latestMonitoring.weight_height_status.toLowerCase() === 'obese';
+    }).length;
+});
+
+const nutritionalStatusData = computed(() => [
+    { category: 'Weight for Age', status: 'Severely Underweight', total: totalSU.value },
+    { category: 'Weight for Age', status: 'Underweight', total: totalUnderweight.value },
+    { category: 'Weight for Age', status: 'Normal', total: totalNormalWeight.value },
+    { category: 'Weight for Age', status: 'Overweight', total: totalOverweightWeight.value },
+    { category: 'Height for Age', status: 'Severely Stunted', total: totalSS.value },
+    { category: 'Height for Age', status: 'Stunted', total: totalStunted.value },
+    { category: 'Height for Age', status: 'Normal', total: totalNormalHeight.value },
+    { category: 'Height for Age', status: 'Tall', total: totalTall.value },
+    { category: 'Weight for Height', status: 'Severely Wasted', total: totalSW.value },
+    { category: 'Weight for Height', status: 'Moderately Wasted', total: totalMW.value },
+    { category: 'Weight for Height', status: 'Normal', total: totalNormal.value },
+    { category: 'Weight for Height', status: 'Overweight', total: totalOverweight.value },
+    { category: 'Weight for Height', status: 'Obese', total: totalObese.value }
+]);
+
+const getCurrentYear = () => {
+    return new Date().getFullYear();
+};
+
+console.log("Final Age Groups Data:", ageGroups.value);
+const barChartData = computed(() => ({
+    labels: [
+        '0-11 months',
+        '1-4 years',
+        '5-9 years',
+        '10-19 years',
+        '20-49 years',
+        '50-64 years',
+        '65 above'
+    ],
+    datasets: [
+        {
+            label: 'Male',
+            backgroundColor: '#007BFF',
+            data: [
+            ageGroups.value?.['0-11 months']?.male || 0,
+                ageGroups.value?.['1-4 years']?.male || 0,
+                ageGroups.value?.['5-9 years']?.male || 0,
+                ageGroups.value?.['10-19 years']?.male || 0,
+                ageGroups.value?.['20-49 years']?.male || 0,
+                ageGroups.value?.['50-64 years']?.male || 0,
+                ageGroups.value?.['65 above']?.male || 0
+            ]
+        },
+        {
+            label: 'Female',
+            backgroundColor: '#FFC107',
+            data: [
+            ageGroups.value?.['0-11 months']?.female || 0,
+                ageGroups.value?.['1-4 years']?.female || 0,
+                ageGroups.value?.['5-9 years']?.female || 0,
+                ageGroups.value?.['10-19 years']?.female || 0,
+                ageGroups.value?.['20-49 years']?.female || 0,
+                ageGroups.value?.['50-64 years']?.female || 0,
+                ageGroups.value?.['65 above']?.female || 0
+            ]
+        }
+    ]
+}));
+
+const barChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false, 
+    indexAxis: 'y', 
+    layout: {
+        padding: {
+            top: 5,
+        }
+    },
+    plugins: {
+        legend: {
+            display: true, 
+            position: 'top',
+            labels: {
+                color: '#333',
+                font: {
+                    size: 14,
+                    weight: 'bold'
+                },
+                margin: 20 
+            }
+        },
+        tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            titleFont: {
+                size: 18,
+                weight: 'bold'
+            },
+            bodyFont: {
+                size: 16
+            },
+            footerFont: {
+                size: 16,
+                style: 'italic'
+            }
+        },
+    },
+    scales: {
+        x: {
+            beginAtZero: true,
+            grid: {
+                display: true
+            },
+            ticks: {
+                autoSkip: false,
+                color: '#333',
+                font: {
+                    size: 12
+                }
+            }  
+        },
+        y: {
+            beginAtZero: true,
+            grid: {
+                color: 'rgba(200, 200, 200, 0.2)'
+            },
+            ticks: {
+                autoSkip: false,
+                color: '#333',
+                font: {
+                    size: 14,
+                    padding: 10
+                }
+            },
+            categoryPercentage: 0.8, 
+            barPercentage: 0.9 
+        }
+    },
+};
+
 </script>
 
 <template>
@@ -554,41 +864,129 @@ const totalZoneCounts = computed(() => {
                 <div class="additional-boxes">
                     <p class="overview">Records Overview</p>
                     <div class="box" >
-                        <Pie :data="pieChartData" :options="pieChartOptions" />
+                        
+                            <Pie :data="pieChartData" :options="pieChartOptions" />
+                       
                         <div style="margin-left: 80px;"></div>
-                        <Line :data="lineChartData" :options="lineChartOptions" />
+
+                        <Line style="background-color: white; padding:5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" :data="lineChartData" :options="lineChartOptions" />
                     </div>
-                    <!-- <div class="box">
-                        <Line :data="lineChartData" :options="lineChartOptions" />
-                        <p class="labels"></p>
-                    </div> -->
                 </div>
-                <div class="zone-counts">
-                    <h2 class="zone-title">Population Distribution by Zone</h2>
-                    <div class="zone-data-container">
-                        <div>
-                            <h1>PNEA Enrollment</h1>
-                            <ul>
-                                <li v-for="(count, zone) in totalPneaZones" :key="zone">
-                                    {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
-                                </li>
-                            </ul>
+                <div class="flex gap-5"> 
+                    <div class="zone-counts">
+                        <h2 class="zone-title">Population Distribution by Zone ({{ getCurrentYear(date) }})</h2>
+                        <div class="zone-data-container">
+                            <div>
+                                <h1>PNEA Records</h1>
+                                <ul>
+                                    <li v-for="(count, zone) in totalPneaZones" :key="zone">
+                                        {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h1>ECCD Records</h1>
+                                <ul>
+                                    <li v-for="(count, zone) in totalChildZones" :key="zone">
+                                        {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h1>Residents</h1>
+                                <ul>
+                                    <li v-for="(count, zone) in totalSurveyZones" :key="zone">
+                                        {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <div>
-                            <h1>ECCD Records</h1>
-                            <ul>
-                                <li v-for="(count, zone) in totalChildZones" :key="zone">
-                                    {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
-                                </li>
-                            </ul>
+                    </div>
+
+                    <div class="zone-counts-age">
+                        <h2 class="zone-title">Population by Age Group ({{ getCurrentYear(date) }})</h2>
+                        <div class="chart-container">
+                            <Bar :data="barChartData" :options="barChartOptions" />
                         </div>
-                        <div>
-                            <h1>Comprehensive Survey</h1>
-                            <ul>
-                                <li v-for="(count, zone) in totalSurveyZones" :key="zone">
-                                    {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
-                                </li>
-                            </ul>
+                    </div>
+                </div>
+                <div class="flex gap-5">
+                    <!-- <div class="zone-counts-vac">
+                        <h2 class="zone-title">Number of Vaccinated</h2>
+                        <div class="chart-container">
+                            <Bar :data="barChartData" :options="barChartOptions" />
+                        </div>
+                    </div> -->
+                    <div class="zone-counts">  
+                        <h2 class="zone-title">Nutritional Status</h2>
+                        <div class="nutritional-status-container-horizontal">
+                            <div class="status-card">
+                                <h3>Weight for Age</h3>
+                                <div class="status-row">
+                                    <div class="status-column">
+                                        <p class="status">Severely Underweight</p>
+                                        <p class="total">{{ totalSU }}</p>
+                                    </div>
+                                    <div class="status-column">
+                                        <p class="status">Underweight</p>
+                                        <p class="total">{{ totalUnderweight }}</p>
+                                    </div>
+                                    <!-- <div class="status-column">
+                                        <p class="status">Normal</p>
+                                        <p class="total">{{ totalNormalWeight }}</p>
+                                    </div> -->
+                                    <div class="status-column">
+                                        <p class="status">Overweight</p>
+                                        <p class="total">{{ totalOverweightWeight }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="status-card">
+                                <h3>Height for Age</h3>
+                                <div class="status-row">
+                                    <div class="status-column">
+                                        <p class="status">Severely Stunted</p>
+                                        <p class="total">{{ totalSS }}</p>
+                                    </div>
+                                    <div class="status-column">
+                                        <p class="status">Stunted</p>
+                                        <p class="total">{{ totalStunted }}</p>
+                                    </div>
+                                    <!-- <div class="status-column">
+                                        <p class="status">Normal</p>
+                                        <p class="total">{{ totalNormalHeight }}</p>
+                                    </div> -->
+                                    <div class="status-column">
+                                        <p class="status">Tall</p>
+                                        <p class="total">{{ totalTall }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="status-card">
+                                <h3>Weight for Height</h3>
+                                <div class="status-row">
+                                    <div class="status-column">
+                                        <p class="status">Severely Wasted</p>
+                                        <p class="total">{{ totalSW }}</p>
+                                    </div>
+                                    <div class="status-column">
+                                        <p class="status">Moderately Wasted</p>
+                                        <p class="total">{{ totalMW }}</p>
+                                    </div>
+                                    <!-- <div class="status-column">
+                                        <p class="status">Normal</p>
+                                        <p class="total">{{ totalNormal }}</p>
+                                    </div> -->
+                                    <div class="status-column">
+                                        <p class="status">Overweight</p>
+                                        <p class="total">{{ totalOverweight }}</p>
+                                    </div>
+                                    <div class="status-column">
+                                        <p class="status">Obese</p>
+                                        <p class="total">{{ totalObese }}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -599,10 +997,18 @@ const totalZoneCounts = computed(() => {
 </template>
 
 <style scoped>
+.chart-container{
+    width:100%;
+    height:280px;
+    background-color: white; 
+    padding:5px; 
+    margin-bottom:10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 .overview {
     margin-top: 10px;  
     left: 10;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
     color: #5713e9;
     position: absolute; 
@@ -796,7 +1202,8 @@ const totalZoneCounts = computed(() => {
     margin-top: 20px; 
     border: 1px solid #ccc;
     border-radius: 8px;
-    background-color: #f2edf9; 
+    /* background-color: #f2edf9;  */
+    background-color: #f9f9f9;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     /* background-color: red; */
 
@@ -899,10 +1306,27 @@ const totalZoneCounts = computed(() => {
     border-radius: 8px;
     background-color: #f9f9f9;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width:100%;
+}
+.zone-counts-age{
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.zone-counts-vac{
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .zone-title {
-    font-size: 20px;
+    font-size: 19.5px;
     font-weight: bold;
     color: #333;
     margin-bottom: 20px;
@@ -927,7 +1351,7 @@ const totalZoneCounts = computed(() => {
 }
 
 .zone-data-container h1 {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: bold;
     color: #5713e9;
     margin-bottom: 10px;
@@ -949,5 +1373,95 @@ const totalZoneCounts = computed(() => {
 
 .zone-counts li:last-child {
     border-bottom: none;
+}
+
+.age-group-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: -10px;
+}
+
+.age-group-table th, .age-group-table td {
+    border-right: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.age-group-table th {
+    /* background-color: #f2f2f2; */
+    color: #5713e9;
+    font-weight: bold;
+}
+
+.nutritional-status-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.nutritional-status-table th, .nutritional-status-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.nutritional-status-table th {
+    background-color: #f2f2f2;
+    color: #5713e9;
+    font-weight: bold;
+}
+
+.nutritional-status-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-around;
+}
+
+.status-card {
+    flex: 1 1 20%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.status-card h3 {
+    font-size: 17px;
+    font-weight: bold;
+    color: #5713e9;
+    margin-bottom: 10px;
+}
+
+.status-card .status {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.status-card .total {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.nutritional-status-container-horizontal {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.status-row {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.status-column {
+    flex: 1;
+    text-align: center;
 }
 </style>

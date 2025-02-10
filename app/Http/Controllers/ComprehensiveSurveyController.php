@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ComprehensiveSurvey;
+use App\Models\Claim;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ComprehensiveSurveyController extends Controller
 {
@@ -154,4 +156,24 @@ class ComprehensiveSurveyController extends Controller
         $zones = ComprehensiveSurvey::select('zone')->get();
         return response()->json($zones);
     }
+
+    public function claimSeniorCitizen($eventId)
+{
+    $today = Carbon::today();
+
+    $seniorCitizen = ComprehensiveSurvey::whereRaw("TIMESTAMPDIFF(YEAR, birth_date, ?) >= 60", [$today])
+        ->leftJoin('claims', function ($join) use ($eventId) {
+            $join->on('comprehensive_surveys.id', '=', 'claims.survey_id')
+                 ->where('claims.event_id', '=', $eventId);
+        })
+        ->select(
+            'comprehensive_surveys.*',
+            DB::raw('IF(claims.id IS NOT NULL, "Claimed", "Not Claimed") AS claim_status')
+        )
+        ->get();
+
+    return response()->json($seniorCitizen);
+}
+
+    
 }

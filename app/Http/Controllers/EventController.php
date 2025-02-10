@@ -5,30 +5,29 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Event;
+use Inertia\Inertia;
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
     // Store a new event
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'date' => 'required|date|date_format:Y-m-d',
+        $validatedData = $request->validate([
+            'title' => 'string|max:255',
+            'date' => 'date',
         ]);
-    
-        $event = Event::create([
-            'title' => $request->title,
-            'date' => $request->date,
-        ]);
-    
-        return response()->json($event, 201);
+
+        Event::create($validatedData);
+        
+        session()->flash('message', 'Data has been added successfully!');
+
     }
 
     // Fetch all events
-    public function index()
+    public function retrieve()
     {
         $events = Event::all();
         return response()->json($events);
-
     }
 }

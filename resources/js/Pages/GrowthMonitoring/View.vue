@@ -2,7 +2,7 @@
 import FormLayout from '../../Layouts/FormLayout.vue';
 import { ref, onMounted, computed, watchEffect } from 'vue';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { router } from '@inertiajs/vue3'; 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -15,7 +15,7 @@ const growthMonitoring = ref([]);
 onMounted(async () => {
     try {
         const response = await axios.get(route('growth-monitoring-data'));
-        console.log('API Response:', response.data); // Log the API response
+        console.log('API Response:', response.data); 
         growthMonitoring.value = response.data;
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -25,7 +25,7 @@ onMounted(async () => {
 watchEffect(async () => {
     try {
         const response = await axios.get(route('growth-monitoring-data'));
-        console.log('API Response:', response.data); // Log the API response
+        console.log('API Response:', response.data);
         growthMonitoring.value = response.data;
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -46,7 +46,7 @@ const filteredData = computed(() => {
     );
 });
 
-const sortOption = ref(''); // New state for sorting option
+const sortOption = ref(''); 
 
 const sortedData = computed(() => {
     let data = [...filteredData.value];
@@ -313,6 +313,7 @@ const getAcronym = (status) => {
                         <th>Weight for Age</th>
                         <th>Height for Age</th>
                         <th>Weight for Height</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -332,6 +333,11 @@ const getAcronym = (status) => {
                             <td v-else>-</td>
                             <td v-if="data.growth_monitorings.length">{{ data.growth_monitorings[0].weight_height_status }}</td>
                             <td v-else>-</td>
+                            <td>
+                                <button @click="router.get(route('child.show', { id: data.id }))" class="address-button">
+                                <i class="fas fa-address-card"></i>
+                            </button>
+                            </td>
                         </tr>
                     </tbody>
             </table>
@@ -346,7 +352,7 @@ const getAcronym = (status) => {
                 </button>
             </div>
         </div>
-        <div class="total-count">
+        <!-- <div class="total-count">
             <h2 style="margin-left: 5px; margin-bottom: 10px;">Weight for Age</h2>
             <p style="margin-bottom: 10px; margin-left: 20px;">SU: {{ totalSU }}</p>
             <p style="margin-bottom: 10px; margin-left: 20px;">Underweight: {{ totalUnderweight }}</p>
@@ -365,11 +371,27 @@ const getAcronym = (status) => {
             <p style="margin-bottom: 10px; margin-left: 20px;">Normal: {{ totalNormal }}</p>
             <p style="margin-left: 20px; margin-bottom: 10px;">Overweight: {{ totalOverweight }}</p>
             <p style="margin-left: 20px; margin-bottom: 20px;">Obese: {{ totalObese }}</p>
-        </div>
+        </div> -->
     </div>
-</template>
+</template> 
 
 <style scoped>
+.address-button {
+    background-color: #17a2b8; 
+    border: none;
+    color: white;
+    padding: 3px 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.address-button:hover {
+    background-color: #138496; 
+    transform: scale(1.1);
+}
 .total-count{
     font-size: 14px;
 }
@@ -419,6 +441,7 @@ const getAcronym = (status) => {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-left: 5%;
+    width: 100%;
 }
 
 .data-pwd-list h2 {
@@ -520,6 +543,6 @@ const getAcronym = (status) => {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    width: 105%;
+    width: 100%;
 }
 </style>
