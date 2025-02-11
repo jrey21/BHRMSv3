@@ -1252,12 +1252,12 @@ h2 {
   position: relative;
 }
 .info-table {
-  width: 100%; /* Adjust width to match the card */
+  width: 100%; 
   border-collapse: collapse;
   margin-bottom: 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   font-size: 14px;
-  margin-left: 0; /* Remove margin-left to align with card */
+  margin-left: 0; 
 }
 .info-table thead th {
   /* position: sticky; */

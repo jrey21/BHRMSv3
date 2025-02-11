@@ -27,7 +27,7 @@
   
   // Compute chart data
   const chartData = computed(() => ({
-    labels: Object.keys(props.ageGroups), // Age groups as labels
+    labels: Object.keys(props.ageGroups), 
     datasets: [
       {
         label: "Male",
