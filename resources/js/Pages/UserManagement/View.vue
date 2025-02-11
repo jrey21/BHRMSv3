@@ -60,14 +60,18 @@
       </tbody>
     </table>
   </div>
-  <div class="container">
+
+  <!-- Audit Logs -->
+  <!-- <div class="container">
     <h3 class="subtitle">Audit Logs</h3>
     <ul class="log-list">
       <li v-for="log in logs" :key="log.id" class="log-item">
         {{ log.action }} - {{ log.timestamp }}
       </li>
     </ul>
-  </div>
+    <button @click="displayPreviousLogs" class="btn show-logs-btn">Show Previous Logs</button>
+    <p v-if="logs.length === 0">No logs available</p> 
+  </div> -->
 
   <div v-if="showDeleteModal" class="modal">
     <div class="modal-content">
@@ -115,17 +119,20 @@ const showResetModal = ref(false);
 const userToReset = ref(null);
 const successMessage = ref('');
 const showSuccessModal = ref(false);
+const currentUser = ref({ name: 'Current User' }); 
 
 onMounted(async () => {
   await fetchUsers();
   await fetchLogs();
+  loadLogsFromLocalStorage(); 
+  displayAllLogs(); 
 });
 
 const fetchUsers = async () => {
   const response = await axios.get('/users-data');
   users.value = response.data.map(user => ({
     ...user,
-    active: Boolean(user.is_active), // Ensure active is a boolean
+    active: Boolean(user.is_active), 
     status: user.is_active ? 'Active' : 'Deactivated',
     position: user.position.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '), // Capitalize first letter of each word
   }));
@@ -133,7 +140,44 @@ const fetchUsers = async () => {
 
 const fetchLogs = async () => {
   const response = await axios.get('/audit-logs');
-  logs.value = response.data;
+  logs.value = response.data.map(log => ({
+    ...log,
+    action: `${log.action} by ${log.user_name}`
+  }));
+  saveLogsToLocalStorage();
+};
+
+const saveLogsToLocalStorage = () => {
+  localStorage.setItem('auditLogs', JSON.stringify(logs.value));
+};
+
+const loadLogsFromLocalStorage = () => {
+  const storedLogs = localStorage.getItem('auditLogs');
+  if (storedLogs) {
+    logs.value = JSON.parse(storedLogs);
+  }
+};
+
+const displayAllLogs = () => {
+  const storedLogs = localStorage.getItem('auditLogs');
+  if (storedLogs) {
+    logs.value = JSON.parse(storedLogs);
+  }
+};
+
+const displayPreviousLogs = async () => {
+  try {
+    console.log('Fetching previous logs...');
+    const response = await axios.get('/audit-logs/previous');
+    console.log('Previous logs fetched:', response.data);
+    logs.value = response.data.map(log => ({
+      ...log,
+      action: `${log.action} by ${log.user_name}`
+    }));
+    console.log('Logs updated:', logs.value);
+  } catch (error) {
+    console.error('Error fetching previous logs:', error);
+  }
 };
 
 const filteredUsers = computed(() => {
@@ -156,14 +200,14 @@ const sortedUsers = computed(() => {
 
 const updateUser = async (user) => {
   await axios.put(`/admin/users/${user.id}`, { position: user.position });
-  logs.value.push({ action: `Updated ${user.name}'s position`, timestamp: new Date().toISOString() });
+  logs.value.push({ action: `Updated ${user.name}'s position by ${currentUser.value.name}`, timestamp: new Date().toISOString() });
 };
 
 const toggleStatus = async (user) => {
   user.active = !user.active;
   try {
     await axios.put(`/users/${user.id}/toggle-activation`, { is_active: user.active });
-    logs.value.push({ action: `${user.active ? 'Activated' : 'Deactivated'} ${user.name}`, timestamp: new Date().toISOString() });
+    logs.value.push({ action: `${user.active ? 'Activated' : 'Deactivated'} ${user.name} by ${currentUser.value.name}`, timestamp: new Date().toISOString() });
     if (!user.active) {
       await prohibitLogin(user.id);
     }
@@ -175,8 +219,7 @@ const toggleStatus = async (user) => {
 watchEffect(async () => {
   for (const user of users.value) {
     await axios.put(`/admin/users/${user.id}`, { is_active: user.active });
-    logs.value.push({ action: `${user.active ? 'Activated' : 'Deactivated'} ${user.name}`, timestamp: new Date().toISOString() });
-
+    logs.value.push({ action: `${user.active ? 'Activated' : 'Deactivated'} ${user.name} by ${currentUser.value.name}`, timestamp: new Date().toISOString() });
     if (!user.active) {
       await prohibitLogin(user.id);
     }
@@ -185,7 +228,24 @@ watchEffect(async () => {
 
 const prohibitLogin = async (id) => {
   await axios.post(`/admin/users/${id}/prohibit-login`);
-  logs.value.push({ action: `Prohibited login for user ID: ${id}`, timestamp: new Date().toISOString() });
+  logs.value.push({ action: `Prohibited login for user ID: ${id} by ${currentUser.value.name}`, timestamp: new Date().toISOString() });
+};
+
+const storeLog = async (user_id, action) => {
+  try {
+    await axios.post('/audit-logs', {
+      user_id: user_id,
+      action: action
+    });
+    console.log('Log stored successfully');
+  } catch (error) {
+    console.error('Error storing log:', error);
+  }
+};
+
+// Example usage of storeLog function
+const exampleUsage = async () => {
+  await storeLog(currentUser.value.id, 'Example action');
 };
 
 const deleteUser = (id) => {
@@ -197,10 +257,10 @@ const confirmDelete = async () => {
   try {
     await axios.delete(`/delete-users/${userToDelete.value.id}`);
     users.value = users.value.filter(user => user.id !== userToDelete.value.id);
-    logs.value.push({ action: `Deleted user ID: ${userToDelete.value.id}`, timestamp: new Date().toISOString() });
+    logs.value.push({ action: `Deleted user ID: ${userToDelete.value.id} by ${currentUser.value.name}`, timestamp: new Date().toISOString() });
     successMessage.value = 'User successfully deleted!';
     showSuccessModal.value = true;
-    setTimeout(closeSuccessModal, 3000); 
+    setTimeout(closeSuccessModal, 3000);
   } catch (error) {
     console.error('Error deleting user:', error);
   } finally {
@@ -222,10 +282,10 @@ const resetPassword = (id) => {
 const confirmReset = async () => {
   try {
     await axios.post(`/admin/users/${userToReset.value.id}/reset-password`); 
-    logs.value.push({ action: `Reset password for user ID: ${userToReset.value.id}`, timestamp: new Date().toISOString() });
-    successMessage.value = 'Password successfully reset!'; 
+    logs.value.push({ action: `Reset password for user ID: ${userToReset.value.id} by ${currentUser.value.name}`, timestamp: new Date().toISOString() });
+    successMessage.value = 'Password successfully reset!';
     showSuccessModal.value = true;
-    setTimeout(closeSuccessModal, 3000); 
+    setTimeout(closeSuccessModal, 3000);
   } catch (error) {
     console.error('Error resetting password:', error);
   } finally {
@@ -271,24 +331,22 @@ h2{
   font-size: 20px; 
   font-weight: bold;
 }
-
 .filters {
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
   margin-top: 10px;
-  justify-content: space-between; 
+  justify-content: space-between;
 }
 .search-container {
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #f8f9fa;
-  border-radius: 50px; 
+  border-radius: 50px;
   padding: 5px 10px; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 .search-box {
   display: flex;
   align-items: center;
@@ -298,21 +356,20 @@ h2{
   border-radius: 50px;
   background-color: #fff;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
-  height: 30px; 
+  height: 30px;
 }
-
+ 
 .search-box i {
   font-size: 14px;
   color: #007bff;
   margin-right: 8px;
 }
-
 .search-box input {
   font-size: 14px;
   border: none;
   outline: none;
   color: #333;
-  height: 20px; 
+  height: 20px;
 }
 
 .search-input:focus {
@@ -325,9 +382,9 @@ h2{
   border-radius: 5px;
   background-color: #79bbff;
   color: white;
-  height: 35px; 
+  height: 35px;
   font-size: 14px;
-}
+}; 
 .sort-select {
   padding: 10px;
   border: 1px solid #5dacfe;
@@ -343,7 +400,7 @@ h2{
   background-color: #f8f9fa; 
   border-radius: 10px;
   overflow: hidden;
-  table-layout: fixed; 
+  table-layout: fixed;
 }
 th, td {
   padding: 5px 16px; 
@@ -351,7 +408,6 @@ th, td {
   text-align: center;
   color: #333; 
   font-size: 14px; 
- 
 }
 th {
   background-color: #e2e8f0;
@@ -401,7 +457,6 @@ tbody tr:nth-child(even) {
   background-color: #4caf50;
   color: white;
 }
-
 .delete-btn {
   background-color: #e74c3c;
   color: white;
@@ -417,7 +472,7 @@ tbody tr:nth-child(even) {
 .subtitle {
   font-size: 18px; 
   font-weight: bold;
-  color: #333;
+  color: #333; 
 }
 .log-list {
   list-style: none;
@@ -456,14 +511,13 @@ tbody tr:nth-child(even) {
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.4);
 }
-
 .modal-content {
   background-color: #fff;
   margin: auto;
   padding: 20px;
   border: 1px solid #ddd;
   width: 80%;
-  max-width: 400px; 
+  max-width: 400px;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   animation: fadeIn 0.3s ease-in-out;
@@ -489,7 +543,6 @@ tbody tr:nth-child(even) {
   cursor: pointer;
   transition: color 0.3s ease;
 }
-
 .close:hover,
 .close:focus {
   color: #000;
@@ -527,7 +580,6 @@ tbody tr:nth-child(even) {
     font-size: 14px; 
     transition: background-color 0.3s ease;
 }
-
 .modal-content button:hover {
     /* background-color: #0056b3; */
     background-color: #c82333;
@@ -543,11 +595,9 @@ tbody tr:nth-child(even) {
     /* background-color: #c82333; */
     background-color: #0056b3;
 }
-
 .success-message {
   display: none;
 }
-
 .flash-modal {
     position: fixed;
     top: 20px;
@@ -563,5 +613,19 @@ tbody tr:nth-child(even) {
 .flash-content {
     font-size: 16px;
     font-weight: bold;
+}
+.show-logs-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.show-logs-btn:hover {
+  background-color: #0056b3;
 }
 </style>

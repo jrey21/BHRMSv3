@@ -58,6 +58,8 @@ Route::middleware(['auth'])->group(function () {
     //AuditLogs
     Route::inertia('logs', 'AuditLogs/Logs')->name('logs');
     Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit.logs');
+    Route::get('/audit-logs/previous', [AuditLogController::class, 'getPreviousLogs']);
+    Route::post('/audit-logs', [AuditLogController::class, 'store']);
 
     //User management
     Route::inertia('user-management', 'UserManagement/View')->name('user-management');
