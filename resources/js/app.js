@@ -7,14 +7,6 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import Layout from './Layouts/Layout.vue';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
-// import { Link } from '@inertiajs/inertia-vue3';
-// import axios from 'axios';
-
-// Set Axios base URL
-// axios.defaults.baseURL = 'http://localhost:8000';
-
-// Optional: You can attach Axios globally to Vue for easier access
-// app.config.globalProperties.$axios = axios;
 
 createInertiaApp({
   title: (title) => `BHRMS ${title}`,

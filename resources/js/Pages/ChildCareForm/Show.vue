@@ -1,22 +1,18 @@
 <script setup>
 import { defineProps, ref, onMounted, computed } from 'vue';
 import FormLayout from '../../Layouts/FormLayout.vue';
+import ChildInformation from './ChildInformation.vue';
+import FlashMessage from '../../Components/FlashMessage.vue';
+import VaccinationRecords from './VaccinationRecords.vue';
+import VitaminASupplementation from './VitaminASupplementation.vue';
+import Counseling from './Counseling.vue';
+import GrowthMonitoring from './GrowthMonitoring.vue';
+import DevelopmentalScreening from './DevelopmentalScreening.vue';
+import Deworming from './Deworming.vue';
+import Dental from './Dental.vue';
+import Space from '../../Components/Space.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
-import { defineAsyncComponent } from 'vue';
-
-// Dynamically import components
-const ChildInformation = defineAsyncComponent(() => import('./ChildInformation.vue'));
-const FlashMessage = defineAsyncComponent(() => import('../../Components/FlashMessage.vue'));
-const VaccinationRecords = defineAsyncComponent(() => import('./VaccinationRecords.vue'));
-const VitaminASupplementation = defineAsyncComponent(() => import('./VitaminASupplementation.vue'));
-const Counseling = defineAsyncComponent(() => import('./Counseling.vue'));
-const GrowthMonitoring = defineAsyncComponent(() => import('./GrowthMonitoring.vue'));
-const DevelopmentalScreening = defineAsyncComponent(() => import('./DevelopmentalScreening.vue'));
-const Deworming = defineAsyncComponent(() => import('./Deworming.vue'));
-const Dental = defineAsyncComponent(() => import('./Dental.vue'));
-
-
 
 defineOptions({
     layout: FormLayout,

@@ -3,13 +3,10 @@ import { ref, onMounted, computed, watchEffect } from 'vue';
 import { router } from '@inertiajs/vue3'; 
 import axios from 'axios';
 import FormLayout from '../../Layouts/FormLayout.vue';
-import { defineAsyncComponent } from 'vue';
+import Distribution from './Distribution.vue';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-
-//import dynamic
-const Distribution = defineAsyncComponent(() => import('./Distribution.vue'));
 
 defineOptions({ layout: FormLayout });
 

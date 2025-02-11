@@ -1,14 +1,14 @@
 <script setup>
 import { defineProps, ref, onMounted, computed } from 'vue';
 import FormLayout from '../../Layouts/FormLayout.vue';
-import { defineAsyncComponent } from 'vue';
+import Enrollment from './Enrollment.vue';
+import PregnancyPeriod from './PregnancyPeriod.vue';
+import LactatingPeriod from './LactatingPeriod.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
-// Dynamically import components
-const Enrollment = defineAsyncComponent(() => import('./Enrollment.vue'));
-const PregnancyPeriod = defineAsyncComponent(() => import('./PregnancyPeriod.vue'));
-const LactatingPeriod = defineAsyncComponent(() => import('./LactatingPeriod.vue'));
+// import OPData from './OPData.vue';
+
 
 defineOptions({
     layout: FormLayout,

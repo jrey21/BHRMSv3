@@ -1,13 +1,10 @@
 <script setup>
 import Layout from "../Layouts/FormLayout.vue";
-import { defineAsyncComponent } from 'vue';
+import RightSidebar from "./Components/RightSidebar.vue";
 import { ref, onMounted, computed, watchEffect, onUnmounted } from 'vue';
 import axios from 'axios';
 import { Line, Pie, Bar } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, BarElement, PointElement, LinearScale, CategoryScale, ArcElement } from 'chart.js';
-
-//import dynamic
-const RightSidebar = defineAsyncComponent(() => import('./Components/RightSidebar.vue'));
 
 ChartJS.register(Title, Tooltip, Legend, LineElement, BarElement, PointElement, LinearScale, CategoryScale, ArcElement);
 

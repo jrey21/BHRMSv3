@@ -22,28 +22,6 @@ Route::middleware(['guest', RefreshPageMiddleware::class])->group(function() {
 
 });
 
-// Admin Approval Routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/pending-users', [AuthController::class, 'getPendingUsers'])->name('admin.pendingUsers');
-    Route::post('/admin/approve/{id}', [AuthController::class, 'approveUser'])->name('admin.approveUser');
-    Route::post('/admin/reject/{id}', [AuthController::class, 'rejectUser'])->name('admin.rejectUser');
-
-    Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.updateUser');
-    Route::delete('/delete-users/{id}', [UserController::class, 'destroy'])->name('admin.deleteUser');
-    Route::post('/admin/users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('admin.resetPassword');
-    Route::inertia('/list-of-users', 'Users/List')->name('list-of-users');
-    Route::put('/users/{id}/toggle-activation', [UserController::class, 'toggleActivation'])->name('users.toggleActivation');
-    Route::get('/users-data', [UserController::class, 'getUsers'])->name('admin.get-users');
-});
-
-// Audit Logs Routes
-Route::middleware(['auth'])->group(function () {
-    Route::inertia('logs', 'AuditLogs/Logs')->name('logs');
-    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit.logs');
-    Route::get('/audit-logs/previous', [AuditLogController::class, 'getPreviousLogs']);
-    Route::post('/audit-logs', [AuditLogController::class, 'store']);
-});
-
 // User Management Routes
 // Route::middleware(['auth'])->group(function () {
 //     Route::inertia('user-management', 'UserManagement/View')->name('user-management');
@@ -51,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
 
 // Profile Routes
 Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::middleware([AdminMiddleware::class])->group(function() {
         Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
 
@@ -71,7 +50,6 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [ProfileController::class, 'updateInfo'])->name('profile.info');
     Route::put('/profile', [ProfileController::class, 'updatePassword'])->name('profile.password');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
     Route::get('/redirect-dashboard', function() {
         if (auth()->user()->position == 'health worker') {
@@ -196,6 +174,28 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::post('/event/{id}/addScannedCode', [SeniorEventController::class, 'addScannedCode'])->name('event.addScannedCode');
     Route::get('event-scanned-data/{id}', [SeniorEventController::class,'showScannedCodes'])->name('event-scanned-data');
     Route::get('scanned-events', [ScannedCodeController::class, 'retrieveData'])->name('scanned-events');
+});
+
+// Admin Approval Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/pending-users', [AuthController::class, 'getPendingUsers'])->name('admin.pendingUsers');
+    Route::post('/admin/approve/{id}', [AuthController::class, 'approveUser'])->name('admin.approveUser');
+    Route::post('/admin/reject/{id}', [AuthController::class, 'rejectUser'])->name('admin.rejectUser');
+
+    Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.updateUser');
+    Route::delete('/delete-users/{id}', [UserController::class, 'destroy'])->name('admin.deleteUser');
+    Route::post('/admin/users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('admin.resetPassword');
+    Route::inertia('/list-of-users', 'Users/List')->name('list-of-users');
+    Route::put('/users/{id}/toggle-activation', [UserController::class, 'toggleActivation'])->name('users.toggleActivation');
+    Route::get('/users-data', [UserController::class, 'getUsers'])->name('admin.get-users');
+});
+
+// Audit Logs Routes
+Route::middleware(['auth'])->group(function () {
+    Route::inertia('logs', 'AuditLogs/Logs')->name('logs');
+    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit.logs');
+    Route::get('/audit-logs/previous', [AuditLogController::class, 'getPreviousLogs']);
+    Route::post('/audit-logs', [AuditLogController::class, 'store']);
 });
 
 
