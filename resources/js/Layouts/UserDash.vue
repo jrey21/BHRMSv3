@@ -1,5 +1,6 @@
 <script setup>
-import Sidebar from '../Pages/Components/Sidebar.vue';
+import Sidebar from '../Pages/Components/UserSidebar.vue';
+import RightSidebar from '../Pages/Components/RightSidebar.vue';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 // Props for dynamic background class
@@ -13,7 +14,8 @@ const isDropdownOpen = ref(false);
 
 // Function to handle logout without confirmation
 const handleLogout = (event) => {
-    window.location.href = route('login');
+    // window.location.href = route('login');
+    form.post(route('logout'));
 };
 
 const isSidebarOpen = ref(false);
@@ -32,6 +34,10 @@ const handleClickOutside = (event) => {
     }
 };
 
+const capitalizeWords = (str) => {
+    return str.replace(/\b\w/g, char => char.toUpperCase());
+};
+
 onMounted(() => {
     document.addEventListener('click', handleClickOutside);
 });
@@ -39,10 +45,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
     document.removeEventListener('click', handleClickOutside);
 });
-
-const capitalizeWords = (str) => {
-    return str.replace(/\b\w/g, char => char.toUpperCase());
-};
 </script>
 
 <template>
@@ -86,12 +88,13 @@ const capitalizeWords = (str) => {
                         </Link>
                     </div>
                 </div>
+
                 <nav class="flex items-center space-x-6">
                     <!-- Authenticated User Links -->
                     <div v-if="$page.props.auth.user" class="relative dropdown-container">
                         <!-- Profile Button -->
                         <button
-                            class="flex items-center space-x-2 px-3 py-2 bg-transparent text-white rounded-md hover:bg-blue-700 transition relative z-10"
+                            class="flex items-center space-x-2 px-3 py-2 bg-transparent text-white rounded-md relative z-10"
                             @click="isDropdownOpen = !isDropdownOpen"
                             >
                             <img 
@@ -130,7 +133,6 @@ const capitalizeWords = (str) => {
 
     <!-- Sidebar and Main Content -->
     <Sidebar :class="{ open: isSidebarOpen }" />
-    
     <main class="main-content">
         <slot />
         <!-- <footer>
@@ -138,6 +140,7 @@ const capitalizeWords = (str) => {
             </div>
         </footer> -->
     </main>
+    <RightSidebar :class="{ open: isRightSidebarOpen }" />
     <div></div>
 </template>
 

@@ -318,7 +318,7 @@ const downloadPDF = () => {
                             <!-- <button @click="markAsGivenBirth(data)" class="birth-button">
                                 <i class="fas fa-check"></i>
                             </button> -->
-                            <button @click="confirmDelete(data)" class="delete-button">
+                            <button v-if="$page.props.auth.user.position === 'admin'" @click="confirmDelete(data)" class="delete-button">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>

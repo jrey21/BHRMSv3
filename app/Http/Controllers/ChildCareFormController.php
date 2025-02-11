@@ -50,7 +50,7 @@ class ChildCareFormController extends Controller
     // Retrieve all the data from the database
     public function retrieve()
     {
-        $childcareForms = ChildCareForm::all();
+        $childcareForms = ChildCareForm::all(); 
         return response()->json($childcareForms);
     }
 
@@ -252,6 +252,7 @@ class ChildCareFormController extends Controller
     //delete a specific child
     public function destroy($id)
     {
+
         $child = ChildCareForm::findOrFail($id);
         $child->delete();
 

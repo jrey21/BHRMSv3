@@ -59,6 +59,7 @@ class Kernel extends HttpKernel
         
         'refresh.page' => \App\Http\Middleware\RefreshPageMiddleware::class, 
         'position' => \App\Http\Middleware\PositionMiddleware::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
         
         // 'isAdmin' => \App\Http\Middleware\IsAdmin::class,
         // 'approved' => \App\Http\Middleware\EnsureUserIsApproved::class,

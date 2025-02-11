@@ -1,6 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3';
-import Layout from "../Layouts/FormLayout.vue";
+import Layout from "../Layouts/UserDash.vue";
 import RightSidebar from "./Components/RightSidebar.vue";
 import { ref, onMounted, computed, watchEffect, onUnmounted } from 'vue';
 import axios from 'axios';
@@ -33,25 +33,7 @@ watchEffect(async () => {
 
 const totalLactating = computed(() => lactatingMothers.value.length);
 
-const childVaccinated = ref([]);
 
-onMounted(async () => {
-    try {
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-});
-
-watchEffect(async () => {
-    try {
-        const response = await axios.get(route('vaccination-record-data'));
-        childVaccinated.value = response.data;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-});
-
-const totalVaccinated = computed(() => childVaccinated.value.length);
 
 const dataCitizens = ref([]);
 
@@ -293,15 +275,14 @@ const lineChartOptions = {
 };
 
 const pieChartData = computed(() => ({
-    labels: ['Total Child Vaccinated','Lactating Mothers', 'Pregnants', '4P\'s', 'PWD\'s', 'Senior Citizens', 'Residents', 'Underweights', 'Childcare'],
+    labels: ['Lactating Mothers', 'Pregnants', '4P\'s', 'PWD\'s', 'Senior Citizens', 'Residents', 'Underweights', 'Childcare'],
     datasets: [
         {
             label: 'Legend',
-            backgroundColor: ['#D70C24ff','#007BFF', '#FFC107', '#6F42C1', '#C2B11D', '#191FC5', '#038624', '#994B10', '#A12873'],
-            hoverBackgroundColor: ['#D70C24ff','#0056b3', '#e0a800', '#5a2d91', '#a89b1a', '#1418a5', '#02691b', '#7a3a0d', '#7d2056'],
+            backgroundColor: ['#007BFF', '#FFC107', '#6F42C1', '#C2B11D', '#191FC5', '#038624', '#994B10', '#A12873'],
+            hoverBackgroundColor: ['#0056b3', '#e0a800', '#5a2d91', '#a89b1a', '#1418a5', '#02691b', '#7a3a0d', '#7d2056'],
             borderWidth: 1,
             data: [
-                totalVaccinated.value,
                 totalLactating.value,
                 totalPregnants.value,
                 total4Ps.value,
@@ -849,9 +830,9 @@ const barChartOptions = {
                 </div>
                 <div class="dashboard-boxes">
                     <div class="total-cases">
-                        <h2 class="numbers">{{ totalVaccinated }}</h2>
-                        <p class="labels">Total Child Vaccinated</p>
-                        <Link :href="route('vaccination-record')" class="view-dets">View Details</Link>
+                        <h2 class="numbers">145</h2>
+                        <p class="labels">Total Cases</p>
+                        <p class="view-dets">View Details</p>
                         <i class="fas fa-chart-bar" style="position: absolute; top: 25px; right: 15px; color: white; opacity:45%; font-size: 50px"></i>
                     </div>
                     <div class="breastfeeding">

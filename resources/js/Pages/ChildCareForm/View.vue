@@ -203,6 +203,7 @@ const downloadPDF = () => {
     });
     doc.save('Child Care Data.pdf');
 };
+
 </script>
 
 <template>
@@ -257,7 +258,7 @@ const downloadPDF = () => {
                             <button @click="router.get(route('child.show', { id: data.id }))" class="address-button">
                                 <i class="fas fa-address-card"></i>
                             </button>
-                            <button @click="confirmDelete(data)" class="delete-button">
+                            <button v-if="$page.props.auth.user.position === 'admin'" @click="confirmDelete(data)" class="delete-button">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>

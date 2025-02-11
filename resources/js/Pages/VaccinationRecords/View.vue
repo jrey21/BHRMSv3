@@ -15,7 +15,7 @@ const vaccinationRecords = ref([]);
 onMounted(async () => {
     try {
         const response = await axios.get(route('vaccination-record-data'));
-        console.log('API Response:', response.data); // Log the API response
+        console.log('API Response:', response.data); 
         vaccinationRecords.value = response.data;
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -25,7 +25,7 @@ onMounted(async () => {
 watchEffect(async () => {
     try {
         const response = await axios.get(route('vaccination-record-data'));
-        console.log('API Response:', response.data); // Log the API response
+        console.log('API Response:', response.data); 
         vaccinationRecords.value = response.data;
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -46,7 +46,7 @@ const filteredData = computed(() => {
     );
 });
 
-const sortOption = ref(''); // New state for sorting option
+const sortOption = ref(''); 
 
 const sortedData = computed(() => {
     let data = [...filteredData.value];
@@ -108,7 +108,7 @@ const getVaccineName = (record) => {
 };
 
 const downloadPDF = () => {
-    let data = [...sortedData.value]; // Use sortedData to ensure the data is sorted according to the selected option
+    let data = [...sortedData.value]; 
 
     const doc = new jsPDF();
 

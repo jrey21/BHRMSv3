@@ -275,6 +275,9 @@ const distributeMedicine = async () => {
 };
 
 const flashMessageClass = computed(() => {
+    if (flashMessage.value.includes('Not enough medicine!')) {
+        return 'flash-modal error';
+    }
     return flashMessage.value.includes('Error') ? 'flash-modal error' : 'flash-modal success';
 });
 
@@ -618,7 +621,7 @@ h2{
     margin-left: 10%;
     padding: 20px;
     margin-top: 0;
-    margin-bottom: 15%;
+    margin-bottom: 10%;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
