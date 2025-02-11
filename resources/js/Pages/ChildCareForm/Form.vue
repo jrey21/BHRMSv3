@@ -134,7 +134,7 @@ const today = new Date().toISOString().split('T')[0];
             </div>
         </div>
         <div style="display: flex; align-items: center; justify-content: center;">
-                <img src="C:\xampp\htdocs\BHRMSv3\resources\js\Pages\Components\image\doh_logo.png" alt="" class="logo" />
+                <img src="../Components/image/doh_logo.png" alt="" class="logo" />
                 <h2 style="text-align: center; color: #1c4e80">Early Childhood Care and Development</h2>
             </div>
 
