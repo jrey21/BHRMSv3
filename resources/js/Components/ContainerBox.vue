@@ -10,16 +10,16 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  title: {
+    type: String,
+    required: false,
+    default: ''
+  }
 });
 
 const filteredUsers = computed(() => {
   return props.users.filter(user => user.status === 0);
 });
-
-const capitalizeWords = (str) => {
-  return str.replace(/\b\w/g, char => char.toUpperCase());
-};
-
 const formattedUsers = computed(() => {
   return filteredUsers.value.map(user => ({
     ...user,

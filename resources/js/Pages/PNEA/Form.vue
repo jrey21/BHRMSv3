@@ -2,6 +2,7 @@
 import { useForm } from '@inertiajs/vue3';
 import FormLayout from '../../Layouts/FormLayout.vue';
 import { ref, watch } from 'vue';
+import FlashMessage from '../../Components/FlashMessage.vue';
 
 defineOptions({ layout: FormLayout });
 
@@ -266,7 +267,8 @@ const submit = () => {
             modalTitle.value = 'Success';
             modalMessage.value = 'The form has been successfully saved.';
             showModal.value = true;
-            flashMessage('The form has been successfully saved.', 'success');
+            window.flash('The form has been successfully saved.', 'success');
+
             window.location.href = route('pnea-enrollment-view');
         },
         onError: (errors) => {
@@ -339,7 +341,7 @@ watch(() => form.birth_date, (newBirthDate) => {
                 </div>
                 <div class="form-group small-input-zone">
                     <label for="zone">Zone</label>
-                    <select name="zone" class="select" id="zone" v-model="form.zone">
+                    <select name="zone" class="select" id="zone" v-model="form.zone" required>
                         <option value=""></option>
                         <option value="Zone 1">Zone 1</option>
                         <option value="Zone 2">Zone 2</option>
@@ -383,7 +385,12 @@ watch(() => form.birth_date, (newBirthDate) => {
                 </div>
                 <div class="form-group small-input">
                     <label for="term_of_pregnancy">Term of Pregnancy</label>
-                    <input type="text" name="term_of_pregnancy" v-model="form.term_of_pregnancy" required/>
+                    <select name="term_of_pregnancy" class="select" v-model="form.term_of_pregnancy" required>
+                        <option value=""></option>
+                        <option value="1st Trimester">1st Trimester</option>
+                        <option value="2nd Trimester">2nd Trimester</option>
+                        <option value="3rd Trimester">3rd Trimester</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="number_of_pregnancy">Number of Pregnancy</label>
@@ -454,7 +461,13 @@ watch(() => form.birth_date, (newBirthDate) => {
                 </div>
                 <div class="form-group">
                     <label for="monthly_family_income">Monthly Family Income</label>
-                    <input type="text" name="monthly_family_income" v-model="form.monthly_family_income" required/>
+                    <select name="monthly_family_income" class="select" v-model="form.monthly_family_income" required >
+                      <option value="Below 10000">Below 10,000</option>
+                      <option value="10000-20000">10,000 - 20,000</option>
+                      <option value="20000-30000">20,000 - 30,000</option>
+                      <option value="30000-40000">30,000 - 40,000</option>
+                      <option value="Above 40000">Above 40,000</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="household_size">Household Size</label>
@@ -1482,9 +1495,9 @@ watch(() => form.birth_date, (newBirthDate) => {
                 <button type="submit" class="save-button">Save</button>
             </div>
         </form>   
-
+        <FlashMessage :show="showModal" :message="modalMessage" />
         <!-- Modal -->
-        <div v-if="showModal" :class="['modal', formSubmittedSuccessfully ? 'modal-success' : 'modal-error']">
+        <!-- <div v-if="showModal" :class="['modal', formSubmittedSuccessfully ? 'modal-success' : 'modal-error']">
             <div class="modal-content-success" v-if="formSubmittedSuccessfully">
                 <h2 style="color: white;">{{ modalTitle }}</h2>
                 <p>{{ modalMessage }}</p>
@@ -1493,12 +1506,12 @@ watch(() => form.birth_date, (newBirthDate) => {
                 <h2 style="color: white;">{{ modalTitle }}</h2>
                 <p>{{ modalMessage }}</p>
             </div>
-        </div>
+        </div> -->
         <!-- Cancel Confirmation Modal -->
         <div v-if="showCancelModal" class="modal">
             <div class="modal-content">
-                <h2 style="margin-bottom: 7px;">Cancel Confirmation</h2>
-                <hr style="margin-bottom: 10px;">
+                <h2 style="text-align: left; margin-bottom: 7px;">Cancel Confirmation</h2>
+                <hr style="margin-top: 10px; margin-bottom:10px; padding: 0;">
                 <p>{{ cancelMessage }}</p>
                 <div class="modal-btn">
                     <button @click="confirmCancel" class="save-button">Yes</button>
@@ -2094,9 +2107,9 @@ label {
     color: white;
 }
 .modal-btn{
-    display: flex;
-    justify-content: center;
-    gap: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
 .modal-content-success {
@@ -2125,16 +2138,17 @@ label {
     top: 0;
 }
 .modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 70%;
-    max-width: 400px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  width: 80%;
+  max-width: 400px; 
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+  z-index: 1001;
 }
-
 .close {
     color: #aaa;
     float: right;

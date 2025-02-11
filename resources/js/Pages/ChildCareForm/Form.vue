@@ -2,6 +2,7 @@
 import { useForm } from '@inertiajs/vue3';
 import FormLayout from '../../Layouts/FormLayout.vue';
 import { ref } from 'vue';
+import FlashMessage from '../../Components/FlashMessage.vue';
 
 defineOptions({ layout: FormLayout });
 
@@ -110,7 +111,7 @@ const today = new Date().toISOString().split('T')[0];
     <Head title=" | Child Care Form"/>
     <div :class="['survey-container', { 'form-success': formSubmittedSuccessfully }]">
         <!-- Modal -->
-        <div v-if="showModal" :class="['modal', formSubmittedSuccessfully ? 'modal-success' : 'modal-error']">
+        <!-- <div v-if="showModal" :class="['modal', formSubmittedSuccessfully ? 'modal-success' : 'modal-error']">
             <div class="modal-content-success" v-if="formSubmittedSuccessfully">
                 <h2 style="color: white;">{{ modalTitle }}</h2>
                 <p>{{ modalMessage }}</p>
@@ -119,12 +120,12 @@ const today = new Date().toISOString().split('T')[0];
                 <h2 style="color: white;">{{ modalTitle }}</h2>
                 <p>{{ modalMessage }}</p>
             </div>
-        </div>
+        </div> -->
         <!-- Cancel Confirmation Modal -->
         <div v-if="showCancelModal" class="modal">
             <div class="modal-content">
-                <h2 style="margin-bottom: 7px;">Cancel Confirmation</h2>
-                <hr style="margin-bottom: 10px;">
+                <h2 style="text-align: left; margin-bottom: 7px;">Cancel Confirmation</h2>
+                <hr style="margin-top: 10px; margin-bottom:10px; padding: 0;">
                 <p>{{ cancelMessage }}</p>
                 <div class="modal-btn">
                     <button @click="confirmCancel" class="save-button">Yes</button>
@@ -331,6 +332,8 @@ const today = new Date().toISOString().split('T')[0];
                 <button type="submit" class="save-button">Save</button>
             </div>
         </form>
+        <FlashMessage :show="showModal" :message="modalMessage" />
+        <!-- <SuccessMessageLayout v-if="formSubmittedSuccessfully" /> -->
     </div>
 </template>
 
@@ -650,13 +653,13 @@ textarea {
     background-color: rgba(0, 0, 0, 0.4);
 }
 .modal-error {
-    background-color: rgba(0, 0, 0, 0.4); /* Change to semi-transparent black */
+    background-color: rgba(0, 0, 0, 0.4); 
     color: white;
 }
 .modal-btn{
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    justify-content: flex-end;
+    gap: 12px;
 }
 
 .modal-content-success {

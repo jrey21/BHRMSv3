@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_active'
     ];
 
     /**
@@ -33,6 +34,13 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+
+    public function permissions()
+    {
+        return $this->hasOne(Permission::class, 'position', 'position');
+    }
+    
 
     /**
      * Get the attributes that should be cast.

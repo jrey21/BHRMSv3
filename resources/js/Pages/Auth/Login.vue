@@ -57,6 +57,11 @@ const submit = () => {
             </div>
             <hr class="w-full border-t border-gray-300 mb-2">
 
+            <!-- Display success message -->
+            <div v-if="$page.props.flash.success" class="mb-4 text-green-500">
+                {{ $page.props.flash.success }}
+            </div>
+
             <form @submit.prevent="submit" class="w-full">
                 <TextInput 
                     class="mb-4" 

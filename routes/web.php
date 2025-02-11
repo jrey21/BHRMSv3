@@ -5,12 +5,14 @@ use App\Models\ChildCareForm;
 use App\Models\ComprehensiveSurvey;
 use App\Models\PNEAEnrollment;
 use App\Models\SeniorEvent;
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ComprehensiveSurveyController;
 use App\Http\Controllers\ChildCareFormController;
 use App\Http\Controllers\VaccinationRecordController;
 use App\Http\Controllers\VitaminASupplementationController;
 use App\Http\Middleware\RefreshPageMiddleware;
+use App\Http\Middleware\PositionMiddleware;
 use App\Http\Controllers\BeneficiariesController;
 use App\Http\Controllers\MedicineListController;
 use App\Http\Controllers\DistributionController;
@@ -26,6 +28,8 @@ use App\Http\Controllers\ClaimController;
 use App\Http\Controllers\QRScanController;
 use App\Http\Controllers\ScanController;
 use App\Http\Controllers\ScannedCodeController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuditLogController;
 // use App\Http\Controllers\UserConfirmationController;
 
 Route::inertia('/', 'Auth/Login' )->name('Login');
@@ -34,6 +38,32 @@ Route::inertia('/', 'Auth/Login' )->name('Login');
 //     Route::post('/admin/approve-user/{id}', [AdminController::class, 'approveUser'])->name('admin.approve-user');
 //     Route::post('/admin/reject-user/{id}', [AdminController::class, 'rejectUser'])->name('admin.reject-user');
 // });
+
+//New Routes of Admin Approval
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/pending-users', [AuthController::class, 'getPendingUsers'])->name('admin.pendingUsers');
+    Route::post('/admin/approve/{id}', [AuthController::class, 'approveUser'])->name('admin.approveUser');
+    Route::post('/admin/reject/{id}', [AuthController::class, 'rejectUser'])->name('admin.rejectUser');
+
+    Route::inertia('confirm-users', 'Auth/AdminUsers')->name('confirm-users');
+
+    Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.updateUser');
+    Route::delete('/delete-users/{id}', [UserController::class, 'destroy'])->name('admin.deleteUser');
+    Route::post('/admin/users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('admin.resetPassword');
+    
+    Route::inertia('/list-of-users', 'Users/List')->name('list-of-users');
+    Route::put('/users/{id}/toggle-activation', [UserController::class, 'toggleActivation'])->name('users.toggleActivation');
+    Route::get('/users-data', [UserController::class, 'getUsers'])->name('admin.get-users');
+
+    //AuditLogs
+    Route::inertia('logs', 'AuditLogs/Logs')->name('logs');
+    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit.logs');
+
+    //User management
+    Route::inertia('user-management', 'UserManagement/View')->name('user-management');
+
+
+});
 
 
 
@@ -44,7 +74,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::put('/profile',[ProfileController::class, 'updatePassword'])->name('profile.password');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('/users', [UserConfirmationController::class, 'index'])->name('users.index');
+    // Route::get('/users', [UserConfirmationController::class, 'index'])->name('users.index');
 
     Route::inertia('/gm', 'ChildCareForm/Gm')->name('gm');
     // -- ----- -- - - - --  - - - - - -  -- -  -- - - - --  - - - - - - - -//

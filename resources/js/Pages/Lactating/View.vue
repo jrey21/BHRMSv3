@@ -215,7 +215,7 @@ const downloadPDF = () => {
                     </thead>
                     <tbody>
                         <tr v-if="paginatedData.length === 0">
-                            <td colspan="7">No data found</td>
+                            <td colspan="9">No data found</td>
                         </tr>
                         <tr v-for="data in paginatedData" :key="data.id">
                             <td>{{ data.fullName }}</td>

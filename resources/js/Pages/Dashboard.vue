@@ -435,6 +435,13 @@ const totalPneaZones = computed(() => {
             pneaZoneCounts[item.zone] = 1;
         }
     });
+    // Add default count of 0 for zones without records
+    const allZones = ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5','Zone 6','Zone 7'];
+    allZones.forEach(zone => {
+        if (!pneaZoneCounts[zone]) {
+            pneaZoneCounts[zone] = 0;
+        }
+    });
     return Object.keys(pneaZoneCounts).sort().reduce((obj, key) => {
         obj[key] = pneaZoneCounts[key];
         return obj;
@@ -461,6 +468,13 @@ const totalChildZones = computed(() => {
             zoneCounts[item.zone] = 1;
         }
     });
+    // Add default count of 0 for zones without records
+    const allZones = ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5','Zone 6','Zone 7']; 
+    allZones.forEach(zone => {
+        if (!zoneCounts[zone]) {
+            zoneCounts[zone] = 0;
+        }
+    });
     return Object.keys(zoneCounts).sort().reduce((obj, key) => {
         obj[key] = zoneCounts[key];
         return obj;
@@ -485,6 +499,13 @@ const totalSurveyZones = computed(() => {
             zoneCounts[item.zone]++;
         } else {
             zoneCounts[item.zone] = 1;
+        }
+    });
+    // Add default count of 0 for zones without records
+    const allZones = ['Zone 1', 'Zone 2', 'Zone 3', 'Zone 4', 'Zone 5','Zone 6','Zone 7']; 
+    allZones.forEach(zone => {
+        if (!zoneCounts[zone]) {
+            zoneCounts[zone] = 0;
         }
     });
     return Object.keys(zoneCounts).sort().reduce((obj, key) => {
@@ -659,6 +680,18 @@ const nutritionalStatusData = computed(() => [
 
 const getCurrentYear = () => {
     return new Date().getFullYear();
+};
+
+const getHighestCountZone = (zoneCounts) => {
+    let highestCount = 0;
+    let highestZone = '';
+    for (const [zone, count] of Object.entries(zoneCounts)) {
+        if (count > highestCount) {
+            highestCount = count;
+            highestZone = zone;
+        }
+    }
+    return highestZone;
 };
 
 console.log("Final Age Groups Data:", ageGroups.value);
@@ -879,7 +912,7 @@ const barChartOptions = {
                             <div>
                                 <h1>PNEA Records</h1>
                                 <ul>
-                                    <li v-for="(count, zone) in totalPneaZones" :key="zone">
+                                    <li v-for="(count, zone) in totalPneaZones" :key="zone" :style="{ color: zone === getHighestCountZone(totalPneaZones) ? 'red' : 'inherit' }">
                                         {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
                                     </li>
                                 </ul>
@@ -887,7 +920,7 @@ const barChartOptions = {
                             <div>
                                 <h1>ECCD Records</h1>
                                 <ul>
-                                    <li v-for="(count, zone) in totalChildZones" :key="zone">
+                                    <li v-for="(count, zone) in totalChildZones" :key="zone" :style="{ color: zone === getHighestCountZone(totalChildZones) ? 'red' : 'inherit' }">
                                         {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
                                     </li>
                                 </ul>
@@ -895,7 +928,7 @@ const barChartOptions = {
                             <div>
                                 <h1>Residents</h1>
                                 <ul>
-                                    <li v-for="(count, zone) in totalSurveyZones" :key="zone">
+                                    <li v-for="(count, zone) in totalSurveyZones" :key="zone" :style="{ color: zone === getHighestCountZone(totalSurveyZones) ? 'red' : 'inherit' }">
                                         {{ zone }} : <strong style="padding: 10px;">{{ count }}</strong>
                                     </li>
                                 </ul>
@@ -931,10 +964,10 @@ const barChartOptions = {
                                         <p class="status">Underweight</p>
                                         <p class="total">{{ totalUnderweight }}</p>
                                     </div>
-                                    <!-- <div class="status-column">
+                                    <div class="status-column">
                                         <p class="status">Normal</p>
                                         <p class="total">{{ totalNormalWeight }}</p>
-                                    </div> -->
+                                    </div>
                                     <div class="status-column">
                                         <p class="status">Overweight</p>
                                         <p class="total">{{ totalOverweightWeight }}</p>
@@ -952,10 +985,10 @@ const barChartOptions = {
                                         <p class="status">Stunted</p>
                                         <p class="total">{{ totalStunted }}</p>
                                     </div>
-                                    <!-- <div class="status-column">
+                                    <div class="status-column">
                                         <p class="status">Normal</p>
                                         <p class="total">{{ totalNormalHeight }}</p>
-                                    </div> -->
+                                    </div>
                                     <div class="status-column">
                                         <p class="status">Tall</p>
                                         <p class="total">{{ totalTall }}</p>
@@ -973,10 +1006,10 @@ const barChartOptions = {
                                         <p class="status">Moderately Wasted</p>
                                         <p class="total">{{ totalMW }}</p>
                                     </div>
-                                    <!-- <div class="status-column">
+                                    <div class="status-column">
                                         <p class="status">Normal</p>
                                         <p class="total">{{ totalNormal }}</p>
-                                    </div> -->
+                                    </div>
                                     <div class="status-column">
                                         <p class="status">Overweight</p>
                                         <p class="total">{{ totalOverweight }}</p>

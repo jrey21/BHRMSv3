@@ -58,6 +58,8 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         
         'refresh.page' => \App\Http\Middleware\RefreshPageMiddleware::class, 
+        'position' => \App\Http\Middleware\PositionMiddleware::class,
+        
         // 'isAdmin' => \App\Http\Middleware\IsAdmin::class,
         // 'approved' => \App\Http\Middleware\EnsureUserIsApproved::class,
 

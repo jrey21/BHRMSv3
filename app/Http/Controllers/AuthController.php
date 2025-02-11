@@ -25,8 +25,6 @@ class AuthController extends Controller
            $fields['avatar'] = Storage::disk('public')->put('avatars', $request->avatar);
         }
 
-        // Hash the password before saving
-        // $fields['password'] = Hash::make($fields['password']);
 
         //Register
         $user = User::create([
@@ -35,33 +33,107 @@ class AuthController extends Controller
             'password' => Hash::make($fields['password']),
             'position' => $fields['position'],
             'avatar' => $fields['avatar'] ?? null,
-        ]);
 
-        //Login
-        Auth::login($user);
+            // additional field for admin approval
+            'is_approved' => false, 
+        ]);
+        
+        // Add flash message for pending approval
+        return redirect()->route('login')->with('success', 'Your account is pending waiting for approval by the admin.');
 
         //Redirect
-        return redirect()->route('dashboard')->with('success', 'Registration Successful!');
+        // return redirect()->route('dashboard')->with('success', 'Registration Successful!');
+
+        //For admin approval
+        // return redirect()->route('login')->with('success', 'Your account is pending approval by the admin.');
     }
 
+
+    //Login function
     public function login(Request $request)
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-    
-        if (Auth::attempt($credentials, $request->remember)) {
-            $request->session()->regenerate();
-    
-            return redirect()->intended('/dashboard');
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user || !Auth::attempt($credentials, $request->remember)) {
+            return back()->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ])->onlyInput('email');
         }
+
+        if (!$user->is_approved) {
+            Auth::logout();
+            return back()->withErrors([
+                'email' => 'Your account is pending approval from the admin.',
+            ]);
+        }
+
+        if (!$user->is_active) { 
+            Auth::logout();
+            return redirect()->route('login')->withErrors([
+                'email' => 'Your account is inactive. Please contact the admin to reactivate your account.',
+            ]);
+        }
+        
+
+        return redirect()->intended('/dashboard');
+
+        //The commented code below is for the normal login without admin approval
+        // if (Auth::attempt($credentials, $request->remember)) {
+        //     $request->session()->regenerate();
     
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        //     return redirect()->intended('/dashboard');
+        // }
+    
+        // return back()->withErrors([
+        //     'email' => 'The provided credentials do not match our records.',
+        // ])->onlyInput('email');
     }
     
+
+    //Fetch pending users
+    public function getPendingUsers()
+    {
+        if (Auth::user()->position !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        $users = User::where('is_approved', false)->get();
+        return response()->json($users);
+    }
+
+    //Function to approve users
+    public function approveUser($id)
+    {
+        if (Auth::user()->position !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $user = User::findOrFail($id);
+        $user->is_approved = true;
+        $user->save();
+
+        return back()->with('success', 'User approved successfully.');
+    }
+
+    //Function reject approval of users
+    public function rejectUser($id)
+    {
+        if (Auth::user()->position !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return back()->with('success', 'User rejected successfully.');
+    }
+
+    //Logout function
     public function logout (Request $request)
     {
         Auth::logout();
