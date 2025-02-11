@@ -55,7 +55,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
         Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
 
         // User Management
-        Route::inertia('user-management', 'UserManagement/View')->name('user-management');
+        Route::inertia('user-management', 'Views/UserManagement')->name('user-management');
 
         //Confirm Users
         Route::inertia('confirm-users', 'Auth/AdminUsers')->name('confirm-users');
@@ -84,7 +84,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
 // Child Care Form Routes
 Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::inertia('childcare-form', 'ChildCareForm/Form')->name('childcare-form');
-    Route::inertia('childcare-form-view', 'ChildCareForm/View')->name('childcare-form-view');
+    Route::inertia('childcare-form-view', 'Views/ChildCareForm')->name('childcare-form-view');
     Route::post('/childcare-form', [ChildCareFormController::class, 'store']);
     Route::get('/childcare-data', [ChildCareFormController::class, 'retrieve'])->name('childcare-data');
     Route::get('/childcare-form-edit/{id}', [ChildCareFormController::class, 'edit'])->name('childcare-form-edit');
@@ -103,7 +103,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
 // PNEA Enrollment Routes
 Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::inertia('pnea-enrollment', 'PNEA/Form')->name('pnea-enrollment');
-    Route::inertia('pnea-enrollment-view', 'PNEA/View')->name('pnea-enrollment-view');
+    Route::inertia('pnea-enrollment-view', 'Views/PNEA')->name('pnea-enrollment-view');
     Route::post('/pnea-enrollment', [PNEAEnrollmentController::class, 'store'])->name('pnea-enrollment');
     Route::get('/pnea-enrollment-data', [PNEAEnrollmentController::class, 'retrieve'])->name('pnea-enrollment-data');
     Route::get('/pnea-zone-data', [PNEAEnrollmentController::class, 'retrieveAndSortZones'])->name('pnea-zone-data');
@@ -118,7 +118,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
 // Comprehensive Survey Routes
 Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::inertia('/comprehensive-survey', 'ComprehensiveSurvey/Form')->name('comprehensive-survey');
-    Route::inertia('/comprehensive-survey-view', 'ComprehensiveSurvey/View')->name('comprehensive-survey-view');
+    Route::inertia('/comprehensive-survey-view', 'Views/ComprehensiveSurvey')->name('comprehensive-survey-view');
     Route::post('/comprehensive-survey', [ComprehensiveSurveyController::class, 'survey']);
     Route::get('/comprehensive-survey-data', [ComprehensiveSurveyController::class, 'retrieve'])->name('comprehensive-survey-data');
     Route::get('/comprehensive-survey-data/{id}', [ComprehensiveSurveyController::class, 'show'])->name('comprehensive-survey-data.show');
@@ -126,25 +126,25 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
 
     Route::get('/comprehensive-survey-zone-data', [ComprehensiveSurveyController::class, 'retrieveAndSortZones'])->name('comprehensive-survey-zone-data');
     Route::get('/comprehensive-survey-sex-data', [ComprehensiveSurveyController::class, 'retrieveSex'])->name('comprehensive-survey-sex-data');
-    Route::inertia('/senior-citizen-view', 'SeniorCitizen/View')->name('senior-citizen-view');
+    Route::inertia('/senior-citizen-view', 'Views/SeniorCitizen')->name('senior-citizen-view');
     Route::get('/senior-citizen-data', [ComprehensiveSurveyController::class, 'seniorCitizen'])->name('senior-citizen-data');
     Route::get('/senior-citizen-count', [ComprehensiveSurveyController::class, 'seniorCitizenCount'])->name('senior-citizen-count');
-    Route::inertia('/four-ps-view', 'FourPs/View')->name('four-ps-view');
+    Route::inertia('/four-ps-view', 'Views/FourPs')->name('four-ps-view');
     Route::get('/four-ps-data', [ComprehensiveSurveyController::class, 'fourPs'])->name('four-ps-data');
-    Route::inertia('/pwd-view', 'PWD/View')->name('pwd-view');
+    Route::inertia('/pwd-view', 'Views/PWD')->name('pwd-view');
     Route::get('/pwd-data', [ComprehensiveSurveyController::class, 'pwd'])->name('pwd-data');
-    Route::inertia('/age-grouping-view', 'AgeGrouping/View')->name('age-grouping-view');
+    Route::inertia('/age-grouping-view', 'Views/AgeGrouping')->name('age-grouping-view');
 });
 
 // Monitoring Form Routes
 Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
-    Route::inertia('monitoring-form', 'MonitoringForm/View')->name('monitoring-form');
+    Route::inertia('monitoring-form', 'Views/MonitoringForm')->name('monitoring-form');
     Route::get('/monitoring-data', [PNEAEnrollmentController::class, 'displayPregnancyPeriodData'])->name('monitoring-data');
 });
 
 // Lactating Form Routes
 Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
-    Route::inertia('lactating-form', 'Lactating/View')->name('lactating-form');
+    Route::inertia('lactating-form', 'Views/Lactating')->name('lactating-form');
     Route::get('/lactating-data', [PNEAEnrollmentController::class, 'displayLactatingPeriodData'])->name('lactating-data');
 });
 
@@ -175,14 +175,14 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
 
 // Growth Monitoring Routes
 Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
-    Route::inertia('/growth-monitoring', 'GrowthMonitoring/View')->name('growth-monitoring');
+    Route::inertia('/growth-monitoring', 'Views/GrowthMonitoring')->name('growth-monitoring');
     Route::get('/growth-monitoring-data', [ChildCareFormController::class, 'showGrowthMonitoring'])->name('growth-monitoring-data');
     Route::get('/underweight', [GrowthMonitoringController::class, 'underweight'])->name('underweight');
 });
 
 // Vaccination Record Routes
 Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
-    Route::inertia('/vaccination-record', 'VaccinationRecords/View')->name('vaccination-record');
+    Route::inertia('/vaccination-record', 'Views/VaccinationRecords')->name('vaccination-record');
     Route::get('/vaccination-record-data', [ChildCareFormController::class, 'showVaccinationRecord'])->name('vaccination-record-data');
 });
 

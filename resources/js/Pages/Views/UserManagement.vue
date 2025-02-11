@@ -103,7 +103,10 @@
 import { ref, computed, onMounted, watchEffect } from 'vue';
 import axios from 'axios';
 import FormLayout from '../../Layouts/FormLayout.vue';
-import FlashMessage from '../../Components/FlashMessage.vue';
+import { defineAsyncComponent } from 'vue';
+
+//dynamic
+const FlashMessage = defineAsyncComponent(() => import('../../Components/FlashMessage.vue'));
 
 defineOptions({ layout: FormLayout });
 

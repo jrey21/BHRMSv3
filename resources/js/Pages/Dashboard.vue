@@ -1,11 +1,13 @@
 <script setup>
-import { Link } from '@inertiajs/inertia-vue3';
 import Layout from "../Layouts/FormLayout.vue";
-import RightSidebar from "./Components/RightSidebar.vue";
+import { defineAsyncComponent } from 'vue';
 import { ref, onMounted, computed, watchEffect, onUnmounted } from 'vue';
 import axios from 'axios';
 import { Line, Pie, Bar } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, BarElement, PointElement, LinearScale, CategoryScale, ArcElement } from 'chart.js';
+
+//import dynamic
+const RightSidebar = defineAsyncComponent(() => import('./Components/RightSidebar.vue'));
 
 ChartJS.register(Title, Tooltip, Legend, LineElement, BarElement, PointElement, LinearScale, CategoryScale, ArcElement);
 
@@ -852,7 +854,7 @@ const barChartOptions = {
                         <h2 class="numbers">{{ totalVaccinated }}</h2>
                         <p class="labels">Total Child Vaccinated</p>
                         <Link :href="route('vaccination-record')" class="view-dets">View Details</Link>
-                        <i class="fas fa-chart-bar" style="position: absolute; top: 25px; right: 15px; color: white; opacity:45%; font-size: 50px"></i>
+                        <i class="fas fa-syringe" style="position: absolute; top: 25px; right: 15px; color: white; opacity:45%; font-size: 50px"></i>
                     </div>
                     <div class="breastfeeding">
                         <h2 class="numbers">{{ totalLactating }}</h2>

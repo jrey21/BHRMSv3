@@ -215,7 +215,7 @@ const setActiveLink = (link) => {
 .sidebar-content {
     overflow-y: auto; 
     overflow-x: hidden; 
-    height: 100vh; 
+    height: calc(100vh - 100px); 
 }
 
 #sidebar.close {

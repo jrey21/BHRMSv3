@@ -2,7 +2,10 @@
 import { useForm } from '@inertiajs/vue3';
 import FormLayout from '../../Layouts/FormLayout.vue';
 import { ref, watch } from 'vue';
-import FlashMessage from '../../Components/FlashMessage.vue';
+import { defineAsyncComponent } from 'vue';
+
+//dynamic
+const FlashMessage = defineAsyncComponent(() => import('../../Components/FlashMessage.vue'));
 
 defineOptions({ layout: FormLayout });
 
