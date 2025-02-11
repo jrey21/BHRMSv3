@@ -1,0 +1,416 @@
+{
+  "_@babel-DnfDSJcD.js": {
+    "file": "assets/@babel-DnfDSJcD.js",
+    "name": "@babel"
+  },
+  "_@fortawesome-XL2-NSwU.js": {
+    "file": "assets/@fortawesome-XL2-NSwU.js",
+    "name": "@fortawesome",
+    "imports": [
+      "_@vue-C4Ig4sz1.js"
+    ]
+  },
+  "_@inertiajs-Bpba38SN.js": {
+    "file": "assets/@inertiajs-Bpba38SN.js",
+    "name": "@inertiajs",
+    "imports": [
+      "_lodash.isequal-Jbfj2AVf.js",
+      "_vue-xfQz_8LU.js",
+      "_lodash.clonedeep-Cg7uPO4m.js",
+      "_qs-ByQ4metQ.js",
+      "_deepmerge-BtKP_WR7.js",
+      "_axios-CCb-kr4I.js",
+      "_nprogress-Catl2AFz.js",
+      "_@vue-C4Ig4sz1.js"
+    ]
+  },
+  "_@kurkle-D8fDXNIl.js": {
+    "file": "assets/@kurkle-D8fDXNIl.js",
+    "name": "@kurkle"
+  },
+  "_@vue-C4Ig4sz1.js": {
+    "file": "assets/@vue-C4Ig4sz1.js",
+    "name": "@vue"
+  },
+  "_axios-CCb-kr4I.js": {
+    "file": "assets/axios-CCb-kr4I.js",
+    "name": "axios"
+  },
+  "_call-bind-Bt3bzbWQ.js": {
+    "file": "assets/call-bind-Bt3bzbWQ.js",
+    "name": "call-bind",
+    "imports": [
+      "_get-intrinsic-BKEvijrG.js",
+      "_function-bind-BbkWVFrm.js",
+      "_set-function-length-B5OANX0j.js",
+      "_es-errors-DzOT6E3C.js",
+      "_es-define-property-tzmkNPou.js"
+    ]
+  },
+  "_chart.js-C3rbDyii.js": {
+    "file": "assets/chart.js-C3rbDyii.js",
+    "name": "chart.js",
+    "imports": [
+      "_@kurkle-D8fDXNIl.js"
+    ]
+  },
+  "_core-js-DIfpHki4.js": {
+    "file": "assets/core-js-DIfpHki4.js",
+    "name": "core-js",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js"
+    ]
+  },
+  "_date-fns-DYEFGVmZ.js": {
+    "file": "assets/date-fns-DYEFGVmZ.js",
+    "name": "date-fns",
+    "imports": [
+      "_@babel-DnfDSJcD.js"
+    ]
+  },
+  "_deepmerge-BtKP_WR7.js": {
+    "file": "assets/deepmerge-BtKP_WR7.js",
+    "name": "deepmerge",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js"
+    ]
+  },
+  "_define-data-property-DO9o5wXF.js": {
+    "file": "assets/define-data-property-DO9o5wXF.js",
+    "name": "define-data-property",
+    "imports": [
+      "_es-define-property-tzmkNPou.js",
+      "_es-errors-DzOT6E3C.js",
+      "_gopd-CEkvUycD.js"
+    ]
+  },
+  "_dijkstrajs-D_NXgYpA.js": {
+    "file": "assets/dijkstrajs-D_NXgYpA.js",
+    "name": "dijkstrajs"
+  },
+  "_es-define-property-tzmkNPou.js": {
+    "file": "assets/es-define-property-tzmkNPou.js",
+    "name": "es-define-property",
+    "imports": [
+      "_get-intrinsic-BKEvijrG.js"
+    ]
+  },
+  "_es-errors-DzOT6E3C.js": {
+    "file": "assets/es-errors-DzOT6E3C.js",
+    "name": "es-errors"
+  },
+  "_fflate-EnPhvkmS.js": {
+    "file": "assets/fflate-EnPhvkmS.js",
+    "name": "fflate"
+  },
+  "_function-bind-BbkWVFrm.js": {
+    "file": "assets/function-bind-BbkWVFrm.js",
+    "name": "function-bind"
+  },
+  "_get-intrinsic-BKEvijrG.js": {
+    "file": "assets/get-intrinsic-BKEvijrG.js",
+    "name": "get-intrinsic",
+    "imports": [
+      "_es-errors-DzOT6E3C.js",
+      "_has-symbols-eVqrYdw7.js",
+      "_has-proto-JnoBQRdH.js",
+      "_function-bind-BbkWVFrm.js",
+      "_hasown-DYqjtFKE.js"
+    ]
+  },
+  "_gopd-CEkvUycD.js": {
+    "file": "assets/gopd-CEkvUycD.js",
+    "name": "gopd",
+    "imports": [
+      "_get-intrinsic-BKEvijrG.js"
+    ]
+  },
+  "_has-property-descriptors-DphFXkuo.js": {
+    "file": "assets/has-property-descriptors-DphFXkuo.js",
+    "name": "has-property-descriptors",
+    "imports": [
+      "_es-define-property-tzmkNPou.js"
+    ]
+  },
+  "_has-proto-JnoBQRdH.js": {
+    "file": "assets/has-proto-JnoBQRdH.js",
+    "name": "has-proto"
+  },
+  "_has-symbols-eVqrYdw7.js": {
+    "file": "assets/has-symbols-eVqrYdw7.js",
+    "name": "has-symbols"
+  },
+  "_hasown-DYqjtFKE.js": {
+    "file": "assets/hasown-DYqjtFKE.js",
+    "name": "hasown",
+    "imports": [
+      "_function-bind-BbkWVFrm.js"
+    ]
+  },
+  "_jspdf-BrysxW-Z.js": {
+    "file": "assets/jspdf-BrysxW-Z.js",
+    "name": "jspdf",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js",
+      "_@babel-DnfDSJcD.js",
+      "_fflate-EnPhvkmS.js"
+    ],
+    "dynamicImports": [
+      "node_modules/html2canvas/dist/html2canvas.esm.js",
+      "node_modules/dompurify/dist/purify.es.js",
+      "node_modules/canvg/lib/index.es.js"
+    ]
+  },
+  "_jspdf-autotable-DuNJD3FR.js": {
+    "file": "assets/jspdf-autotable-DuNJD3FR.js",
+    "name": "jspdf-autotable",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js",
+      "_jspdf-BrysxW-Z.js"
+    ]
+  },
+  "_lodash.clonedeep-Cg7uPO4m.js": {
+    "file": "assets/lodash.clonedeep-Cg7uPO4m.js",
+    "name": "lodash.clonedeep",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js"
+    ]
+  },
+  "_lodash.isequal-Jbfj2AVf.js": {
+    "file": "assets/lodash.isequal-Jbfj2AVf.js",
+    "name": "lodash.isequal",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js"
+    ]
+  },
+  "_nprogress-!~{00d}~.js": {
+    "file": "assets/nprogress-CSXic_Zd.css",
+    "src": "_nprogress-!~{00d}~.js"
+  },
+  "_nprogress-Catl2AFz.js": {
+    "file": "assets/nprogress-Catl2AFz.js",
+    "name": "nprogress",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js"
+    ],
+    "css": [
+      "assets/nprogress-CSXic_Zd.css"
+    ]
+  },
+  "_object-inspect-CL7_Git2.js": {
+    "file": "assets/object-inspect-CL7_Git2.js",
+    "name": "object-inspect",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js"
+    ]
+  },
+  "_performance-now-COwSKZtU.js": {
+    "file": "assets/performance-now-COwSKZtU.js",
+    "name": "performance-now",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js"
+    ]
+  },
+  "_qrcode-SHonoxyK.js": {
+    "file": "assets/qrcode-SHonoxyK.js",
+    "name": "qrcode",
+    "imports": [
+      "_dijkstrajs-D_NXgYpA.js"
+    ]
+  },
+  "_qs-ByQ4metQ.js": {
+    "file": "assets/qs-ByQ4metQ.js",
+    "name": "qs",
+    "imports": [
+      "_side-channel-C208HWcR.js"
+    ]
+  },
+  "_raf-93v8bdBc.js": {
+    "file": "assets/raf-93v8bdBc.js",
+    "name": "raf",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js",
+      "_performance-now-COwSKZtU.js"
+    ]
+  },
+  "_rgbcolor-CJOMaPxD.js": {
+    "file": "assets/rgbcolor-CJOMaPxD.js",
+    "name": "rgbcolor",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js"
+    ]
+  },
+  "_set-function-length-B5OANX0j.js": {
+    "file": "assets/set-function-length-B5OANX0j.js",
+    "name": "set-function-length",
+    "imports": [
+      "_get-intrinsic-BKEvijrG.js",
+      "_define-data-property-DO9o5wXF.js",
+      "_has-property-descriptors-DphFXkuo.js",
+      "_gopd-CEkvUycD.js",
+      "_es-errors-DzOT6E3C.js"
+    ]
+  },
+  "_side-channel-C208HWcR.js": {
+    "file": "assets/side-channel-C208HWcR.js",
+    "name": "side-channel",
+    "imports": [
+      "_get-intrinsic-BKEvijrG.js",
+      "_call-bind-Bt3bzbWQ.js",
+      "_object-inspect-CL7_Git2.js",
+      "_es-errors-DzOT6E3C.js"
+    ]
+  },
+  "_stackblur-canvas-CBjRDurV.js": {
+    "file": "assets/stackblur-canvas-CBjRDurV.js",
+    "name": "stackblur-canvas"
+  },
+  "_svg-pathdata-BCgtg4Q0.js": {
+    "file": "assets/svg-pathdata-BCgtg4Q0.js",
+    "name": "svg-pathdata"
+  },
+  "_vue-chartjs-DhIF-rBW.js": {
+    "file": "assets/vue-chartjs-DhIF-rBW.js",
+    "name": "vue-chartjs",
+    "imports": [
+      "_chart.js-C3rbDyii.js",
+      "_@vue-C4Ig4sz1.js"
+    ]
+  },
+  "_vue-qrcode-reader-CTQGBJ9D.js": {
+    "file": "assets/vue-qrcode-reader-CTQGBJ9D.js",
+    "name": "vue-qrcode-reader",
+    "imports": [
+      "_@vue-C4Ig4sz1.js"
+    ]
+  },
+  "_vue-router-DnXiCCiH.js": {
+    "file": "assets/vue-router-DnXiCCiH.js",
+    "name": "vue-router",
+    "imports": [
+      "_@vue-C4Ig4sz1.js"
+    ]
+  },
+  "_vue-xfQz_8LU.js": {
+    "file": "assets/vue-xfQz_8LU.js",
+    "name": "vue",
+    "imports": [
+      "_@inertiajs-Bpba38SN.js",
+      "_@vue-C4Ig4sz1.js"
+    ]
+  },
+  "node_modules/canvg/lib/index.es.js": {
+    "file": "assets/canvg-DH6v90DY.js",
+    "name": "canvg",
+    "src": "node_modules/canvg/lib/index.es.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_core-js-DIfpHki4.js",
+      "_@babel-DnfDSJcD.js",
+      "_raf-93v8bdBc.js",
+      "_rgbcolor-CJOMaPxD.js",
+      "_svg-pathdata-BCgtg4Q0.js",
+      "_stackblur-canvas-CBjRDurV.js",
+      "_@inertiajs-Bpba38SN.js",
+      "_lodash.isequal-Jbfj2AVf.js",
+      "_vue-xfQz_8LU.js",
+      "_@vue-C4Ig4sz1.js",
+      "_lodash.clonedeep-Cg7uPO4m.js",
+      "_qs-ByQ4metQ.js",
+      "_side-channel-C208HWcR.js",
+      "_get-intrinsic-BKEvijrG.js",
+      "_es-errors-DzOT6E3C.js",
+      "_has-symbols-eVqrYdw7.js",
+      "_has-proto-JnoBQRdH.js",
+      "_function-bind-BbkWVFrm.js",
+      "_hasown-DYqjtFKE.js",
+      "_call-bind-Bt3bzbWQ.js",
+      "_set-function-length-B5OANX0j.js",
+      "_define-data-property-DO9o5wXF.js",
+      "_es-define-property-tzmkNPou.js",
+      "_gopd-CEkvUycD.js",
+      "_has-property-descriptors-DphFXkuo.js",
+      "_object-inspect-CL7_Git2.js",
+      "_deepmerge-BtKP_WR7.js",
+      "_axios-CCb-kr4I.js",
+      "_nprogress-Catl2AFz.js",
+      "_performance-now-COwSKZtU.js"
+    ]
+  },
+  "node_modules/dompurify/dist/purify.es.js": {
+    "file": "assets/dompurify-a-CayzAK.js",
+    "name": "dompurify",
+    "src": "node_modules/dompurify/dist/purify.es.js",
+    "isDynamicEntry": true
+  },
+  "node_modules/html2canvas/dist/html2canvas.esm.js": {
+    "file": "assets/html2canvas-CBrSDip1.js",
+    "name": "html2canvas",
+    "src": "node_modules/html2canvas/dist/html2canvas.esm.js",
+    "isDynamicEntry": true
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-CiSeSss0.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/Pages/Components/image/doh_logo.png": {
+    "file": "assets/doh_logo-eo6IEIkU.png",
+    "src": "resources/js/Pages/Components/image/doh_logo.png"
+  },
+  "resources/js/Pages/Components/image/patag_logo.png": {
+    "file": "assets/patag_logo-6di25bQh.png",
+    "src": "resources/js/Pages/Components/image/patag_logo.png"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DZaWjNkv.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_axios-CCb-kr4I.js",
+      "_@vue-C4Ig4sz1.js",
+      "_@inertiajs-Bpba38SN.js",
+      "_@fortawesome-XL2-NSwU.js",
+      "_vue-router-DnXiCCiH.js",
+      "_vue-chartjs-DhIF-rBW.js",
+      "_chart.js-C3rbDyii.js",
+      "_jspdf-BrysxW-Z.js",
+      "_jspdf-autotable-DuNJD3FR.js",
+      "_date-fns-DYEFGVmZ.js",
+      "_vue-qrcode-reader-CTQGBJ9D.js",
+      "_qrcode-SHonoxyK.js",
+      "_nprogress-Catl2AFz.js",
+      "_lodash.isequal-Jbfj2AVf.js",
+      "_vue-xfQz_8LU.js",
+      "_lodash.clonedeep-Cg7uPO4m.js",
+      "_qs-ByQ4metQ.js",
+      "_side-channel-C208HWcR.js",
+      "_get-intrinsic-BKEvijrG.js",
+      "_es-errors-DzOT6E3C.js",
+      "_has-symbols-eVqrYdw7.js",
+      "_has-proto-JnoBQRdH.js",
+      "_function-bind-BbkWVFrm.js",
+      "_hasown-DYqjtFKE.js",
+      "_call-bind-Bt3bzbWQ.js",
+      "_set-function-length-B5OANX0j.js",
+      "_define-data-property-DO9o5wXF.js",
+      "_es-define-property-tzmkNPou.js",
+      "_gopd-CEkvUycD.js",
+      "_has-property-descriptors-DphFXkuo.js",
+      "_object-inspect-CL7_Git2.js",
+      "_deepmerge-BtKP_WR7.js",
+      "_@kurkle-D8fDXNIl.js",
+      "_@babel-DnfDSJcD.js",
+      "_fflate-EnPhvkmS.js",
+      "_dijkstrajs-D_NXgYpA.js"
+    ],
+    "css": [
+      "assets/app-BN3U0g14.css"
+    ],
+    "assets": [
+      "assets/patag_logo-6di25bQh.png",
+      "assets/doh_logo-eo6IEIkU.png"
+    ]
+  }
+}

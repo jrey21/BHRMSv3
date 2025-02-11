@@ -13,8 +13,9 @@ export default defineConfig({
     css: {
         minify: false, // Disable minification for debugging
       },
-      
+
     build: {
+        outDir: 'dist',
         rollupOptions: {
             output: {
                 manualChunks(id) {
