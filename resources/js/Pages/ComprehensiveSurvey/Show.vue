@@ -187,13 +187,62 @@ const cancelEdit = () => {
                     </td>
                 </tr>
 
-                <tr><td class="label">H/H Access to Sanitary: </td><td>{{ survey.sanitary_access }}</td></tr>
-                <tr><td class="label">Water Sources: </td><td>{{ survey.water_source }}</td></tr>
-                <tr><td class="label">Family Planning Used: </td><td>{{ survey.family_planning }}</td></tr>
-                <tr><td class="label">Are you a member of the LGBT community?: </td><td>{{ survey.lgbt ? 'Yes' : 'No' }}</td></tr>
-                <tr><td class="label">Do you identify as a (PWD)?: </td><td>{{ survey.pwd ? 'Yes' : 'No' }}</td></tr>
-                <tr><td class="label">Are you a member of 4'Ps? : </td><td>{{ survey.four_ps ? 'Yes' : 'No' }}</td></tr>
-                <tr><td class="label">Are you Non-HTS?: </td><td>{{ survey.non_hts ? 'Yes' : 'No' }}</td></tr>
+                <tr><td class="label">H/H Access to Sanitary: </td>
+                    <td v-if="!isEditing">{{ survey.sanitary_access }}</td>
+                    <td v-else><select v-model="editableSurvey.sanitary_access" class="data input-field">
+                        <option value="Owned">Owned</option>
+                        <option value="Shared">Shared</option>
+                        <option value="None">None</option>
+                    </select></td>
+                </tr>
+                <tr><td class="label">Water Sources: </td>
+                    <td v-if="!isEditing">{{ survey.water_source }}</td>
+                    <td v-else><select v-model="editableSurvey.water_source" class="data input-field">
+                        <option value="Level 1">Level 1</option>
+                        <option value="Level 2">Level 2</option>
+                        <option value="Level 3">Level 3</option>
+                    </select></td>
+                </tr>
+                <tr><td class="label">Family Planning Used: </td>
+                    <td v-if="!isEditing">{{ survey.family_planning }}</td>
+                    <td v-else><input v-model="editableSurvey.family_planning" class="data input-field" /></td>
+                </tr>
+                <tr><td class="label">Are you a member of the LGBT community?: </td>
+                    <td v-if="!isEditing">{{ survey.lgbt ? 'Yes' : 'No' }}</td>
+                    <td v-else>
+                        <select v-model="editableSurvey.lgbt" class="data input-field">
+                            <option :value="1">Yes</option>
+                            <option :value="0">No</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr><td class="label">Do you identify as a (PWD)?: </td>
+                    <td v-if="!isEditing">{{ survey.pwd ? 'Yes' : 'No' }}</td>
+                    <td v-else>
+                        <select v-model="editableSurvey.pwd" class="data input-field">
+                            <option :value="1">Yes</option>
+                            <option :value="0">No</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr><td class="label">Are you a member of 4'Ps? : </td>
+                    <td v-if="!isEditing">{{ survey.four_ps ? 'Yes' : 'No' }}</td>
+                    <td v-else>
+                        <select v-model="editableSurvey.four_ps" class="data input-field">
+                            <option :value="1">Yes</option>
+                            <option :value="0">No</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr><td class="label">Are you Non-HTS?: </td>
+                    <td v-if="!isEditing">{{ survey.non_hts ? 'Yes' : 'No' }}</td>
+                    <td v-else>
+                        <select v-model="editableSurvey.non_hts" class="data input-field">
+                            <option :value="1">Yes</option>
+                            <option :value="0">No</option>
+                        </select>
+                    </td>
+                </tr>
             </table>
         </div>
     </div>

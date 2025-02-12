@@ -2,7 +2,7 @@
 import FormLayout from '../../Layouts/FormLayout.vue';
 import { ref, onMounted, computed, watchEffect } from 'vue';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { router } from '@inertiajs/vue3'; 
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -98,13 +98,6 @@ const changePage = (page) => {
     }
 };
 
-const router = useRouter();
-
-const goBack = () => {
-    router.back();
-    router.go();
-};
-
 const downloadPDF = () => {
     let data = [...sortedData.value];
 
@@ -184,17 +177,23 @@ const downloadPDF = () => {
                     <th>Age</th>
                     <th>Sex</th>
                     <th>Zone</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-if="paginatedData.length === 0">
-                    <td colspan="4">No data found</td>
+                    <td colspan="5">No data found</td>
                 </tr>
                 <tr v-for="data in paginatedData" :key="data.id">
                     <td>{{ data.last_name.charAt(0).toUpperCase() + data.last_name.slice(1) + ", " + data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1)}}</td>
                     <td>{{ data.age_display }}</td>
                     <td>{{ data.sex.charAt(0).toUpperCase() }}</td>
                     <td>{{ data.zone }}</td>
+                    <td>
+                    <button @click="router.get(route('comprehensive-survey-data.show', { id: data.id }))" class="view-button">
+                        <i class="fas fa-address-card"></i>
+                    </button>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -212,6 +211,20 @@ const downloadPDF = () => {
 </template>
 
 <style scoped>
+.view-button {
+    background-color: #17a2b8; 
+    border: none;
+    color: white;
+    padding: 3px 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.view-button:hover {
+    background-color: #138496; 
+    transform: scale(1.1);
+}
 .header {
     display: flex;
     justify-content: space-between;
@@ -294,7 +307,7 @@ const downloadPDF = () => {
     text-overflow: ellipsis;
 }
 .data-table th:nth-child(1){
-    width: 30%; 
+    width: 45%; 
 }
 .data-table th:nth-child(2){
     width: 15%; 
@@ -304,6 +317,9 @@ const downloadPDF = () => {
 }
 .data-table th:nth-child(4){
     width: 15%; 
+}
+.data-table th:nth-child(5){
+    width: 10%; 
 }
 
 .data-table td {

@@ -261,7 +261,7 @@ const submit = () => {
     form.cs_delivery = form.cs_delivery === 'yes' ? 1 : 0;
 
     // Submit the form
-    form.post(route('pnea-enrollment'), {
+    form.post(route('pnea-enrollment-store'), {
         onSuccess: () => {
             formSubmittedSuccessfully.value = true;
             modalTitle.value = 'Success';

@@ -391,7 +391,7 @@ const downloadPDF = () => {
                             <button @click="editData(data)" class="edit-button">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button @click="confirmDelete(data)" class="delete-button">
+                            <button v-if="$page.props.auth.user.position === 'admin'" @click="confirmDelete(data)" class="delete-button">
                                 <i class="fas fa-trash"></i>
                             </button>
                             <button @click="openDistributeModal(data)" class="distribute-button">

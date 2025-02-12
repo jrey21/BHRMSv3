@@ -218,7 +218,7 @@ const getStatusStyle = (status) => {
                    <div class="form-row">
                         <div class="form-group ">
                             <label for="date">Record Date</label>
-                            <input type="date" v-model="newRecord.date" required />
+                            <input type="date" v-model="newRecord.date" :max="today"  required />
                         </div>
                         <div class="form-group">
                             <label for="month">Month</label>

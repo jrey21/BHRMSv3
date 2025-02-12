@@ -290,7 +290,7 @@ const today = new Date().toISOString().split('T')[0];
                     <label for="sanitaryAccess">H/H Access to Sanitary</label>
                     <select :name="`sanitaryAccess_${index}`" v-model="row.sanitaryAccess" required>
                         <option value=""></option>
-                        <option value="Owned">Own</option>
+                        <option value="Owned">Owned</option>
                         <option value="Shared">Shared</option>
                         <option value="None">None</option>
                     </select>

@@ -84,6 +84,12 @@ const setActiveLink = (link) => {
                         Dashboard
                     </Link>
                 </li>
+                <li>
+                    <Link :href="route('financial-assistance')" class="menu" :class="{ active: route().current('financial-assistance') }" @click="setActiveLink($event.target.closest('.menu'))">
+                        <i class="fas fa-hand-holding-usd mr-3 ml-2"></i>
+                        Financial Assistance
+                    </Link>
+                </li>
                 <!-- Category -->
                 <h3 class="categories">Forms</h3>
                 <hr>

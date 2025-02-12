@@ -11,7 +11,7 @@ export default defineConfig({
         }),
     ],
     css: {
-        minify: false, // Disable minification for debugging
+        minify: false, 
       },
 
     build: {

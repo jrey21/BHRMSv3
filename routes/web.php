@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\AuditLog;
 use App\Http\Controllers\{
     AuthController, ComprehensiveSurveyController, ChildCareFormController, 
     VaccinationRecordController, VitaminASupplementationController, 
@@ -21,6 +22,7 @@ Route::middleware(['guest', RefreshPageMiddleware::class])->group(function() {
     Route::post('/login', [AuthController::class, 'login']);
 
 });
+
 
 // User Management Routes
 // Route::middleware(['auth'])->group(function () {
@@ -43,7 +45,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
         Route::delete('/childcare-form-delete/{id}', [ChildCareFormController::class, 'destroy'])->name('childcare-form-delete');
         Route::delete('/pnea-enrollment-delete/{id}', [PNEAEnrollmentController::class, 'destroy'])->name('pnea-enrollment-delete');
         Route::delete('/survey-delete/{id}', [ComprehensiveSurveyController::class, 'destroy'])->name('survey-delete');
-
+        Route::delete('/event-delete/{id}', [SeniorEventController::class, 'destroy'])->name('event-delete');
         
     });
     Route::inertia('/userDashboard', 'UserDashboard')->name('userDashboard');
@@ -57,6 +59,12 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
         }
         return redirect()->route('dashboard');
     })->name('redirect-dashboard');
+
+    
+    Route::get('/audit-logs', function () {
+        return AuditLog::latest()->get();
+    });
+    
 });
 
 // Child Care Form Routes
@@ -68,6 +76,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::get('/childcare-form-edit/{id}', [ChildCareFormController::class, 'edit'])->name('childcare-form-edit');
     Route::put('/childcare-form-update/{id}', [ChildCareFormController::class, 'update'])->name('childcare-form-update');
 
+    Route::get('/child-zone-data', [ChildCareFormController::class, 'retrieveAndSortZones'])->name('child-zone-data');
     Route::get('/child/{id}', [ChildCareFormController::class, 'show'])->name('child.show');
     Route::post('/child/{id}/addVac', [ChildCareFormController::class, 'addVac'])->name('child.addVac');
     Route::post('/child/{id}/addVitA', [ChildCareFormController::class, 'addVitA'])->name('child.addVitA');
@@ -82,7 +91,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
 Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::inertia('pnea-enrollment', 'PNEA/Form')->name('pnea-enrollment');
     Route::inertia('pnea-enrollment-view', 'Views/PNEA')->name('pnea-enrollment-view');
-    Route::post('/pnea-enrollment', [PNEAEnrollmentController::class, 'store'])->name('pnea-enrollment');
+    Route::post('/pnea-enrollment-store', [PNEAEnrollmentController::class, 'store'])->name('pnea-enrollment-store');
     Route::get('/pnea-enrollment-data', [PNEAEnrollmentController::class, 'retrieve'])->name('pnea-enrollment-data');
     Route::get('/pnea-zone-data', [PNEAEnrollmentController::class, 'retrieveAndSortZones'])->name('pnea-zone-data');
     Route::get('/pnea-enrollment-edit/{id}', [PNEAEnrollmentController::class, 'edit'])->name('pnea-enrollment-edit');
@@ -91,6 +100,8 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::get('/pnea/{id}', [PNEAEnrollmentController::class, 'show'])->name('pnea.show');
     Route::post('/pnea/{id}/addPregnancyPeriod', [PNEAEnrollmentController::class, 'addPregnancyPeriod'])->name('pnea.addPregnancyPeriod');
     Route::post('/pnea/{id}/addLactatingPeriod', [PNEAEnrollmentController::class, 'addLactatingPeriod'])->name('pnea.addLactatingPeriod');
+    
+    Route::inertia('/financial-assistance', 'Views/FinancialAssistanceView')->name('financial-assistance');
 });
 
 // Comprehensive Survey Routes
@@ -112,6 +123,8 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::inertia('/pwd-view', 'Views/PWD')->name('pwd-view');
     Route::get('/pwd-data', [ComprehensiveSurveyController::class, 'pwd'])->name('pwd-data');
     Route::inertia('/age-grouping-view', 'Views/AgeGrouping')->name('age-grouping-view');
+    Route::put('/comprehensive-survey-view/toggle-activation/{id}', [ComprehensiveSurveyController::class, 'toggleIsLiving'])->name('comprehensive-survey.toggle-activation');
+
 });
 
 // Monitoring Form Routes

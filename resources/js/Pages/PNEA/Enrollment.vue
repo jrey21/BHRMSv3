@@ -26,8 +26,7 @@
                 </p>
                 <p class="width-20">
                     <strong class="labels">Age:</strong> <Space />
-                    <span v-if="!isEditing">{{ pnea.age }} years</span>
-                    <input v-else v-model="editablePnea.age" class="short-input" />
+                    <span>{{ calculateAge(pnea.birth_date) }} years</span>
                 </p>
             </div>
             <div class="container-1">
@@ -69,7 +68,11 @@
                 <p class="width-50">
                     <strong class="labels">Term of Pregnancy:</strong> <Space />
                     <span v-if="!isEditing">{{ capitalize(pnea.term_of_pregnancy) }}</span>
-                    <input v-else v-model="editablePnea.term_of_pregnancy" class="short-input" />
+                    <select v-else v-model="editablePnea.term_of_pregnancy" class="short-input">
+                        <option value="1st Trimester">1st Trimester</option>
+                        <option value="2nd Trimester">2nd Trimester</option>
+                        <option value="3rd Trimester">3rd Trimester</option>
+                    </select>
                 </p>
                 <p class="width-50">
                     <strong class="labels">Interval of Delivery:</strong> <Space />
@@ -136,7 +139,13 @@
                 <p class="width-50">
                     <strong class="labels">Monthly Family Income:</strong> <Space />
                     <span v-if="!isEditing">{{ pnea.monthly_family_income }}</span>
-                    <input v-else v-model="editablePnea.monthly_family_income" class="short-input" />
+                    <select v-else v-model="editablePnea.monthly_family_income" class="short-input">
+                        <option value="Below 10,000">Below 10,000</option>
+                        <option value="10,000-20,000">10,000 - 20,000</option>
+                        <option value="20,000-30,000">20,000 - 30,000</option>
+                        <option value="30,000-40,000">30,000 - 40,000</option>
+                        <option value="Above 40,000">Above 40,000</option>
+                    </select>
                 </p>
                 <p class="width-50">
                     <strong class="labels">Household Size:</strong> <Space />
@@ -1206,6 +1215,18 @@ const saveData = async () => {
 const cancelEdit = () => {
     Object.assign(editablePnea.value, props.pnea);
     isEditing.value = false;
+};
+
+const calculateAge = (birthDate) => {
+    if (!birthDate) return '-';
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+    return age;
 };
 </script>
 

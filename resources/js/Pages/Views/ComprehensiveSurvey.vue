@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, watchEffect } from 'vue';
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/vue/24/solid";
 import { router } from '@inertiajs/vue3'; 
 import axios from 'axios';
 import FormLayout from '../../Layouts/FormLayout.vue';
@@ -138,7 +139,7 @@ const saveChanges = async () => {
 };
 
 const downloadPDF = () => {
-    let data = [...sortedData.value]; // Use sortedData to ensure the data is sorted according to the selected option
+    let data = [...sortedData.value]; 
 
     const doc = new jsPDF();
 
@@ -155,7 +156,7 @@ const downloadPDF = () => {
     // Add more space before the "Comprehensive Survey" title
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('Comprehensive Survey', pageWidth / 2, 40, { align: 'center' }); // Added more space here
+    doc.text('Comprehensive Survey', pageWidth / 2, 40, { align: 'center' }); 
     
     // Bold the "List of Residents" and "BHS PATAG" titles
     doc.setFont('helvetica', 'normal');
@@ -179,12 +180,12 @@ const downloadPDF = () => {
             data.zone,
             data.occupation.charAt(0).toUpperCase() + data.occupation.slice(1)
         ]),
-        startY: tableStartY, // Adjusted top margin
+        startY: tableStartY, 
         didDrawPage: function (data) {
             // Add page number
             let pageCount = doc.internal.getNumberOfPages();
             doc.setFontSize(10);
-            doc.setTextColor(150); // Make the font color lighter
+            doc.setTextColor(150); 
             doc.text(`Page ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
         }
     });
@@ -222,6 +223,36 @@ const deleteSurvey = async () => {
 const closeDeleteModal = () => {
     showDeleteModal.value = false;
     surveyToDelete.value = null;
+};
+
+
+const isLiving = ref(true); 
+
+const toggleStatus = async (user) => {
+    const newStatus = user.is_living === 1 ? 0 : 1;
+    user.is_living = newStatus; 
+
+    try {
+        await axios.put(route('comprehensive-survey.toggle-activation', { id: user.id }), {
+            is_living: newStatus
+        });
+        flashMessage.value = 'Status updated successfully!';
+        // Update the surveyData array to reflect the change
+        const index = surveyData.value.findIndex(survey => survey.id === user.id);
+        if (index !== -1) {
+            surveyData.value[index].is_living = newStatus;
+        }
+    } catch (error) {
+        console.error('Error updating status:', error);
+        flashMessage.value = 'Error updating status.';
+        // Revert the status change in case of error
+        user.is_living = newStatus === 1 ? 0 : 1;
+    } finally {
+        showFlashMessage.value = true;
+        setTimeout(() => {
+            showFlashMessage.value = false;
+        }, 900);
+    }
 };
 
 </script>
@@ -271,12 +302,13 @@ const closeDeleteModal = () => {
                         <th>Sex</th>
                         <th>Zone</th>
                         <th>Occupation</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-if="paginatedData.length === 0">
-                        <td colspan="7">No data found</td>
+                        <td colspan="8">No data found</td>
                     </tr>
                     <tr v-for="data in paginatedData" :key="data.id">
                         <td>{{ data.household_number }}</td>
@@ -284,11 +316,16 @@ const closeDeleteModal = () => {
                         <td>{{ data.age_display }}</td>
                         <td>{{ data.sex.charAt(0).toUpperCase() }}</td>
                         <td>{{ data.zone }}</td>
-                        <td>{{ data.occupation.charAt(0).toUpperCase() + data.occupation.slice(1) }}</td>
+                        <td>{{ data.occupation }}</td>
                         <td>
-                            <!-- <button @click="editData(data)" class="edit-button">
-                                <i class="fas fa-edit"></i>
-                            </button> -->
+                            <span :class="{ living: data.is_living === 1, deceased: data.is_living !== 1 }" :style="{ color: data.is_living !== 1 ? 'red' : 'green', fontWeight: data.is_living !== 1 ? 'bold' : '' }">
+                                {{ data.is_living === 1 ? 'Living' : 'Deceased' }}
+                            </span>
+                        </td>
+                        <td>
+                            <button @click="toggleStatus(data)" class="btn status-btn">
+                                <i :class="data.is_living === 1 ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
+                            </button>
                             <button @click="router.get(route('comprehensive-survey-data.show', { id: data.id }))" class="view-button">
                                 <i class="fas fa-address-card"></i>
                             </button>
@@ -448,13 +485,16 @@ h2{
     text-overflow: ellipsis;
 }
 .data-table th:nth-child(2){
-    width: 30%; 
+    width: 24%; 
 }
 .data-table th:nth-child(3){
     width: 10%; 
 }
 .data-table th:nth-child(1),.data-table th:nth-child(4),.data-table th:nth-child(5){
-    width: 9%; 
+    width: 8%; 
+}
+.data-table th:nth-child(6){
+    width: 20%; 
 }
 .data-table th:nth-child(7){
     width: 10%; 
@@ -833,5 +873,23 @@ h2{
     display: flex;
     justify-content: flex-end;
     gap: 5px;
+}
+.btn {
+  padding: 4px 4px; 
+  margin-right: 5px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 12px; 
+  display: inline-flex; 
+  justify-content: center;
+  align-items: center;
+}
+.btn i {
+  font-size: 16px; 
+}
+.status-btn {
+  background-color: #4caf50;
+  color: white;
 }
 </style>

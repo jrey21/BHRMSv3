@@ -74,7 +74,9 @@ class ComprehensiveSurveyController extends Controller
     // Retrieve all the data from the database
     public function retrieve()
     {
+       
         $comprehensiveSurveys = ComprehensiveSurvey::all();
+        // $comprehensiveSurveys = ComprehensiveSurvey::where('is_living', 1)->get();
         return response()->json($comprehensiveSurveys);
     }
 
@@ -102,22 +104,28 @@ class ComprehensiveSurveyController extends Controller
     public function seniorCitizen()
     {
         $today = Carbon::today();
-        $seniorCitizen = ComprehensiveSurvey::whereRaw("TIMESTAMPDIFF(YEAR, birth_date, ?) >= 60", [$today])->get();
+        $seniorCitizen = ComprehensiveSurvey::whereRaw("TIMESTAMPDIFF(YEAR, birth_date, ?) >= 60", [$today])
+            ->where('is_living', 1)
+            ->get();
         return response()->json($seniorCitizen);   
     }
 
     //Fetch four ps data
     public function fourPs()
     {
-        $fourPs = ComprehensiveSurvey::where('four_ps', 1)->get();
+        $fourPs = ComprehensiveSurvey::where('four_ps', 1)
+            ->where('is_living', 1)
+            ->get();
         return response()->json($fourPs);   
     }
 
     //Fetch pwd data
     public function pwd()
     {
-        $pwd = ComprehensiveSurvey::where('pwd', 1)->get();
-        return response()->json($pwd);   
+        $pwd = ComprehensiveSurvey::where('pwd', 1)
+        ->where('is_living', 1)
+        ->get();
+    return response()->json($pwd);    
     }
 
     //Update a specific data from the database
@@ -135,6 +143,13 @@ class ComprehensiveSurveyController extends Controller
         $survey->education = $request->input('education');
         $survey->religion = $request->input('religion');
         $survey->occupation = $request->input('occupation');
+        $survey->sanitary_access = $request->input('sanitary_access');
+        $survey->water_source = $request->input('water_source');
+        $survey->family_planning = $request->input('family_planning');
+        $survey->lgbt = $request->input('lgbt');
+        $survey->pwd = $request->input('pwd');
+        $survey->four_ps = $request->input('four_ps');
+        $survey->non_hts = $request->input('non_hts');
 
         $survey->save();
 
@@ -158,22 +173,29 @@ class ComprehensiveSurveyController extends Controller
     }
 
     public function claimSeniorCitizen($eventId)
-{
-    $today = Carbon::today();
+    {
+        $today = Carbon::today();
 
-    $seniorCitizen = ComprehensiveSurvey::whereRaw("TIMESTAMPDIFF(YEAR, birth_date, ?) >= 60", [$today])
-        ->leftJoin('claims', function ($join) use ($eventId) {
-            $join->on('comprehensive_surveys.id', '=', 'claims.survey_id')
-                 ->where('claims.event_id', '=', $eventId);
-        })
-        ->select(
-            'comprehensive_surveys.*',
-            DB::raw('IF(claims.id IS NOT NULL, "Claimed", "Not Claimed") AS claim_status')
-        )
-        ->get();
+        $seniorCitizen = ComprehensiveSurvey::whereRaw("TIMESTAMPDIFF(YEAR, birth_date, ?) >= 60", [$today])
+            ->leftJoin('claims', function ($join) use ($eventId) {
+                $join->on('comprehensive_surveys.id', '=', 'claims.survey_id')
+                    ->where('claims.event_id', '=', $eventId);
+            })
+            ->select(
+                'comprehensive_surveys.*',
+                DB::raw('IF(claims.id IS NOT NULL, "Claimed", "Not Claimed") AS claim_status')
+            )
+            ->get();
 
-    return response()->json($seniorCitizen);
-}
+        return response()->json($seniorCitizen);
+    }
 
-    
+    public function toggleIsLiving($id)
+    {
+        $survey = ComprehensiveSurvey::findOrFail($id);
+        $survey->is_living = !$survey->is_living;
+        $survey->save();
+
+        return response()->json($survey);
+    }
 }

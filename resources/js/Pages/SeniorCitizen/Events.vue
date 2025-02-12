@@ -4,7 +4,7 @@ import { ref, onMounted, computed, watchEffect, watch } from 'vue';
 import axios from 'axios';
 import { router } from '@inertiajs/vue3'; 
 import 'jspdf-autotable';
-
+import jsPDF from 'jspdf';
 
 defineOptions({ layout: FormLayout });
 
@@ -113,6 +113,85 @@ const saveEvent = async () => {
     }
 };
 
+const showDeleteModal = ref(false);
+const eventToDelete = ref(null);
+
+const confirmDelete = (event) => {
+    eventToDelete.value = event;
+    showDeleteModal.value = true;
+};
+
+const deleteData = async () => {
+    try {
+        await axios.delete(route('event-delete', { id: eventToDelete.value.id }));
+        eventsData.value = eventsData.value.filter(item => item.id !== eventToDelete.value.id);
+        flashMessage.value = 'Data deleted successfully!';
+        showFlashMessage.value = true;
+        setTimeout(() => {
+            showFlashMessage.value = false;
+        }, 900);
+        closeDeleteModal();
+    } catch (error) {
+        console.error('Error deleting data:', error);
+        flashMessage.value = `Error deleting data: ${JSON.stringify(error.response.data)}`;
+        showFlashMessage.value = true;
+        setTimeout(() => {
+            showFlashMessage.value = false;
+        }, 5000);
+    }
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    eventToDelete.value = null;
+};
+
+const downloadPDF = () => {
+    let data = [...sortedEvents.value];
+
+    const doc = new jsPDF();
+
+    // Set font size and alignment
+    doc.setFontSize(12);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header section (Regular font for other titles)
+    doc.setFont('helvetica', 'normal');
+    doc.text('Republic of the Philippines', pageWidth / 2, 10, { align: 'center' });
+    doc.text('Province of Leyte', pageWidth / 2, 16, { align: 'center' });
+    doc.text('City of Baybay', pageWidth / 2, 22, { align: 'center' });
+
+    // Add more space before the "Events List" title
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Financial Assistance', pageWidth / 2, 40, { align: 'center' }); 
+    
+    // Bold font for the "BHS PATAG" title
+    doc.setFont('helvetica', 'bold');
+    doc.text('BHS PATAG', pageWidth / 2, 50, { align: 'center' });
+
+    // Adjusted top margin for the table
+    const tableStartY = 60;
+    
+    doc.autoTable({
+        head: [['', 'Title', 'Date', 'Location']],
+        body: data.map((event, index) => [
+            `${index + 1}.`, 
+            event.title,
+            formatDate(event.date),
+            event.location
+        ]),
+        startY: tableStartY, // Adjusted top margin
+        didDrawPage: function (data) {
+            // Add page number
+            let pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(10);
+            doc.setTextColor(150); 
+            doc.text(`Page ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+        }
+    });
+    doc.save('Financial-Assistance-Events.pdf');
+};
 </script>
 
 <template>
@@ -136,6 +215,9 @@ const saveEvent = async () => {
                         <option value="date">Date</option>
                     </select>
                 </div>
+                <button @click="downloadPDF" class="download-button">
+                    <i class="fas fa-download"></i>
+                </button>
                 <button @click="openModal" class="add-button">
                     <i class="fas fa-plus"></i>
                 </button>
@@ -153,7 +235,7 @@ const saveEvent = async () => {
                 </thead>
                 <tbody>
                     <tr v-if="paginatedEvents.length === 0">
-                        <td colspan="2">No data found</td>
+                        <td colspan="4">No data found</td>
                     </tr>
                     <tr v-for="event in paginatedEvents" :key="event.id">
                         <td>{{ event.title }}</td>
@@ -162,6 +244,9 @@ const saveEvent = async () => {
                         <td>
                             <button @click="router.get(route('events-data.show', { id: event.id }))" class="address-button">
                                 <i class="fas fa-address-card"></i>
+                            </button>
+                            <button v-if="$page.props.auth.user.position === 'admin'" @click="confirmDelete(event)" class="delete-button">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -203,6 +288,18 @@ const saveEvent = async () => {
             <div class="flash-content">{{ flashMessage }}</div>
         </div>
     </transition>
+
+    <div v-if="showDeleteModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Confirm Delete</h2>
+            <hr style="margin-top: 10px; margin-bottom:10px; padding: 0;">
+            <p>Are you sure you want to delete <strong style="color: #007bff;">{{ eventToDelete.title }} </strong> ?</p>
+            <div class="modal-buttons">
+                <button @click="deleteData">Delete</button>
+                <button @click="closeDeleteModal">Cancel</button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <style scoped>
@@ -396,6 +493,26 @@ const saveEvent = async () => {
     background-color: #45a049; 
 }
 
+.download-button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 5px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-top: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.download-button:hover {
+    background-color: #0056b3;
+}
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -493,6 +610,54 @@ const saveEvent = async () => {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+.delete-button {
+    background-color: #dc3545; 
+    border: none;
+    color: white;
+    padding: 3px 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 3px;
+    margin-left:4px;
+}
+
+.delete-button:hover {
+    background-color: #c82333; 
+    transform: scale(1.1);
+}
+
+.modal-content button {
+    margin-top: 20px;
+    padding: 8px 12px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; 
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: #c82333;
+}
+
+.modal-content button:last-child {
+    background-color: #007bff;
+    margin-left: 10px;
+}
+
+.modal-content button:last-child:hover {
+    background-color: #0056b3;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
 }
 </style>
 

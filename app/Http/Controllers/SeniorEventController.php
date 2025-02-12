@@ -60,4 +60,13 @@ class SeniorEventController extends Controller
         return response()->json($event->scannedCodes);
     }
 
+    //destroy
+    public function destroy($id)
+    {
+        $seniorEvent = SeniorEvent::findOrFail($id);
+        $seniorEvent->delete();
+
+        return response()->json($seniorEvent);
+    }
+
 }

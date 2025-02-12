@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('action'); 
-            $table->text('description')->nullable();
+            $table->string('user_id')->nullable(); // Store user ID if available
+            $table->string('action'); // Action performed
+            $table->string('table_name')->nullable(); // Affected table
+            $table->text('old_data')->nullable(); // Old data before update
+            $table->text('new_data')->nullable(); // New data after update
+            $table->ipAddress('ip_address')->nullable(); // IP address of user
             $table->timestamps();
         });
     }

@@ -470,7 +470,7 @@ const childZoneData = ref([]);
 
 onMounted(async () => {
     try {
-        const response = await axios.get(route('childcare-zone-data'));
+        const response = await axios.get(route('child-zone-data'));
         childZoneData.value = response.data;
     } catch (error) {
         console.error('Error fetching zone data:', error);

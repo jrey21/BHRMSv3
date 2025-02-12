@@ -5,7 +5,7 @@ import axios from 'axios';
 const seniorCitizens = ref([]);
 const searchQuery = ref('');
 const sortOption = ref('');
-const claimedQrCodes = ref([]); // Add this line
+const claimedQrCodes = ref([]);
 
 const filteredData = computed(() => {
     if (!searchQuery.value) {

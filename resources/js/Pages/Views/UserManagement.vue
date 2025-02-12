@@ -46,7 +46,11 @@
             </span>
           </td>
           <td class="center-align">
-            <button @click="toggleStatus(user)" class="btn status-btn" :disabled="user.is_approved === 0" :class="{ 'disabled-btn': user.is_approved === 0 }">
+            <button 
+              @click="toggleStatus(user)" 
+              class="btn status-btn" 
+              :disabled="user.is_approved === 0" 
+              :class="{ 'disabled-btn': user.is_approved === 0, 'deactivated-btn': !user.active }">
               <i :class="user.active ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
             </button>
             <button @click="deleteUser(user.id)" class="btn delete-btn">
@@ -62,16 +66,16 @@
   </div>
 
   <!-- Audit Logs -->
-  <!-- <div class="container">
+  <div class="container">
     <h3 class="subtitle">Audit Logs</h3>
     <ul class="log-list">
       <li v-for="log in logs" :key="log.id" class="log-item">
         {{ log.action }} - {{ log.timestamp }}
       </li>
     </ul>
-    <button @click="displayPreviousLogs" class="btn show-logs-btn">Show Previous Logs</button>
-    <p v-if="logs.length === 0">No logs available</p> 
-  </div> -->
+    <!-- <button @click="displayPreviousLogs" class="btn show-logs-btn">Show Previous Logs</button>
+    <p v-if="logs.length === 0">No logs available</p>  -->
+  </div>
 
   <div v-if="showDeleteModal" class="modal">
     <div class="modal-content">
@@ -203,11 +207,25 @@ const updateUser = async (user) => {
   logs.value.push({ action: `Updated ${user.name}'s position by ${currentUser.value.name}`, timestamp: new Date().toISOString() });
 };
 
+const storeLogInDatabase = async (user_id, action) => {
+  try {
+    await axios.post('/audit-logs', {
+      user_id: user_id,
+      action: action
+    });
+    console.log('Log stored in database successfully');
+  } catch (error) {
+    console.error('Error storing log in database:', error);
+  }
+};
+
 const toggleStatus = async (user) => {
   user.active = !user.active;
   try {
     await axios.put(`/users/${user.id}/toggle-activation`, { is_active: user.active });
-    logs.value.push({ action: `${user.active ? 'Activated' : 'Deactivated'} ${user.name} by ${currentUser.value.name}`, timestamp: new Date().toISOString() });
+    const action = `${user.active ? 'Activated' : 'Deactivated'} ${user.name} by ${currentUser.value.name}`;
+    logs.value.push({ action: action, timestamp: new Date().toISOString() });
+    await storeLogInDatabase(user.id, action);
     if (!user.active) {
       await prohibitLogin(user.id);
     }
@@ -257,7 +275,9 @@ const confirmDelete = async () => {
   try {
     await axios.delete(`/delete-users/${userToDelete.value.id}`);
     users.value = users.value.filter(user => user.id !== userToDelete.value.id);
-    logs.value.push({ action: `Deleted user ID: ${userToDelete.value.id} by ${currentUser.value.name}`, timestamp: new Date().toISOString() });
+    const action = `Deleted user ID: ${userToDelete.value.id} by ${currentUser.value.name}`;
+    logs.value.push({ action: action, timestamp: new Date().toISOString() });
+    await storeLogInDatabase(userToDelete.value.id, action);
     successMessage.value = 'User successfully deleted!';
     showSuccessModal.value = true;
     setTimeout(closeSuccessModal, 3000);
@@ -282,7 +302,9 @@ const resetPassword = (id) => {
 const confirmReset = async () => {
   try {
     await axios.post(`/admin/users/${userToReset.value.id}/reset-password`); 
-    logs.value.push({ action: `Reset password for user ID: ${userToReset.value.id} by ${currentUser.value.name}`, timestamp: new Date().toISOString() });
+    const action = `Reset password for user ID: ${userToReset.value.id} by ${currentUser.value.name}`;
+    logs.value.push({ action: action, timestamp: new Date().toISOString() });
+    await storeLogInDatabase(userToReset.value.id, action);
     successMessage.value = 'Password successfully reset!';
     showSuccessModal.value = true;
     setTimeout(closeSuccessModal, 3000);

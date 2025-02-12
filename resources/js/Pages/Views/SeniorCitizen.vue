@@ -3,7 +3,6 @@ import { ref, onMounted, computed, watchEffect } from 'vue';
 import axios from 'axios';
 import QRCode from 'qrcode';
 import FormLayout from '../../Layouts/FormLayout.vue';
-import FinancialAssistance from '../SeniorCitizen/Events.vue';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { useRouter } from 'vue-router';
@@ -334,7 +333,6 @@ defineExpose({
             </button>
         </div>
     </div>
-    <FinancialAssistance/>
 </template>
 
 <style scoped>

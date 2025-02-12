@@ -7,9 +7,10 @@
     <p class="error">{{ error }}</p>
 
     <!-- <p class="flash-message" v-if="flashMessage">{{ flashMessage }}</p> -->
-    <p class="error" v-if="invalidQrMessage">{{ invalidQrMessage }}</p>
+    
 
     <div v-if="isScanning" class="qr-scanner-video">
+      <p class="error" v-if="invalidQrMessage">{{ invalidQrMessage }}</p>
       <qrcode-stream
         :constraints="selectedConstraints"
         :track="trackFunctionSelected.value"
@@ -69,7 +70,7 @@
   </div>
 
  <!-- Senior List Table -->
-  <div class="data-container">
+  <div v-if="!isScanning" class="data-container">
     <div class="action-bar">
       <div class="search-container">
           <div class="search-box">
@@ -319,7 +320,7 @@ async function onDetect(detectedCodes) {
     invalidQrMessage.value = 'Invalid QR code detected!';
     setTimeout(() => {
       invalidQrMessage.value = '';
-    }, 5000); 
+    }, 2000); 
   } else {
     invalidQrMessage.value = '';
   }
@@ -780,8 +781,10 @@ function downloadPDF() {
     font-size: 14px;
 }
 .error {
+  text-align: center;
   font-weight: bold;
   color: red;
+  margin-bottom:5px;
 }
 .barcode-format-checkbox {
   margin-right: 10px;
