@@ -85,6 +85,10 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::post('/child/{id}/addDevelopmentalScreening', [ChildCareFormController::class, 'addDevelopmentalScreening'])->name('child.addDevelopmentalScreening');
     Route::post('/child/{id}/addDeworming', [ChildCareFormController::class, 'addDeworming'])->name('child.addDeworming');
     Route::post('/child/{id}/addDental', [ChildCareFormController::class, 'addDental'])->name('child.addDental');
+
+
+
+
 });
 
 // PNEA Enrollment Routes
