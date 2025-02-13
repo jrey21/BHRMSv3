@@ -11,11 +11,15 @@ const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
+const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
 const sortedCounselingRecords = computed(() => {
     const records = props.child.counseling.map(record => {
         console.log('Record:', record); 
         return {
-            breastfeeding_status: record.breastfeeding_status,
+            breastfeeding_status: capitalizeFirstLetter(record.breastfeeding_status),
             duration: record.duration,
             feeding_start_age: record.feeding_start_age,
             feeding_start_age_unit: record.feeding_start_age_unit,
@@ -259,6 +263,7 @@ const toggleCounseling = () => {
     font-weight: bold;
     z-index: 1;
     color: white;
+    
 }
 .info-table td {
     border: 1px solid #ddd;

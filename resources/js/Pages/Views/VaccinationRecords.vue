@@ -365,6 +365,7 @@ const downloadPDF = () => {
     cursor: pointer;
     position: sticky;
     top: -1px;
+    border: 1px solid #ccc; 
 }
 
 /* Styling for the search box */

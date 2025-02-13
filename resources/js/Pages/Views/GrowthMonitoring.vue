@@ -33,17 +33,37 @@ watchEffect(async () => {
 });
 const currentPage = ref(1);
 const itemsPerPage = 20;
+const selectedFilter = ref('weight_for_height');
 
 const searchQuery = ref('');
 
 const filteredData = computed(() => {
-    if (!searchQuery.value) {
+    if (!searchQuery.value && !selectedFilter.value) {
         return growthMonitoring.value;
     }
-    return growthMonitoring.value.filter(data =>
-        data.first_name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        data.last_name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
+
+    return growthMonitoring.value.filter(person => {
+        const matchesSearch =
+            person.first_name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+            person.last_name.toLowerCase().includes(searchQuery.value.toLowerCase());
+
+        if (!selectedFilter.value) {
+            return matchesSearch; // Only search filter applied
+        }
+
+        const latestMonitoring = getLatestMonitoring(person);
+        if (!latestMonitoring) return false; // Skip if no growth monitoring data
+
+        if (selectedFilter.value === 'weight_for_age') {
+            return matchesSearch && latestMonitoring.weight_age_status;
+        } else if (selectedFilter.value === 'height_for_age') {
+            return matchesSearch && latestMonitoring.height_age_status;
+        } else if (selectedFilter.value === 'weight_for_height') {
+            return matchesSearch && latestMonitoring.weight_height_status;
+        }
+
+        return matchesSearch;
+    });
 });
 
 const sortOption = ref(''); 
@@ -65,6 +85,24 @@ const sortedData = computed(() => {
     return data;
 });
 
+const calculateAge = (birthDate) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+
+    if (age === 0) {
+        const months = monthDifference + 12 * (today.getFullYear() - birth.getFullYear());
+        return `${months} ${months === 1 ? 'month' : 'months'}`;
+    }
+
+    return `${age} ${age === 1 ? 'year' : 'years'}`;
+};
+
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
     const end = start + itemsPerPage;
@@ -73,11 +111,14 @@ const paginatedData = computed(() => {
     console.log('Start Index:', start);
     console.log('End Index:', end);
     console.log('Total Data:', sortedData.value.length);
-    return sortedData.value.slice(start, end);
+    return sortedData.value.slice(start, end).map(data => ({
+        ...data,
+        age: calculateAge(data.birth_date)
+    }));
 });
 
 const totalPages = computed(() => {
-    return Math.ceil(growthMonitoring.value.length / itemsPerPage);
+    return Math.ceil(filteredData.value.length / itemsPerPage);
 });
 
 const changePage = (page) => {
@@ -219,15 +260,18 @@ const downloadPDF = () => {
     const tableStartY = 60;
 
     autoTable(doc, {
-        head: [['Name', 'Weight', 'Height', 'Zone', 'WFA', 'HFA', 'WFH']],
-        body: sortedData.value.map(data => [
-            `${data.first_name} ${data.last_name}`,
+        head: [['Zone', 'Mother', 'Name of Child', 'Age', 'Weight', 'Height', 'WFA','HFA', 'WFH']],
+        body: paginatedData.value.map(data => [
+            data.zone,
+            data.mother_name,
+            `${data.first_name} ${data.last_name} ${data.suffix}`,
+            data.age,
             data.growth_monitorings.length ? `${data.growth_monitorings[0].weight} kg` : '-',
             data.growth_monitorings.length ? `${data.growth_monitorings[0].height} cm` : '-',
-            data.zone,
             data.growth_monitorings.length ? getAcronym(data.growth_monitorings[0].weight_age_status) : '-',
             data.growth_monitorings.length ? getAcronym(data.growth_monitorings[0].height_age_status) : '-',
             data.growth_monitorings.length ? getAcronym(data.growth_monitorings[0].weight_height_status) : '-'
+
         ]),
         startY: tableStartY + 16,
         margin: { top: 20, left: 14, right: 14, bottom: 20 },
@@ -281,6 +325,7 @@ const getAcronym = (status) => {
      <div class="header">
         <h1 class="text-slate-500">Growth Monitoring</h1>
     </div>
+    <!-- Whole Table -->
     <div class="main-content">
         <div class="data-pwd-list">
             <div class="action-bar">
@@ -290,29 +335,41 @@ const getAcronym = (status) => {
                         <input type="text" v-model="searchQuery" placeholder="Search by name ..." />
                     </div>
                 </div>
-
                 <div>
-                    <select v-model="sortOption" class="sort-select">
+                <!-- Filter Dropdown -->
+                    <select v-model="selectedFilter" class="sort-select">
+                        <option value="weight_for_age">Weight for Age</option>
+                        <option value="height_for_age">Height for Age</option>
+                        <option value="weight_for_height">Weight for Height</option>
+                    </select>
+                <div>
+                </div>
+                    <!-- <select v-model="sortOption" class="sort-select">
                         <option value="">Sort By</option>
                         <option value="asc">Name (A-Z)</option>
                         <option value="desc">Name (Z-A)</option>
                         <option value="zone">Zone</option>
-                    </select>
+                    </select> -->
                     <button @click="downloadPDF"> <i class="fas fa-download"></i></button>
                 </div>
                 
             </div>
+
+            <!-- Whole Table -->
             <div class="scrollable-table">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Name</th>
+                        <th>Zone</th>
+                        <th>Mother</th>
+                        <th>Name of Child</th>
+                        <th>Age</th>
                         <th>Weight</th>
                         <th>Height</th>
-                        <th>Zone</th>
-                        <th>Weight for Age</th>
-                        <th>Height for Age</th>
-                        <th>Weight for Height</th>
+                        
+                        <th v-if="selectedFilter === 'weight_for_age'">WFA</th>
+                        <th v-if="selectedFilter === 'height_for_age'">HFA</th>
+                        <th v-if="selectedFilter === 'weight_for_height'">WFH</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -321,18 +378,17 @@ const getAcronym = (status) => {
                             <td colspan="9">No data found</td>
                         </tr>
                         <tr v-for="data in paginatedData" :key="data.id">
-                            <td>{{ data.first_name }} {{ data.last_name }}</td>
+                            <td>{{ data.zone }}</td>
+                            <td>{{ data.mother_name }}</td>
+                            <td>{{ data.first_name }} {{ data.last_name }} {{ data.suffix }}</td>
+                            <td>{{ data.age }}</td>
                             <td v-if="data.growth_monitorings.length">{{ data.growth_monitorings[0].weight }} kg</td>
                             <td v-else>-</td>
                             <td v-if="data.growth_monitorings.length">{{ data.growth_monitorings[0].height }} cm</td>
                             <td v-else>-</td>
-                            <td>{{ data.zone }}</td>
-                            <td v-if="data.growth_monitorings.length">{{ data.growth_monitorings[0].weight_age_status }}</td>
-                            <td v-else>-</td>
-                            <td v-if="data.growth_monitorings.length">{{ data.growth_monitorings[0].height_age_status }}</td>
-                            <td v-else>-</td>
-                            <td v-if="data.growth_monitorings.length">{{ data.growth_monitorings[0].weight_height_status }}</td>
-                            <td v-else>-</td>
+                            <td v-if="selectedFilter === 'weight_for_age'">{{ getLatestMonitoring(data)?.weight_age_status || '-' }}</td>
+                            <td v-if="selectedFilter === 'height_for_age'">{{ getLatestMonitoring(data)?.height_age_status || '-' }}</td>
+                            <td v-if="selectedFilter === 'weight_for_height'">{{ getLatestMonitoring(data)?.weight_height_status || '-' }}</td>
                             <td>
                                 <button @click="router.get(route('child.show', { id: data.id }))" class="address-button">
                                 <i class="fas fa-address-card"></i>
@@ -352,27 +408,8 @@ const getAcronym = (status) => {
                 </button>
             </div>
         </div>
-        <!-- <div class="total-count">
-            <h2 style="margin-left: 5px; margin-bottom: 10px;">Weight for Age</h2>
-            <p style="margin-bottom: 10px; margin-left: 20px;">SU: {{ totalSU }}</p>
-            <p style="margin-bottom: 10px; margin-left: 20px;">Underweight: {{ totalUnderweight }}</p>
-            <p style="margin-bottom: 10px; margin-left: 20px;">Normal: {{ totalNormalWeight }}</p>
-            <p style="margin-left: 20px; margin-bottom: 40px;">Overweight: {{ totalOverweightWeight }}</p>
-
-            <h2 style="margin-left: 5px; margin-bottom: 10px;">Height for Age</h2>
-            <p style="margin-bottom: 10px; margin-left: 20px;">SS: {{ totalSS }}</p>
-            <p style="margin-bottom: 10px; margin-left: 20px;">Stunted: {{ totalStunted }}</p>
-            <p style="margin-bottom: 10px; margin-left: 20px;">Normal: {{ totalNormalHeight }}</p>
-            <p style="margin-left: 20px; margin-bottom: 40px;">Tall: {{ totalTall }}</p>
-
-            <h2 style="margin-left: 5px; margin-bottom: 10px;">Weight for Height</h2>
-            <p style="margin-bottom: 10px; margin-left: 20px;">SW: {{ totalSW }}</p>
-            <p style="margin-bottom: 10px; margin-left: 20px;">MW: {{ totalMW }}</p>
-            <p style="margin-bottom: 10px; margin-left: 20px;">Normal: {{ totalNormal }}</p>
-            <p style="margin-left: 20px; margin-bottom: 10px;">Overweight: {{ totalOverweight }}</p>
-            <p style="margin-left: 20px; margin-bottom: 20px;">Obese: {{ totalObese }}</p>
-        </div> -->
     </div>
+
 </template> 
 
 <style scoped>
@@ -463,12 +500,33 @@ const getAcronym = (status) => {
     font-size: 14px;
 }
 
-.data-pwd-list th {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
+.data-pwd-list th:nth-child(1), .data-pwd-list td:nth-child(1) {
+    width: 10%;
 }
+
+.data-pwd-list th:nth-child(2), .data-pwd-list td:nth-child(2){
+    width:20%;
+}
+.data-pwd-list th:nth-child(3), .data-pwd-list td:nth-child(3){
+    width:25%;
+}
+.data-pwd-list th:nth-child(4), .data-pwd-list td:nth-child(4) {
+    width: 10%;
+}
+
+.data-pwd-list th:nth-child(5), .data-pwd-list td:nth-child(5) {
+    width: 10%;
+}
+.data-pwd-list th:nth-child(6), .data-pwd-list td:nth-child(6){
+    width:10%;
+}
+.data-pwd-list th:nth-child(7), .data-pwd-list td:nth-child(7) {
+    width: 15%;
+}
+.data-pwd-list th:nth-child(8), .data-pwd-list td:nth-child(8) {
+    width: 10%;
+}
+
 
 /* Styling for the search box */
 .search-box {

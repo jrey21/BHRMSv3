@@ -275,6 +275,7 @@ const toggleVitaminARecords = () => {
     font-weight: bold;
     z-index: 1;
     color: white;
+    
 }
 .info-table td {
     border: 1px solid #ddd;

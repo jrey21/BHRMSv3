@@ -364,7 +364,6 @@ const formatDate = (dateString) => {
 }
 .data {
     color: #333;
-    max-width: 30px;
     background-color: #f4f4f4;
     padding: 0;
     margin: 0;
