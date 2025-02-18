@@ -47,19 +47,15 @@ const filteredData = computed(() => {
             person.first_name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
             person.last_name.toLowerCase().includes(searchQuery.value.toLowerCase());
 
-        if (!selectedFilter.value) {
-            return matchesSearch; // Only search filter applied
-        }
-
         const latestMonitoring = getLatestMonitoring(person);
         if (!latestMonitoring) return false; // Skip if no growth monitoring data
 
         if (selectedFilter.value === 'weight_for_age') {
-            return matchesSearch && latestMonitoring.weight_age_status;
+            return matchesSearch && latestMonitoring.weight_age_status.toLowerCase().includes(searchQuery.value.toLowerCase());
         } else if (selectedFilter.value === 'height_for_age') {
-            return matchesSearch && latestMonitoring.height_age_status;
+            return matchesSearch && latestMonitoring.height_age_status.toLowerCase().includes(searchQuery.value.toLowerCase());
         } else if (selectedFilter.value === 'weight_for_height') {
-            return matchesSearch && latestMonitoring.weight_height_status;
+            return matchesSearch && latestMonitoring.weight_height_status.toLowerCase().includes(searchQuery.value.toLowerCase());
         }
 
         return matchesSearch;
@@ -67,6 +63,16 @@ const filteredData = computed(() => {
 });
 
 const sortOption = ref(''); 
+const filterOptions = computed(() => {
+    if (selectedFilter.value === 'weight_for_age') {
+        return ['Severely Underweight', 'Underweight', 'Normal', 'Overweight'];
+    } else if (selectedFilter.value === 'height_for_age') {
+        return ['Severely Stunted', 'Stunted', 'Normal', 'Tall'];
+    } else if (selectedFilter.value === 'weight_for_height') {
+        return ['Severely Wasted', 'Moderately Wasted', 'Normal', 'Overweight', 'Obese'];
+    }
+    return [];
+});
 
 const sortedData = computed(() => {
     let data = [...filteredData.value];
@@ -75,14 +81,81 @@ const sortedData = computed(() => {
             person.growth_monitorings.sort((a, b) => new Date(b.date) - new Date(a.date));
         }
     });
+
     if (sortOption.value === 'asc') {
         data.sort((a, b) => a.first_name.localeCompare(b.first_name));
     } else if (sortOption.value === 'desc') {
         data.sort((a, b) => b.first_name.localeCompare(a.first_name));
     } else if (sortOption.value === 'zone') {
         data.sort((a, b) => a.zone.localeCompare(b.zone));
+    } else if (sortOption.value === 'Severely Underweight') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.weight_age_status.toLowerCase() === 'severely underweight';
+        });
+    } else if (sortOption.value === 'Underweight') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.weight_age_status.toLowerCase() === 'underweight';
+        });
+    } else if (sortOption.value === 'Normal') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.weight_age_status.toLowerCase() === 'normal';
+        });
+    } else if (sortOption.value === 'Overweight') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.weight_age_status.toLowerCase() === 'overweight';
+        });
+    } else if (sortOption.value === 'Severely Stunted') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.height_age_status.toLowerCase() === 'severely stunted';
+        });
+    } else if (sortOption.value === 'Stunted') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.height_age_status.toLowerCase() === 'stunted';
+        });
+    } else if (sortOption.value === 'Normal') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.height_age_status.toLowerCase() === 'normal';
+        });
+    } else if (sortOption.value === 'Tall') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.height_age_status.toLowerCase() === 'tall';
+        });
+    } else if (sortOption.value === 'Severely Wasted') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.weight_height_status.toLowerCase() === 'severely wasted';
+        });
+    } else if (sortOption.value === 'Moderately Wasted') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.weight_height_status.toLowerCase() === 'moderately wasted';
+        });
+    } else if (sortOption.value === 'Normal') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.weight_height_status.toLowerCase() === 'normal';
+        });
+    } else if (sortOption.value === 'Overweight') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.weight_height_status.toLowerCase() === 'overweight';
+        });
+    } else if (sortOption.value === 'Obese') {
+        data = data.filter(person => {
+            const latestMonitoring = getLatestMonitoring(person);
+            return latestMonitoring && latestMonitoring.weight_height_status.toLowerCase() === 'obese';
+        });
     }
-    return data;
+
+        return data;
 });
 
 const calculateAge = (birthDate) => {
@@ -342,14 +415,12 @@ const getAcronym = (status) => {
                         <option value="height_for_age">Height for Age</option>
                         <option value="weight_for_height">Weight for Height</option>
                     </select>
-                <div>
-                </div>
-                    <!-- <select v-model="sortOption" class="sort-select">
+                  
+                    <select v-model="sortOption" class="sort-select">
                         <option value="">Sort By</option>
-                        <option value="asc">Name (A-Z)</option>
-                        <option value="desc">Name (Z-A)</option>
                         <option value="zone">Zone</option>
-                    </select> -->
+                        <option v-for="option in filterOptions" :key="option" :value="option">{{ option }}</option>
+                    </select>
                     <button @click="downloadPDF"> <i class="fas fa-download"></i></button>
                 </div>
                 

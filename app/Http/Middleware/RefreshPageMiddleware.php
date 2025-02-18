@@ -8,6 +8,7 @@ class RefreshPageMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
+        // Implement the logic for the middleware
         $response = $next($request);
         
         if ($response instanceof \Illuminate\Http\RedirectResponse) {

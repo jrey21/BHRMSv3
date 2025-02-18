@@ -205,8 +205,30 @@ const flashMessage = (message, type) => {
     document.body.appendChild(flash);
     setTimeout(() => flash.remove(), 3000);
 };
+const checkNameCombinationExists = async () => {
+    try {
+        const response = await axios.post(route('check-name-pnea'), {
+            fullName: form.fullName,
+        });
+        return response.data.exists;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+};
+const submit = async () => {
 
-const submit = () => {
+  const nameExists = await checkNameCombinationExists();
+    if (nameExists) {
+        modalTitle.value = 'Error!';
+        modalMessage.value = 'This name already exists!';
+        showModal.value = true;
+        // window.flash('This name already exists!', 'error');
+        setTimeout(() => {
+            showModal.value = false;
+        }, 3000);
+        return;
+    }
     // Normalize boolean fields
     form.prenatal_care_counseled = form.prenatal_care_counseled === 'yes';
     form.prenatal_checkup_counseled = form.prenatal_checkup_counseled === 'yes';
@@ -267,8 +289,10 @@ const submit = () => {
             modalTitle.value = 'Success';
             modalMessage.value = 'The form has been successfully saved.';
             showModal.value = true;
-            window.flash('The form has been successfully saved.', 'success');
-
+            // window.flash('The form has been successfully saved.', 'success');
+            setTimeout(() => {
+                showModal.value = false;
+            }, 2000); 
             window.location.href = route('pnea-enrollment-view');
         },
         onError: (errors) => {
@@ -276,8 +300,14 @@ const submit = () => {
             modalTitle.value = 'Error';
             modalMessage.value = 'An error occurred while saving the form. Please review the following errors: ' + JSON.stringify(errors, null, 2);
             showModal.value = true;
-            flashMessage('An error occurred while saving the form. Please review the errors.', 'error');
-        }
+            // flashMessage('An error occurred while saving the form. Please review the errors.', 'error');
+            setTimeout(() => {
+                showModal.value = false;
+            }, 4000); 
+            // setTimeout(() => {
+            //     document.querySelector('.flash-message.error').remove();
+            // }, 3000); 
+          }
     });
 };
 
@@ -1495,9 +1525,9 @@ watch(() => form.birth_date, (newBirthDate) => {
                 <button type="submit" class="save-button">Save</button>
             </div>
         </form>   
-        <FlashMessage :show="showModal" :message="modalMessage" />
+        <!-- <FlashMessage :show="showModal" :message="modalMessage" /> -->
         <!-- Modal -->
-        <!-- <div v-if="showModal" :class="['modal', formSubmittedSuccessfully ? 'modal-success' : 'modal-error']">
+        <div v-if="showModal" :class="['modal', formSubmittedSuccessfully ? 'modal-success' : 'modal-error']">
             <div class="modal-content-success" v-if="formSubmittedSuccessfully">
                 <h2 style="color: white;">{{ modalTitle }}</h2>
                 <p>{{ modalMessage }}</p>
@@ -1506,7 +1536,7 @@ watch(() => form.birth_date, (newBirthDate) => {
                 <h2 style="color: white;">{{ modalTitle }}</h2>
                 <p>{{ modalMessage }}</p>
             </div>
-        </div> -->
+        </div>
         <!-- Cancel Confirmation Modal -->
         <div v-if="showCancelModal" class="modal">
             <div class="modal-content">

@@ -8,6 +8,16 @@ use Inertia\Inertia;
 
 class PNEAEnrollmentController extends Controller
 {
+     // Function to check if name combination already exists
+     public function checkNameCombinationExists(Request $request)
+     {
+         $exists = PNEAEnrollment::where('fullName', $request->input('fullName'))
+             ->exists();
+ 
+         return response()->json(['exists' => $exists]);
+     }
+
+
     public function store(Request $request)
     {
         // Validate the request data
@@ -212,7 +222,7 @@ class PNEAEnrollmentController extends Controller
 
         session()->flash('message', 'Data has been added successfully!');
 
-        return redirect()->route('pnea-enrollment-view'); 
+        // return redirect()->route('pnea-enrollment-view'); 
     }
 
     //add pregnancy period data

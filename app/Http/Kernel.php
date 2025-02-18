@@ -56,7 +56,6 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        
         'refresh.page' => \App\Http\Middleware\RefreshPageMiddleware::class, 
         'position' => \App\Http\Middleware\PositionMiddleware::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,

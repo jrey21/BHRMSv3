@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class ComprehensiveSurveyController extends Controller
 {
+
     public function survey(Request $request)
     {    
         // Validate the form data
@@ -197,5 +198,23 @@ class ComprehensiveSurveyController extends Controller
         $survey->save();
 
         return response()->json($survey);
+    }
+
+    public function checkDuplicate(Request $request)
+    {
+        $validatedData = $request->validate([
+            'lastName' => ['required', 'string', 'max:255'],
+            'firstName' => ['required', 'string', 'max:255'],
+            'middleName' => ['nullable', 'string', 'max:255'],
+            'suffix' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $exists = ComprehensiveSurvey::where('last_name', $validatedData['lastName'])
+            ->where('first_name', $validatedData['firstName'])
+            ->where('middle_name', $validatedData['middleName'])
+            ->where('suffix', $validatedData['suffix'])
+            ->exists();
+
+        return response()->json(['exists' => $exists]);
     }
 }

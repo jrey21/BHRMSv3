@@ -7,9 +7,22 @@ use Inertia\Inertia;
 
 class ChildCareFormController extends Controller
 {
+    // Function to check if name combination already exists
+    public function checkNameCombinationExists(Request $request)
+    {
+        $exists = ChildCareForm::where('last_name', $request->input('last_name'))
+            ->where('first_name', $request->input('first_name'))
+            ->where('middle_name', $request->input('middle_name'))
+            ->where('suffix', $request->input('suffix'))
+            ->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
+
     // Store the data to the database
     public function store(Request $request)
     {
+
         $validatedData = $request->validate([
             'family_no' => 'required|string|max:255',
             'child_no' => 'required|string|max:255',

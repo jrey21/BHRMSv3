@@ -86,6 +86,7 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::post('/child/{id}/addDeworming', [ChildCareFormController::class, 'addDeworming'])->name('child.addDeworming');
     Route::post('/child/{id}/addDental', [ChildCareFormController::class, 'addDental'])->name('child.addDental');
 
+    Route::post('check-name-combination',[ChildCareFormController::class, 'checkNameCombinationExists'])->name('check-name-combination');
 
 
 
@@ -106,6 +107,8 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::post('/pnea/{id}/addLactatingPeriod', [PNEAEnrollmentController::class, 'addLactatingPeriod'])->name('pnea.addLactatingPeriod');
     
     Route::inertia('/financial-assistance', 'Views/FinancialAssistanceView')->name('financial-assistance');
+    Route::post('check-name-pnea',[PNEAEnrollmentController::class, 'checkNameCombinationExists'])->name('check-name-pnea');
+
 });
 
 // Comprehensive Survey Routes
@@ -128,6 +131,8 @@ Route::middleware(['auth', RefreshPageMiddleware::class])->group(function() {
     Route::get('/pwd-data', [ComprehensiveSurveyController::class, 'pwd'])->name('pwd-data');
     Route::inertia('/age-grouping-view', 'Views/AgeGrouping')->name('age-grouping-view');
     Route::put('/comprehensive-survey-view/toggle-activation/{id}', [ComprehensiveSurveyController::class, 'toggleIsLiving'])->name('comprehensive-survey.toggle-activation');
+
+    Route::post('check-name-compre',[ComprehensiveSurveyController::class, 'checkDuplicate'])->name('check-name-compre');
 
 });
 

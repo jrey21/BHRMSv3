@@ -66,7 +66,34 @@ const capitalizeFormFields = () => {
     }
 };
 
-const submit = () => {
+const checkNameCombinationExists = async () => {
+    try {
+        const response = await axios.post(route('check-name-combination'), {
+            last_name: form.last_name,
+            first_name: form.first_name,
+            middle_name: form.middle_name,
+            suffix: form.suffix,
+        });
+        return response.data.exists;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+};
+
+const submit = async () => {
+    const nameExists = await checkNameCombinationExists();
+    if (nameExists) {
+        modalTitle.value = 'Error!';
+        modalMessage.value = 'This child already exists!';
+        showModal.value = true;
+        window.flash('This child already exists!', 'error');
+        setTimeout(() => {
+            showModal.value = false;
+        }, 4000);
+        return;
+    }
+
     capitalizeFormFields();
     form.post(route('childcare-form'), {
         onSuccess: () => {
@@ -75,6 +102,9 @@ const submit = () => {
             modalMessage.value = 'The form has been successfully saved!';
             showModal.value = true;
             window.flash('The form has been successfully saved!', 'success');
+            setTimeout(() => {
+                showModal.value = false;
+            }, 2000); 
 
             window.location.href = route('childcare-form-view'); 
         },
@@ -85,7 +115,9 @@ const submit = () => {
             modalMessage.value = errorMessages;
             showModal.value = true;
             window.flash('An error occurred while saving the form. Please review the errors.', 'error');
-            
+            setTimeout(() => {
+                showModal.value = false;
+            }, 4000); 
         }
     });
 };
@@ -109,9 +141,9 @@ const today = new Date().toISOString().split('T')[0];
 
 <template>
     <Head title=" | Child Care Form"/>
-    <div :class="['survey-container', { 'form-success': formSubmittedSuccessfully }]">
+    <div class="survey-container">
         <!-- Modal -->
-        <!-- <div v-if="showModal" :class="['modal', formSubmittedSuccessfully ? 'modal-success' : 'modal-error']">
+        <div v-if="showModal" :class="['modal', formSubmittedSuccessfully ? 'modal-success' : 'modal-error']">
             <div class="modal-content-success" v-if="formSubmittedSuccessfully">
                 <h2 style="color: white;">{{ modalTitle }}</h2>
                 <p>{{ modalMessage }}</p>
@@ -120,7 +152,7 @@ const today = new Date().toISOString().split('T')[0];
                 <h2 style="color: white;">{{ modalTitle }}</h2>
                 <p>{{ modalMessage }}</p>
             </div>
-        </div> -->
+        </div>
         <!-- Cancel Confirmation Modal -->
         <div v-if="showCancelModal" class="modal">
             <div class="modal-content">
@@ -332,7 +364,7 @@ const today = new Date().toISOString().split('T')[0];
                 <button type="submit" class="save-button">Save</button>
             </div>
         </form>
-        <FlashMessage :show="showModal" :message="modalMessage" />
+        <!-- <FlashMessage :show="showModal" :message="modalMessage" /> -->
         <!-- <SuccessMessageLayout v-if="formSubmittedSuccessfully" /> -->
     </div>
 </template>
@@ -664,7 +696,7 @@ textarea {
 
 .modal-content-success {
     background-color: #28a745;
-    color: white;
+    color: #ffffff;
     margin: auto;
     padding: 20px;
     border: 1px solid #28a745;
@@ -673,19 +705,20 @@ textarea {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(74, 220, 79, 0.1);
     text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
 }
 .modal-content-error {
     background-color: #dc3545;
-    color: white;
+    color: #ffffff; 
     margin: auto;
     padding: 20px;
     border: 1px solid #dc3545;
     width: 70%;
-    max-width: 400px;
+    max-width: 300px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(220, 53, 69, 0.1);
     text-align: center;
-    top: 0;
+    animation: fadeIn 0.5s ease-in-out;
 }
 .modal-content {
     background-color: #fefefe;
@@ -696,6 +729,17 @@ textarea {
     max-width: 400px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .close {

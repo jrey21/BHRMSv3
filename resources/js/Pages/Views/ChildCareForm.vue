@@ -24,7 +24,7 @@ const filteredData = computed(() => {
 const currentPage = ref(1);
 const itemsPerPage = 20;
 
-const sortOrder = ref('asc'); // Default sort order
+const sortOrder = ref('asc'); 
 
 const sortedData = computed(() => {
     return [...filteredData.value].sort((a, b) => {
