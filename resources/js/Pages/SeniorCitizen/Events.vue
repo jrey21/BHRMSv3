@@ -34,7 +34,7 @@ watchEffect(() => {
 });
 
 const currentPage = ref(1);
-const itemsPerPage = 20;
+const itemsPerPage = 10;
 const searchQuery = ref('');
 const sortOption = ref(''); 
 
@@ -47,7 +47,7 @@ const filteredEvents = computed(() => {
     );
 });
 
-const sortedEvents = computed(() => {
+const sortedData = computed(() => {
     let data = [...filteredEvents.value];
     if (sortOption.value === 'asc') {
         data.sort((a, b) => a.title.localeCompare(b.title));
@@ -59,21 +59,21 @@ const sortedEvents = computed(() => {
     return data;
 });
 
-const paginatedEvents = computed(() => {
+const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return sortedEvents.value.slice(start, end);
+    return sortedData.value.slice(start, end);
 });
 
 const totalPages = computed(() => {
-    return Math.ceil(eventsData.value.length / itemsPerPage);
+    return Math.ceil(filteredEvents.value.length / itemsPerPage);
 });
 
 const changePage = (page) => {
     if (page >= 1 && page <= totalPages.value) {
         currentPage.value = page;
     }
-}; 
+};
 
 const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -234,10 +234,10 @@ const downloadPDF = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-if="paginatedEvents.length === 0">
+                    <tr v-if="paginatedData.length === 0">
                         <td colspan="4">No data found</td>
                     </tr>
-                    <tr v-for="event in paginatedEvents" :key="event.id">
+                    <tr v-for="event in paginatedData" :key="event.id">
                         <td>{{ event.title }}</td>
                         <td>{{ formatDate(event.date) }}</td>
                         <td>{{ event.location }}</td>
@@ -289,7 +289,7 @@ const downloadPDF = () => {
         </div>
     </transition>
 
-    <div v-if="showDeleteModal" class="modal-overlay">
+    <div v-if="showDeleteModal" class="modal">
         <div class="modal-content">
             <h2>Confirm Delete</h2>
             <hr style="margin-top: 10px; margin-bottom:10px; padding: 0;">
@@ -303,6 +303,19 @@ const downloadPDF = () => {
 </template>
 
 <style scoped>
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
 .button-container {
     text-align: right;
     margin-bottom: 10px;
@@ -538,7 +551,7 @@ const downloadPDF = () => {
     margin-top: 0;
     font-size: 18px;
     color: #333;
-    border-bottom: 1px solid #ddd;
+    /* border-bottom: 1px solid #ddd; */
     padding-bottom: 10px;
 }
 .modal-content label {

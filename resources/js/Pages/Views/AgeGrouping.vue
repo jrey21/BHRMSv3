@@ -4,6 +4,15 @@ import axios from 'axios';
 import FormLayout from '../../Layouts/FormLayout.vue';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+
+const capitalizeAllLetters = (str) => {
+    return str.toUpperCase();
+};
+
+const loggedInUserName = computed(() => capitalizeAllLetters(page.props.auth.user.name));
 
 defineOptions({ layout: FormLayout });
 
@@ -189,8 +198,8 @@ const downloadAgeGroupPDF = () => {
              { content: totalFemale.value, styles: { fontStyle: 'bold' } }, 
              { content: totalMale.value + totalFemale.value, styles: { fontStyle: 'bold' } }]
         ],
-        styles: { fontSize: 12, halign: 'center' }, // Center align text
-        headStyles: { fillColor: [0, 102, 204], textColor: [255, 255, 255] }, // Header styling
+        styles: { fontSize: 12, halign: 'center' }, 
+        headStyles: { fillColor: [0, 102, 204], textColor: [255, 255, 255] }, 
         startY: tableStartY
     });
 
@@ -221,8 +230,10 @@ const downloadAgeGroupPDF = () => {
     doc.text('SUBMITTED BY:', 14, spaceBeforeSignatures);
     doc.text('NOTED BY:', pageWidth / 2 + 10, spaceBeforeSignatures);
 
-    doc.text('_____________________________', 14, spaceBeforeSignatures + 15);
-    doc.text('_____________________________', pageWidth / 2 + 10, spaceBeforeSignatures + 15);
+    doc.text('_____________________________', 14, spaceBeforeSignatures + 13);
+    doc.text(`${loggedInUserName.value}`, 22, spaceBeforeSignatures + 18);
+    doc.text('_______________', pageWidth / 2 + 10, spaceBeforeSignatures + 13);
+    doc.text('ALLAN P. GUMBA', pageWidth / 2 + 10, spaceBeforeSignatures + 18);
 
     // Save the PDF
     doc.save('Age_Grouping_Data.pdf');
