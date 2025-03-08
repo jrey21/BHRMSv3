@@ -18,6 +18,7 @@ class VaccinationRecord extends Model
         'dose_number',
         'date',
         'status',
+        'administered_by',
     ];
 
     public function child()

@@ -157,6 +157,7 @@ const downloadPDF = () => {
     });
     doc.save('Vaccination-Records.pdf');
 };
+
 </script>
 
 <template>
@@ -177,7 +178,7 @@ const downloadPDF = () => {
                     <option value="">Sort By</option>
                     <option value="asc">Name (A-Z)</option>
                     <option value="desc">Name (Z-A)</option>
-                    <option value="age">Age</option>
+                    <!-- <option value="age">Age</option> -->
                     <option value="zone">Zone</option>
                 </select>
                 <button @click="downloadPDF" class="download-button"> <i class="fas fa-download"></i></button>
@@ -192,6 +193,7 @@ const downloadPDF = () => {
                     <th>Vaccine Name</th>
                     <th>Dose Number</th>
                     <th>Date</th>
+                    <th>Administered by</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -206,6 +208,7 @@ const downloadPDF = () => {
                         <td>{{ getVaccineName(record) }}</td>
                         <td>{{ formatDoseNumber(record.dose_number) }}</td>
                         <td>{{ formatDate(record.date) }}</td>
+                        <td>{{ record.administered_by }}</td>
                         <td v-if="index === 0" :rowspan="data.vaccination_records.length">
                             <button @click="router.get(route('child.show', { id: data.id }))" class="address-button">
                                 <i class="fas fa-address-card"></i>

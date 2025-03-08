@@ -60,7 +60,7 @@ const capitalizeWords = (str) => {
             <!-- Logo and Title -->
             <div class="flex items-center space-x-2" style="margin-left:5px; font-size:medium;">
                 <img src="../Pages/Components/image/patag_logo.png" alt="logo" class="w-10 h-10" />
-                <Link :href="route('dashboard')">Barangay Patag</Link>
+                <Link :href="route('dashboard')">Barangay Health Records Management System of Barangay Patag (BHRMS)</Link>
             </div>
 
             <!-- Navigation Links -->

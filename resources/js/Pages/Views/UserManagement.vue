@@ -66,16 +66,16 @@
   </div>
 
   <!-- Audit Logs -->
-  <div class="container">
+  <!-- <div class="container">
     <h3 class="subtitle">Audit Logs</h3>
     <ul class="log-list">
       <li v-for="log in logs" :key="log.id" class="log-item">
         {{ log.action }} - {{ log.timestamp }}
       </li>
     </ul>
-    <!-- <button @click="displayPreviousLogs" class="btn show-logs-btn">Show Previous Logs</button>
-    <p v-if="logs.length === 0">No logs available</p>  -->
-  </div>
+    <button @click="displayPreviousLogs" class="btn show-logs-btn">Show Previous Logs</button>
+    <p v-if="logs.length === 0">No logs available</p> 
+  </div> -->
 
   <div v-if="showDeleteModal" class="modal">
     <div class="modal-content">
@@ -138,7 +138,7 @@ const fetchUsers = async () => {
     ...user,
     active: Boolean(user.is_active), 
     status: user.is_active ? 'Active' : 'Deactivated',
-    position: user.position.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '), // Capitalize first letter of each word
+    position: user.position.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '), 
   }));
 };
 
@@ -400,19 +400,19 @@ h2{
 }
 .filter-select {
   padding: 5px;
-  border: 1px solid #5dacfe;
+  border: 1px solid #007bff;
   border-radius: 5px;
-  background-color: #79bbff;
-  color: white;
+  background-color: white;
+  color: black;
   height: 35px;
   font-size: 14px;
 }; 
 .sort-select {
   padding: 10px;
-  border: 1px solid #5dacfe;
+  border: 1px solid #007bff;
   border-radius: 5px;
-  background-color: #79bbff;
-  color: white;
+  background-color: white;
+  color: black;
 }
 .user-table {
   width: 100%;
@@ -443,10 +443,10 @@ tbody tr:nth-child(even) {
 }
 .select-box {
   padding: 5px;
-  border: 1px solid #5dacfe;
+  border: 1px solid white;
   border-radius: 5px;
-  background-color: #007dff;
-  color: white;
+  background-color: white;
+  color: black;
   font-size: 14px;
 }
 .active {
@@ -636,7 +636,7 @@ tbody tr:nth-child(even) {
     font-size: 16px;
     font-weight: bold;
 }
-.show-logs-btn {
+/* .show-logs-btn {
   background-color: #007bff;
   color: white;
   padding: 10px 20px;
@@ -649,5 +649,5 @@ tbody tr:nth-child(even) {
 
 .show-logs-btn:hover {
   background-color: #0056b3;
-}
+} */
 </style>

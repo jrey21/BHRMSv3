@@ -10,6 +10,7 @@ import GrowthMonitoring from './GrowthMonitoring.vue';
 import DevelopmentalScreening from './DevelopmentalScreening.vue';
 import Deworming from './Deworming.vue';
 import Dental from './Dental.vue';
+// import ECCDCard from './ECCDCard.vue';
 import Space from '../../Components/Space.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
@@ -87,6 +88,9 @@ const today = computed(() => {
 
     <!-- Dental Information -->
     <Dental :child="child" />
+
+    <!-- ECCD Card Information -->
+   
 
 </template>
 

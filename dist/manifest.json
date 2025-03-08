@@ -10,17 +10,21 @@
       "_@vue-C4Ig4sz1.js"
     ]
   },
-  "_@inertiajs-ByWnpbRZ.js": {
-    "file": "assets/@inertiajs-ByWnpbRZ.js",
+  "_@heroicons-l0sNRNKZ.js": {
+    "file": "assets/@heroicons-l0sNRNKZ.js",
+    "name": "@heroicons"
+  },
+  "_@inertiajs-CuyXJhMg.js": {
+    "file": "assets/@inertiajs-CuyXJhMg.js",
     "name": "@inertiajs",
     "imports": [
-      "_lodash.isequal-C5bO8hFf.js",
-      "_vue-Ch2qjh0A.js",
-      "_lodash.clonedeep-DS12kxUr.js",
-      "_qs-CA_GZojS.js",
-      "_deepmerge-FqDck7Zx.js",
+      "_lodash.isequal-3UoWoZ9L.js",
+      "_vue-DOKpucOP.js",
+      "_lodash.clonedeep-dsXoK55A.js",
+      "_qs-6tk6WLIh.js",
+      "_deepmerge-CjqJHECb.js",
       "_axios-CCb-kr4I.js",
-      "_nprogress-DnJcoC-q.js",
+      "_nprogress-8RaWm_Cz.js",
       "_@vue-C4Ig4sz1.js"
     ]
   },
@@ -54,11 +58,11 @@
       "_@kurkle-D8fDXNIl.js"
     ]
   },
-  "_core-js-DCkPnlCq.js": {
-    "file": "assets/core-js-DCkPnlCq.js",
+  "_core-js-DyFOSwNP.js": {
+    "file": "assets/core-js-DyFOSwNP.js",
     "name": "core-js",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js"
+      "_@inertiajs-CuyXJhMg.js"
     ]
   },
   "_date-fns-DYEFGVmZ.js": {
@@ -68,11 +72,11 @@
       "_@babel-DnfDSJcD.js"
     ]
   },
-  "_deepmerge-FqDck7Zx.js": {
-    "file": "assets/deepmerge-FqDck7Zx.js",
+  "_deepmerge-CjqJHECb.js": {
+    "file": "assets/deepmerge-CjqJHECb.js",
     "name": "deepmerge",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js"
+      "_@inertiajs-CuyXJhMg.js"
     ]
   },
   "_define-data-property-DO9o5wXF.js": {
@@ -147,11 +151,11 @@
       "_function-bind-BbkWVFrm.js"
     ]
   },
-  "_jspdf-BJuofG_h.js": {
-    "file": "assets/jspdf-BJuofG_h.js",
+  "_jspdf-Dl52lwi3.js": {
+    "file": "assets/jspdf-Dl52lwi3.js",
     "name": "jspdf",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js",
+      "_@inertiajs-CuyXJhMg.js",
       "_@babel-DnfDSJcD.js",
       "_fflate-EnPhvkmS.js"
     ],
@@ -161,54 +165,54 @@
       "node_modules/canvg/lib/index.es.js"
     ]
   },
-  "_jspdf-autotable-DGFooAlF.js": {
-    "file": "assets/jspdf-autotable-DGFooAlF.js",
+  "_jspdf-autotable-BG62XYkh.js": {
+    "file": "assets/jspdf-autotable-BG62XYkh.js",
     "name": "jspdf-autotable",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js",
-      "_jspdf-BJuofG_h.js"
+      "_@inertiajs-CuyXJhMg.js",
+      "_jspdf-Dl52lwi3.js"
     ]
   },
-  "_lodash.clonedeep-DS12kxUr.js": {
-    "file": "assets/lodash.clonedeep-DS12kxUr.js",
+  "_lodash.clonedeep-dsXoK55A.js": {
+    "file": "assets/lodash.clonedeep-dsXoK55A.js",
     "name": "lodash.clonedeep",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js"
+      "_@inertiajs-CuyXJhMg.js"
     ]
   },
-  "_lodash.isequal-C5bO8hFf.js": {
-    "file": "assets/lodash.isequal-C5bO8hFf.js",
+  "_lodash.isequal-3UoWoZ9L.js": {
+    "file": "assets/lodash.isequal-3UoWoZ9L.js",
     "name": "lodash.isequal",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js"
+      "_@inertiajs-CuyXJhMg.js"
     ]
   },
-  "_nprogress-!~{00d}~.js": {
+  "_nprogress-!~{00e}~.js": {
     "file": "assets/nprogress-CSXic_Zd.css",
-    "src": "_nprogress-!~{00d}~.js"
+    "src": "_nprogress-!~{00e}~.js"
   },
-  "_nprogress-DnJcoC-q.js": {
-    "file": "assets/nprogress-DnJcoC-q.js",
+  "_nprogress-8RaWm_Cz.js": {
+    "file": "assets/nprogress-8RaWm_Cz.js",
     "name": "nprogress",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js"
+      "_@inertiajs-CuyXJhMg.js"
     ],
     "css": [
       "assets/nprogress-CSXic_Zd.css"
     ]
   },
-  "_object-inspect-RmeKvQOm.js": {
-    "file": "assets/object-inspect-RmeKvQOm.js",
+  "_object-inspect-CeaauOZ7.js": {
+    "file": "assets/object-inspect-CeaauOZ7.js",
     "name": "object-inspect",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js"
+      "_@inertiajs-CuyXJhMg.js"
     ]
   },
-  "_performance-now-SME5mHiM.js": {
-    "file": "assets/performance-now-SME5mHiM.js",
+  "_performance-now-Ds1fCc7h.js": {
+    "file": "assets/performance-now-Ds1fCc7h.js",
     "name": "performance-now",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js"
+      "_@inertiajs-CuyXJhMg.js"
     ]
   },
   "_qrcode-SHonoxyK.js": {
@@ -218,26 +222,26 @@
       "_dijkstrajs-D_NXgYpA.js"
     ]
   },
-  "_qs-CA_GZojS.js": {
-    "file": "assets/qs-CA_GZojS.js",
+  "_qs-6tk6WLIh.js": {
+    "file": "assets/qs-6tk6WLIh.js",
     "name": "qs",
     "imports": [
-      "_side-channel-CPkhPW-P.js"
+      "_side-channel-DAWOnIee.js"
     ]
   },
-  "_raf-D_y3eAZ4.js": {
-    "file": "assets/raf-D_y3eAZ4.js",
+  "_raf-DtSgFqQ4.js": {
+    "file": "assets/raf-DtSgFqQ4.js",
     "name": "raf",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js",
-      "_performance-now-SME5mHiM.js"
+      "_@inertiajs-CuyXJhMg.js",
+      "_performance-now-Ds1fCc7h.js"
     ]
   },
-  "_rgbcolor-DjIRt6Sd.js": {
-    "file": "assets/rgbcolor-DjIRt6Sd.js",
+  "_rgbcolor-DWtIi-x5.js": {
+    "file": "assets/rgbcolor-DWtIi-x5.js",
     "name": "rgbcolor",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js"
+      "_@inertiajs-CuyXJhMg.js"
     ]
   },
   "_set-function-length-B5OANX0j.js": {
@@ -251,13 +255,13 @@
       "_es-errors-DzOT6E3C.js"
     ]
   },
-  "_side-channel-CPkhPW-P.js": {
-    "file": "assets/side-channel-CPkhPW-P.js",
+  "_side-channel-DAWOnIee.js": {
+    "file": "assets/side-channel-DAWOnIee.js",
     "name": "side-channel",
     "imports": [
       "_get-intrinsic-BKEvijrG.js",
       "_call-bind-Bt3bzbWQ.js",
-      "_object-inspect-RmeKvQOm.js",
+      "_object-inspect-CeaauOZ7.js",
       "_es-errors-DzOT6E3C.js"
     ]
   },
@@ -269,11 +273,11 @@
     "file": "assets/svg-pathdata-BCgtg4Q0.js",
     "name": "svg-pathdata"
   },
-  "_vue-Ch2qjh0A.js": {
-    "file": "assets/vue-Ch2qjh0A.js",
+  "_vue-DOKpucOP.js": {
+    "file": "assets/vue-DOKpucOP.js",
     "name": "vue",
     "imports": [
-      "_@inertiajs-ByWnpbRZ.js",
+      "_@inertiajs-CuyXJhMg.js",
       "_@vue-C4Ig4sz1.js"
     ]
   },
@@ -300,24 +304,24 @@
     ]
   },
   "node_modules/canvg/lib/index.es.js": {
-    "file": "assets/canvg-ClrYEiil.js",
+    "file": "assets/canvg-CeY0L2Sp.js",
     "name": "canvg",
     "src": "node_modules/canvg/lib/index.es.js",
     "isDynamicEntry": true,
     "imports": [
-      "_core-js-DCkPnlCq.js",
+      "_core-js-DyFOSwNP.js",
       "_@babel-DnfDSJcD.js",
-      "_raf-D_y3eAZ4.js",
-      "_rgbcolor-DjIRt6Sd.js",
+      "_raf-DtSgFqQ4.js",
+      "_rgbcolor-DWtIi-x5.js",
       "_svg-pathdata-BCgtg4Q0.js",
       "_stackblur-canvas-CBjRDurV.js",
-      "_@inertiajs-ByWnpbRZ.js",
-      "_lodash.isequal-C5bO8hFf.js",
-      "_vue-Ch2qjh0A.js",
+      "_@inertiajs-CuyXJhMg.js",
+      "_lodash.isequal-3UoWoZ9L.js",
+      "_vue-DOKpucOP.js",
       "_@vue-C4Ig4sz1.js",
-      "_lodash.clonedeep-DS12kxUr.js",
-      "_qs-CA_GZojS.js",
-      "_side-channel-CPkhPW-P.js",
+      "_lodash.clonedeep-dsXoK55A.js",
+      "_qs-6tk6WLIh.js",
+      "_side-channel-DAWOnIee.js",
       "_get-intrinsic-BKEvijrG.js",
       "_es-errors-DzOT6E3C.js",
       "_has-symbols-eVqrYdw7.js",
@@ -330,11 +334,11 @@
       "_es-define-property-tzmkNPou.js",
       "_gopd-CEkvUycD.js",
       "_has-property-descriptors-DphFXkuo.js",
-      "_object-inspect-RmeKvQOm.js",
-      "_deepmerge-FqDck7Zx.js",
+      "_object-inspect-CeaauOZ7.js",
+      "_deepmerge-CjqJHECb.js",
       "_axios-CCb-kr4I.js",
-      "_nprogress-DnJcoC-q.js",
-      "_performance-now-SME5mHiM.js"
+      "_nprogress-8RaWm_Cz.js",
+      "_performance-now-Ds1fCc7h.js"
     ]
   },
   "node_modules/dompurify/dist/purify.es.js": {
@@ -350,7 +354,7 @@
     "isDynamicEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-CiSeSss0.css",
+    "file": "assets/app-DtNohuUp.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -363,29 +367,30 @@
     "src": "resources/js/Pages/Components/image/patag_logo.png"
   },
   "resources/js/app.js": {
-    "file": "assets/app-CPZGMxEN.js",
+    "file": "assets/app-BWlyHpDx.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
       "_axios-CCb-kr4I.js",
       "_@vue-C4Ig4sz1.js",
-      "_@inertiajs-ByWnpbRZ.js",
+      "_@inertiajs-CuyXJhMg.js",
       "_@fortawesome-XL2-NSwU.js",
+      "node_modules/html2canvas/dist/html2canvas.esm.js",
+      "_jspdf-Dl52lwi3.js",
       "_vue-router-DnXiCCiH.js",
       "_vue-chartjs-DhIF-rBW.js",
       "_chart.js-C3rbDyii.js",
-      "_jspdf-BJuofG_h.js",
-      "_jspdf-autotable-DGFooAlF.js",
+      "_jspdf-autotable-BG62XYkh.js",
       "_date-fns-DYEFGVmZ.js",
       "_vue-qrcode-reader-CTQGBJ9D.js",
       "_qrcode-SHonoxyK.js",
-      "_nprogress-DnJcoC-q.js",
-      "_lodash.isequal-C5bO8hFf.js",
-      "_vue-Ch2qjh0A.js",
-      "_lodash.clonedeep-DS12kxUr.js",
-      "_qs-CA_GZojS.js",
-      "_side-channel-CPkhPW-P.js",
+      "_nprogress-8RaWm_Cz.js",
+      "_lodash.isequal-3UoWoZ9L.js",
+      "_vue-DOKpucOP.js",
+      "_lodash.clonedeep-dsXoK55A.js",
+      "_qs-6tk6WLIh.js",
+      "_side-channel-DAWOnIee.js",
       "_get-intrinsic-BKEvijrG.js",
       "_es-errors-DzOT6E3C.js",
       "_has-symbols-eVqrYdw7.js",
@@ -398,15 +403,15 @@
       "_es-define-property-tzmkNPou.js",
       "_gopd-CEkvUycD.js",
       "_has-property-descriptors-DphFXkuo.js",
-      "_object-inspect-RmeKvQOm.js",
-      "_deepmerge-FqDck7Zx.js",
-      "_@kurkle-D8fDXNIl.js",
+      "_object-inspect-CeaauOZ7.js",
+      "_deepmerge-CjqJHECb.js",
       "_@babel-DnfDSJcD.js",
       "_fflate-EnPhvkmS.js",
+      "_@kurkle-D8fDXNIl.js",
       "_dijkstrajs-D_NXgYpA.js"
     ],
     "css": [
-      "assets/app-vRGgQCji.css"
+      "assets/app-BxGpegss.css"
     ],
     "assets": [
       "assets/patag_logo-6di25bQh.png",

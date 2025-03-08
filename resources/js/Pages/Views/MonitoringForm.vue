@@ -222,7 +222,9 @@ const interpretStatus = (status) => {
                             <td v-else>-</td>
                             <td v-if="data.pregnancy_periods.length">{{ interpretStatus(getLatestPregnancy(data).status) }}</td>
                             <td v-else>-</td>
-                            <td v-if="data.pregnancy_periods.length">{{ getLatestPregnancy(data).muac_color }}</td>
+                            <td v-if="data.pregnancy_periods.length">
+                                <span :style="{ backgroundColor: getLatestPregnancy(data).muac_color, display: 'inline-block', width: '35px', height: '15px' }"></span>
+                            </td>
                             <td v-else>-</td>
                             <td v-if="data.pregnancy_periods.length">{{ interpretMuacStatus(getLatestPregnancy(data).muac_status) }}</td>
                             <td v-else>-</td>

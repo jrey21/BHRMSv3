@@ -205,30 +205,9 @@ const flashMessage = (message, type) => {
     document.body.appendChild(flash);
     setTimeout(() => flash.remove(), 3000);
 };
-const checkNameCombinationExists = async () => {
-    try {
-        const response = await axios.post(route('check-name-pnea'), {
-            fullName: form.fullName,
-        });
-        return response.data.exists;
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
-};
+
 const submit = async () => {
 
-  const nameExists = await checkNameCombinationExists();
-    if (nameExists) {
-        modalTitle.value = 'Error!';
-        modalMessage.value = 'This name already exists!';
-        showModal.value = true;
-        // window.flash('This name already exists!', 'error');
-        setTimeout(() => {
-            showModal.value = false;
-        }, 3000);
-        return;
-    }
     // Normalize boolean fields
     form.prenatal_care_counseled = form.prenatal_care_counseled === 'yes';
     form.prenatal_checkup_counseled = form.prenatal_checkup_counseled === 'yes';

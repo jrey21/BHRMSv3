@@ -16,13 +16,15 @@ const newRecord = ref({
     dose_number: '',
     date: '',
     status: '',
+    administered_by: '',
 });
 
 const resetForm = () => {
     newRecord.value = {
         vaccine_name: '',
         dose_number:'',
-        date:''
+        date:'',
+        administered_by: '',
     };
 };
 
@@ -33,6 +35,8 @@ const vaccineDoses = {
     'Hepatitis B': 3,
     Measles: 2,
 };
+
+
 
 const toggleVaccinationRecords = () => {
     // Toggle the visibility of the vaccination records section
@@ -133,12 +137,12 @@ const sortedVaccinationRecords = computed(() => {
 
 const availableDoses = computed(() => {
     // Get the available doses for the selected vaccine
-    const doses = ['dose_1', 'dose_2', 'dose_3','dose_4', 'booster'];
+    const doses = ['dose_1', 'dose_2', 'dose_3', 'dose_4', 'booster'];
     if (newRecord.value.vaccine_name === 'Other') {
         return doses; // Return all doses if the vaccine is "Other"
     }
     const recordedDoses = props.child.vaccination_records
-        .filter(record => record.vaccine_name === newRecord.value.vaccine_name)
+        .filter(record => record.vaccine_name === newRecord.value.vaccine_name || record.other_vaccine_name === newRecord.value.other_vaccine_name)
         .map(record => record.dose_number);
     return doses.filter(dose => !recordedDoses.includes(dose));
 });
@@ -169,6 +173,17 @@ const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
 };
+
+const capitalizeWords = (str) => {
+    return str.replace(/\b\w/g, char => char.toUpperCase());
+};
+
+// Watcher to capitalize the first letter of each word in "administered_by"
+watch(newRecord.value, (newVal) => {
+    if (newVal.administered_by) {
+        newVal.administered_by = capitalizeWords(newVal.administered_by);
+    }
+}, { deep: true });
 </script>
 
 <template>
@@ -237,7 +252,12 @@ const formatDate = (dateString) => {
                         <option value="HIB">HIB</option>
                         <option value="PCV">PCV</option>
                         <option value="Polio">Polio</option>
+                        <option v-for="record in props.child.vaccination_records.filter(record => record.vaccine_name === 'Other')" :key="record.other_vaccine_name" :value="record.other_vaccine_name">
+                            {{ record.other_vaccine_name }}
+                        </option>
                         <option value="Other">Other</option>
+                        
+                    
                     </select>
                     <input
                         v-if="newRecord.vaccine_name === 'Other'"
@@ -255,6 +275,8 @@ const formatDate = (dateString) => {
                             {{ dose.replace('_date', '').replace('_', ' ').toUpperCase() }}
                         </option>
                     </select>
+                    <label for="administered_by">Administered By:</label>
+                    <input type="text" v-model="newRecord.administered_by" required />
 
                     <div class="button-container">
                         <button type="submit">Add</button>

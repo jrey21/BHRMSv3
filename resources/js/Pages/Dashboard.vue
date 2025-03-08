@@ -291,28 +291,35 @@ const lineChartOptions = {
     }
 };
 
-const pieChartData = computed(() => ({
-    labels: ['Total Child Vaccinated','Lactating Mothers', 'Pregnants', '4P\'s', 'PWD\'s', 'Senior Citizens', 'Residents', 'Underweights', 'Childcare'],
-    datasets: [
-        {
-            label: 'Legend',
-            backgroundColor: ['#D70C24ff','#007BFF', '#FFC107', '#6F42C1', '#C2B11D', '#191FC5', '#038624', '#994B10', '#A12873'],
-            hoverBackgroundColor: ['#D70C24ff','#0056b3', '#e0a800', '#5a2d91', '#a89b1a', '#1418a5', '#02691b', '#7a3a0d', '#7d2056'],
-            borderWidth: 1,
-            data: [
-                totalVaccinated.value,
-                totalLactating.value,
-                totalPregnants.value,
-                total4Ps.value,
-                totalPWDs.value,
-                totalCitizens.value,
-                totalResidents.value,
-                totalUnderweights.value,
-                totalChildcare.value
-            ]
-        }
-    ]
-}));
+const pieChartData = computed(() => {
+    const data = [
+        { label: 'Total Child Vaccinated', value: totalVaccinated.value },
+        { label: 'Lactating Mothers', value: totalLactating.value },
+        { label: 'Pregnants', value: totalPregnants.value },
+        { label: '4P\'s', value: total4Ps.value },
+        { label: 'PWD\'s', value: totalPWDs.value },
+        { label: 'Senior Citizens', value: totalCitizens.value },
+        { label: 'Residents', value: totalResidents.value },
+        { label: 'Underweights', value: totalUnderweights.value },
+        { label: 'Childcare', value: totalChildcare.value }
+    ];
+
+    // Sort data from highest to lowest
+    data.sort((a, b) => b.value - a.value);
+
+    return {
+        labels: data.map(item => item.label),
+        datasets: [
+            {
+                label: 'Legend',
+                backgroundColor: ['#D70C24ff','#007BFF', '#FFC107', '#6F42C1', '#C2B11D', '#191FC5', '#038624', '#994B10', '#A12873'],
+                hoverBackgroundColor: ['#D70C24ff','#0056b3', '#e0a800', '#5a2d91', '#a89b1a', '#1418a5', '#02691b', '#7a3a0d', '#7d2056'],
+                borderWidth: 1,
+                data: data.map(item => item.value)
+            }
+        ]
+    };
+});
 
 const pieChartOptions = {
     responsive: true,
@@ -1335,12 +1342,125 @@ const barChartOptions = {
 }
 
 @media (max-width: 768px) {
+    .total-cases, .pregnant, .breastfeeding, .pwd, .pantawid, .senior-citizen, .Underweights,.residents,.age-grouping,.child-care{
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        position: relative;
+        cursor: pointer;
+        text-align: left; 
+        min-width: 30px; 
+        max-width: 200px; 
+        min-height: 100px;
+    }
+    .dashboard-container {
+        display: flex;
+        max-width: 100%;
+    }
+    .content-wrapper {
+        width: 100%;
+        max-width: 100%;
+    }
     .dashboard-boxes {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2,1fr);
     }
 
     .additional-boxes .box {
         flex: 1 1 100%;
+    }
+
+    .zone-counts, .zone-counts-age, .zone-counts-vac {
+        padding: 10px;
+    }
+
+    .zone-title {
+        font-size: 16px;
+    }
+
+    .zone-data-container > div {
+        padding: 10px;
+    }
+
+    .status-card {
+        padding: 10px;
+    }
+
+    .status-card h3 {
+        font-size: 15px;
+    }
+
+    .status-card .status {
+        font-size: 12px;
+    }
+
+    .status-card .total {
+        font-size: 18px;
+    }
+
+    .numbers {
+        font-size: 24px;
+    }
+
+    .labels, .label1, .age {
+        font-size: 14px;
+    }
+
+    .view-dets {
+        font-size: 11px;
+    }
+
+    .dashboard-boxes > div {
+        padding: 10px;
+        min-height: 100px;
+    }
+    
+   
+}
+
+@media (max-width: 480px) {
+    .dashboard-boxes {
+        grid-template-columns: 1fr;
+    }
+
+    .zone-title {
+        font-size: 14px;
+    }
+
+    .zone-data-container > div {
+        padding: 5px;
+    }
+
+    .status-card {
+        padding: 5px;
+    }
+
+    .status-card h3 {
+        font-size: 13px;
+    }
+
+    .status-card .status {
+        font-size: 10px;
+    }
+
+    .status-card .total {
+        font-size: 16px;
+    }
+
+    .numbers {
+        font-size: 20px;
+    }
+
+    .labels, .label1, .age {
+        font-size: 12px;
+    }
+
+    .view-dets {
+        font-size: 10px;
+    }
+
+    .dashboard-boxes > div {
+        padding: 10px;
+        min-height: 80px;
     }
 }
 

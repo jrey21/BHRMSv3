@@ -9,14 +9,22 @@ defineOptions({ layout: FormLayout });
 
 const distributionData = ref([]);
 const searchQuery = ref('');
+const medicineTypeFilter = ref('');
+const medicineTypes = ref([]);
 
 const filteredData = computed(() => {
-    if (!searchQuery.value) {
-        return distributionData.value;
+    let data = distributionData.value;
+    if (searchQuery.value) {
+        data = data.filter(item =>
+            item.beneficiary_name.toLowerCase().includes(searchQuery.value.toLowerCase())
+        );
     }
-    return distributionData.value.filter(data =>
-        data.beneficiary_name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
+    if (medicineTypeFilter.value) {
+        data = data.filter(item =>
+            item.medicine_name.toLowerCase().includes(medicineTypeFilter.value.toLowerCase())
+        );
+    }
+    return data;
 });
 
 const currentPage = ref(1);
@@ -42,6 +50,8 @@ onMounted(async () => {
     try {
         const response = await axios.get(route('medicine-list-distributed-data'));
         distributionData.value = response.data;
+        // Extract unique medicine types
+        medicineTypes.value = [...new Set(response.data.map(item => item.medicine_name))];
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -172,6 +182,21 @@ const downloadPDF = () => {
     doc.save('Medicine-distribution.pdf');
 };
 
+const capitalizeFirstLetter = (string) => {
+    return string.replace(/\b\w/g, char => char.toUpperCase());
+};
+
+const refreshTable = async () => {
+    try {
+        const response = await axios.get(route('medicine-list-distributed-data'));
+        distributionData.value = response.data;
+        // Extract unique medicine types
+        medicineTypes.value = [...new Set(response.data.map(item => item.medicine_name))];
+    } catch (error) {
+        console.error('Error refreshing data:', error);
+    }
+};
+
 </script>
 
 <template>
@@ -191,7 +216,18 @@ const downloadPDF = () => {
                     <input type="text" v-model="searchQuery" placeholder="Search by name ..." />
                 </div>
             </div>
-            <button class="download-button" @click="downloadPDF"><i class="fas fa-download"></i></button>
+            
+            <div>
+                <div class="search-box">
+                    <i class="fas fa-filter" style="margin-left: 8px;"></i>
+                    <select v-model="medicineTypeFilter">
+                        <option value="">All Medicines</option>
+                        <option v-for="type in medicineTypes" :key="type" :value="type">{{ type }}</option>
+                    </select>
+                </div>
+                <button class="refresh-button" @click="refreshTable"><i class="fas fa-sync-alt"></i></button>
+                <button class="download-button" @click="downloadPDF"><i class="fas fa-download"></i></button>
+            </div>
         </div>
         <div class="scrollable-table">
             <table class="data-table">
@@ -210,7 +246,7 @@ const downloadPDF = () => {
                     </tr>
                     <tr v-for="data in paginatedData" :key="data.id">
                         <td>{{ distributionData.indexOf(data) + 1 +"." }}</td>
-                        <td>{{ data.beneficiary_name }}</td>
+                        <td>{{ capitalizeFirstLetter(data.beneficiary_name) }}</td>
                         <td>{{ data.medicine_name }}</td>
                         <td>{{ data.distributed_quantity }}</td>
                         <td>{{ formatDate(data.distribution_date) }}</td>
@@ -267,18 +303,22 @@ h2 {
     border-radius: 50px;
     background-color: #fff;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    /* margin-right: 10px;  */
 }
 .search-box i {
     font-size: 14px;
     color: #007bff;
     margin-right: 8px;
 }
-.search-box input {
+.search-box input,
+.search-box select { 
     font-size: 14px;
     border: none;
     outline: none;
     color: #333;
     height: 25px;
+    flex: 1; 
+    padding-left: 8px; 
 }
 .data-container {
     width: 100%;
@@ -634,9 +674,26 @@ h2 {
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.3s ease;
-    margin-left: 10px;
+    /* margin-left: 10px; */
 }
 .download-button:hover {
     background-color: #0056b3;
+}
+.refresh-button {
+    background-color: #28a745; 
+    border: none;
+    color: white;
+    padding: 5px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+.refresh-button:hover {
+    background-color: #218838; 
 }
 </style>

@@ -110,7 +110,20 @@ const months = ['1st Month', '2nd Month', '3rd Month', '4th Month', '5th Month',
 
 const getRecordForMonth = (month, field) => {
     const record = props.pnea.pregnancy_periods.find(record => record.month === month);
+    if (field === 'muac_color') {
+        return record ? record[field] : '';
+    }
     return record ? record[field] : '';
+};
+
+const getMuacColorStyle = (color) => {
+    return {
+        display: 'inline-block',
+        width: '12px',
+        height: '12px',
+        borderRadius: '50%',
+        backgroundColor: color.toLowerCase(),
+    };
 };
 
 const getStatusStyle = (status) => {
@@ -194,7 +207,7 @@ const getStatusStyle = (status) => {
                         <tr>
                             <td>MUAC (color)</td>
                             <td v-for="month in months" :key="'muac_color-' + month">
-                                {{ getRecordForMonth(month, 'muac_color') }}
+                                <span :style="getMuacColorStyle(getRecordForMonth(month, 'muac_color'))"></span>
                             </td>
                         </tr>
                         <tr>

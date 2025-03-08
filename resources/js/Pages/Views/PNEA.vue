@@ -267,7 +267,7 @@ const downloadPDF = () => {
         </div>
     </transition>
     <div class="header">
-        <h1 class="child-head text-slate-500">List of Pregnant Mothers</h1>
+        <h1 class="child-head text-slate-500">List of Pregnant and Lactating Mothers</h1>
     </div>
     <div class="data-container">
         <div class="action-bar">

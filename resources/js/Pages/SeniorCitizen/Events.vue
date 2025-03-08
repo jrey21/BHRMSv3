@@ -336,14 +336,16 @@ const downloadPDF = () => {
     background-color: #f9f9f9;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-left: 5%;
+    max-width: 100%; 
 }
 .scrollable-table {
-    height: 480px;
+    height: auto; /* Adjust height for smaller screens */
     overflow-y: auto;
     margin-top: 10px;
     scroll-snap-type: y mandatory;
     scrollbar-width: thin; 
     scrollbar-color: #ccc #f9f9f9; 
+    max-width: 100%; 
 }
 
 /* Webkit browsers */
@@ -402,13 +404,16 @@ const downloadPDF = () => {
     text-overflow: ellipsis;
 }
 .data-table th:nth-child(1) {
-    width: 40%; 
+    width: 30%; 
 }
 .data-table th:nth-child(2) {
-    width: 17%; 
+    width: 20%; 
 }
 .data-table th:nth-child(3) {
-    width: 35%; 
+    width: 30%; 
+}
+.data-table th:nth-child(4) {
+    width: 20%; 
 }
 
 .data-table td {
@@ -458,12 +463,13 @@ const downloadPDF = () => {
 .search-box {
     display: flex;
     align-items: center;
-    width: 240px; 
+    width: 100%; /* Change this line */
     padding: 2px; 
     border: 2px solid #9dc0e6; 
     border-radius: 50px; 
     background-color: #fff; 
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1); 
+    margin-bottom: 10px; 
 }
 
 .search-box i {
@@ -671,6 +677,133 @@ const downloadPDF = () => {
     display: flex;
     justify-content: flex-end;
     gap: 5px;
+}
+
+@media (max-width: 768px) {
+    .data-container {
+        margin-left: 0; 
+        padding: 10px; 
+    }
+
+    .action-bar {
+        flex-direction: column; 
+        align-items: center; 
+    }
+
+    .button-group, .download-button, .add-button {
+        width: 100%; 
+        margin-top: 10px;
+        align-items: center;
+    }
+
+    .search-container {
+        width: 100%; 
+    }
+
+    .scrollable-table {
+        height: auto; 
+        max-height: 300px; 
+    }
+
+    .data-table th, .data-table td {
+        font-size: 12px; 
+    }
+
+    .pagination {
+        flex-direction: row; 
+        align-items: center; 
+        justify-content: center; 
+        gap:10px;
+    }
+
+    .pagination button {
+        margin: 5px 0; 
+    }
+
+    .pagination span {
+        margin: 5px 0; 
+    }
+
+    .header{
+        font-size: 16px; 
+        flex-wrap: wrap; 
+        text-align: center; 
+    }
+    .header h1 {
+        flex: 1;
+        margin-top: 25px;
+    }
+
+    .search-box {
+        width: 100%; 
+    }
+}
+
+@media (max-width: 480px) {
+    .header{
+        font-size: 16px; 
+        flex-wrap: wrap; 
+        text-align: center; 
+    }
+    .header h1 {
+        flex: 1;
+        margin-top: 25px;
+    }
+
+    .data-container {
+        padding: 5px; 
+    }
+
+    .action-bar {
+        flex-direction: column; 
+        align-items: center; 
+    }
+
+    .button-group, .download-button, .add-button {
+        width: 100%; 
+        margin-top: 10px; 
+        align-items: center;
+    }
+
+    .search-container {
+        width: 100%; 
+    }
+
+    .scrollable-table {
+        max-height: 200px; 
+    }
+
+    .data-table th, .data-table td {
+        font-size: 10px; 
+    }
+
+    .pagination {
+        flex-direction: row; 
+        align-items: center; 
+        justify-content: center; 
+    }
+
+    .pagination button {
+        margin: 2px 0; 
+    }
+
+    .pagination span {
+        margin: 2px 0; 
+    }
+
+    .search-box {
+        width: 100%; 
+    }
+
+    .sort-select {
+        width: 100%; 
+        margin-bottom: 10px; 
+    }
+
+    .add-button, .download-button {
+        width: 100%; 
+        margin-top: 5px; 
+    }
 }
 </style>
 

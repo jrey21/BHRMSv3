@@ -172,6 +172,16 @@ const downloadPDF = () => {
     // router.push({ name: 'DetailsPage', params: { id: data.id } });
 };
 };
+
+const getMuacColorStyle = (muacColor) => {
+    return {
+        display: 'inline-block',
+        width: '35px',
+        height: '15px',
+        // borderRadius: '50%',
+        backgroundColor: muacColor,
+    };
+};
 </script>
 
 <template>
@@ -228,7 +238,9 @@ const downloadPDF = () => {
                             <td v-else>-</td>
                             <td v-if="data.lactating_periods.length">{{ interpretStatus(getLatestlactating(data).status) }}</td>
                             <td v-else>-</td>
-                            <td v-if="data.lactating_periods.length">{{ getLatestlactating(data).muac_color }}</td>
+                            <td v-if="data.lactating_periods.length">
+                                <span :style="getMuacColorStyle(getLatestlactating(data).muac_color)"></span>
+                            </td>
                             <td v-else>-</td>
                             <td v-if="data.lactating_periods.length">{{ interpretMuacStatus(getLatestlactating(data).muac_status) }}</td>
                             <td v-else>-</td>

@@ -131,6 +131,7 @@ class ChildCareFormController extends Controller
             'dose_number' => 'required|string|max:255',
             'date' => 'required|date',
             'status' => 'nullable|string|max:255',
+            'administered_by' => 'required|string|max:255',
         ]);
 
         $child = ChildCareForm::findOrFail($child_id);
